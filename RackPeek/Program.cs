@@ -7,9 +7,11 @@ using Microsoft.Extensions.Logging;
 using RackPeek.Commands;
 using RackPeek.Commands.Server;
 using RackPeek.Commands.Server.Cpus;
+using RackPeek.Commands.Server.Drives;
 using RackPeek.Domain.Resources.Hardware.Reports;
 using RackPeek.Domain.Resources.Hardware.Server;
 using RackPeek.Domain.Resources.Hardware.Server.Cpu;
+using RackPeek.Domain.Resources.Hardware.Server.Drive;
 using RackPeek.Yaml;
 
 namespace RackPeek;
@@ -85,11 +87,23 @@ public static class Program
         services.AddScoped<AddCpuUseCase>();
         services.AddScoped<UpdateCpuUseCase>();
         services.AddScoped<RemoveCpuUseCase>();
+        
+        // Drive use cases
+        services.AddScoped<AddDrivesUseCase>();
+        services.AddScoped<UpdateDriveUseCase>();
+        services.AddScoped<RemoveDriveUseCase>();
+
 
         // CPU commands
         services.AddScoped<ServerCpuAddCommand>();
         services.AddScoped<ServerCpuSetCommand>();
         services.AddScoped<ServerCpuRemoveCommand>();
+        
+        // Drive commands
+        services.AddScoped<ServerDriveAddCommand>();
+        services.AddScoped<ServerDriveUpdateCommand>();
+        services.AddScoped<ServerDriveRemoveCommand>();
+
         
         // Spectre bootstrap
         var registrar = new TypeRegistrar(services);
@@ -137,6 +151,21 @@ public static class Program
                     cpu.AddCommand<ServerCpuRemoveCommand>("del")
                         .WithDescription("Remove a CPU from a server");
                 });
+                
+                server.AddBranch("drive", drive =>
+                {
+                    drive.SetDescription("Manage server drives");
+
+                    drive.AddCommand<ServerDriveAddCommand>("add")
+                        .WithDescription("Add a drive to a server");
+
+                    drive.AddCommand<ServerDriveUpdateCommand>("set")
+                        .WithDescription("Update a drive on a server");
+
+                    drive.AddCommand<ServerDriveRemoveCommand>("del")
+                        .WithDescription("Remove a drive from a server");
+                });
+
             });
 
             // ----------------------------

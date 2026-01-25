@@ -8,7 +8,7 @@ public record AccessPointHardwareReport(
 public record AccessPointHardwareRow(
     string Name,
     string Model,
-    int SpeedGb
+    double SpeedGb
 );
 
 public class AccessPointHardwareReportUseCase(IHardwareRepository repository)

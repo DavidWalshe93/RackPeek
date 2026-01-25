@@ -17,7 +17,11 @@ public record ServerHardwareRow(
     int HddStorageGb,
     int TotalNicPorts,
     int MaxNicSpeedGb,
+    int GpuCount,
+    int TotalGpuVramGb,
+    string GpuSummary,
     bool Ipmi
+    
 );
 
 public class ServerHardwareReportUseCase(IHardwareRepository repository)
@@ -51,6 +55,19 @@ public class ServerHardwareReportUseCase(IHardwareRepository repository)
 
             var totalNicPorts = server.Nics?.Sum(n => n.Ports) ?? 0;
             var maxNicSpeed = server.Nics?.Max(n => n.Speed) ?? 0;
+            
+            var gpuCount = server.Gpus?.Count ?? 0;
+
+            var totalGpuVram = server.Gpus?
+                .Sum(g => g.Vram) ?? 0;
+
+            var gpuSummary = server.Gpus == null || server.Gpus.Count == 0
+                ? "None"
+                : string.Join(", ",
+                    server.Gpus
+                        .GroupBy(g => g.Model)
+                        .Select(g => $"{g.Count()}× {g.Key}"));
+
 
             return new ServerHardwareRow(
                 Name: server.Name,
@@ -63,6 +80,9 @@ public class ServerHardwareReportUseCase(IHardwareRepository repository)
                 HddStorageGb: hddStorage,
                 TotalNicPorts: totalNicPorts,
                 MaxNicSpeedGb: maxNicSpeed,
+                GpuCount: gpuCount,
+                TotalGpuVramGb: totalGpuVram,
+                GpuSummary: gpuSummary,
                 Ipmi: server.Ipmi ?? false
             );
         }).ToList();

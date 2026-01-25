@@ -60,6 +60,9 @@ resources:
           size: 2Tb
         - type: ssd
           size: 256gb
+    gpus:
+        - model: NVIDIA Tesla T4
+          vram: 16gb
     nics:
         - type: rj45
           speed: 1gb
@@ -101,6 +104,12 @@ resources:
         var ssd = server.Drives[1];
         Assert.Equal("ssd", ssd.Type);
         Assert.Equal(256, ssd.Size);
+        
+        //GPUs
+        Assert.NotNull(server.Gpus);
+        var gpu = server.Gpus[0];
+        Assert.Equal("NVIDIA Tesla T4", gpu.Model);
+        Assert.Equal(16, gpu.Vram);
 
         // ipmi
         Assert.True(server.Ipmi);
@@ -394,7 +403,7 @@ resources:
   - kind: AccessPoint
     name: lounge-ap
     model: Unifi-Ap-Pro
-    speed: 1gb
+    speed: 2.5Gb
 ";
 
         var sut = CreateSut(yaml);
@@ -412,7 +421,7 @@ resources:
 
         Assert.Equal("lounge-ap", accessPoint.Name);
         Assert.Equal("Unifi-Ap-Pro", accessPoint.Model);
-        Assert.Equal(1, accessPoint.Speed);
+        Assert.Equal(2.5, accessPoint.Speed);
 
     }
     

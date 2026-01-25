@@ -1,0 +1,96 @@
+using NSubstitute;
+using RackPeek.Domain.Resources.Hardware;
+using RackPeek.Domain.Resources.Hardware.Server.Drive;
+
+namespace Tests.Hardware;
+
+public class AddDrivesUseCaseTests
+{
+    [Fact]
+    public async Task ExecuteAsync_Adds_drive_when_server_exists()
+    {
+        // Arrange
+        var repo = Substitute.For<IHardwareRepository>();
+        var server = new RackPeek.Domain.Resources.Hardware.Models.Server
+        {
+            Name = "node01",
+            Drives = new List<RackPeek.Domain.Resources.Hardware.Models.Drive>()
+        };
+
+        repo.GetByNameAsync("node01").Returns(server);
+
+        var sut = new AddDrivesUseCase(repo);
+
+        // Act
+        await sut.ExecuteAsync(
+            serverName: "node01",
+            type: "NVMe",
+            size: 2000
+        );
+
+        // Assert
+        Assert.Single(server.Drives);
+        Assert.Equal("NVMe", server.Drives[0].Type);
+        Assert.Equal(2000, server.Drives[0].Size);
+
+        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+            s.Name == "node01" &&
+            s.Drives.Count == 1 &&
+            s.Drives[0].Type == "NVMe" &&
+            s.Drives[0].Size == 2000
+        ));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_Initializes_drive_list_when_null()
+    {
+        // Arrange
+        var repo = Substitute.For<IHardwareRepository>();
+        var server = new RackPeek.Domain.Resources.Hardware.Models.Server
+        {
+            Name = "node01",
+            Drives = null
+        };
+
+        repo.GetByNameAsync("node01").Returns(server);
+
+        var sut = new AddDrivesUseCase(repo);
+
+        // Act
+        await sut.ExecuteAsync(
+            serverName: "node01",
+            type: "SATA",
+            size: 500
+        );
+
+        // Assert
+        Assert.NotNull(server.Drives);
+        Assert.Single(server.Drives);
+
+        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+            s.Drives != null &&
+            s.Drives.Count == 1 &&
+            s.Drives[0].Type == "SATA"
+        ));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_Does_nothing_when_server_does_not_exist()
+    {
+        // Arrange
+        var repo = Substitute.For<IHardwareRepository>();
+        repo.GetByNameAsync("node01").Returns((RackPeek.Domain.Resources.Hardware.Models.Hardware?)null);
+
+        var sut = new AddDrivesUseCase(repo);
+
+        // Act
+        await sut.ExecuteAsync(
+            serverName: "node01",
+            type: "NVMe",
+            size: 2000
+        );
+
+        // Assert
+        await repo.DidNotReceive().UpdateAsync(Arg.Any<RackPeek.Domain.Resources.Hardware.Models.Server>());
+    }
+}

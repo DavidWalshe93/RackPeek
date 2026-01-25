@@ -12,7 +12,7 @@ public class UpdateServerUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        repo.GetByNameAsync("node01").Returns(new Server
+        repo.GetByNameAsync("node01").Returns(new RackPeek.Domain.Resources.Hardware.Models.Server
         {
             Name = "node01",
             Ipmi = false,
@@ -33,7 +33,7 @@ public class UpdateServerUseCaseTests
         );
 
         // Assert
-        await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
+        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
             s.Name == "node01" &&
             s.Ram.Size == 64 &&
             s.Ipmi == true
@@ -56,7 +56,7 @@ public class UpdateServerUseCaseTests
 
         // Assert
         Assert.Equal("Server 'node01' not found.", ex.Message);
-        await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
+        await repo.DidNotReceive().UpdateAsync(Arg.Any<RackPeek.Domain.Resources.Hardware.Models.Server>());
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class UpdateServerUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        repo.GetByNameAsync("node01").Returns(new Server
+        repo.GetByNameAsync("node01").Returns(new RackPeek.Domain.Resources.Hardware.Models.Server
         {
             Name = "node01",
             Ipmi = false,
@@ -85,7 +85,7 @@ public class UpdateServerUseCaseTests
         );
 
         // Assert
-        await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
+        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
             s.Ram.Size == 32 &&
             s.Ipmi == false
         ));

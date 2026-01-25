@@ -12,7 +12,7 @@ public class DescribeServerUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        repo.GetByNameAsync("node01").Returns(new Server
+        repo.GetByNameAsync("node01").Returns(new RackPeek.Domain.Resources.Hardware.Models.Server
         {
             Name = "node01",
             Ipmi = true,

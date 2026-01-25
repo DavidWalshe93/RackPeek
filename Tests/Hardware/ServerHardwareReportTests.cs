@@ -12,7 +12,7 @@ public class ServerHardwareReportTests
     {
         var repo = Substitute.For<IHardwareRepository>();
         repo.GetAllAsync().Returns([
-            new Server
+            new RackPeek.Domain.Resources.Hardware.Models.Server
             {
                 Name = "srv1",
                 Ipmi = true,

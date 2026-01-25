@@ -14,9 +14,9 @@ public class GetServersUseCaseTests
         var repo = Substitute.For<IHardwareRepository>();
         repo.GetAllAsync().Returns(new List<RackPeek.Domain.Resources.Hardware.Models.Hardware>
         {
-            new Server { Name = "server1" },
+            new RackPeek.Domain.Resources.Hardware.Models.Server { Name = "server1" },
             new Desktop { Name = "desktop1" },
-            new Server { Name = "server2" }
+            new RackPeek.Domain.Resources.Hardware.Models.Server { Name = "server2" }
         });
 
         var sut = new GetServersUseCase(repo);
@@ -26,7 +26,7 @@ public class GetServersUseCaseTests
 
         // Assert
         Assert.Equal(2, servers.Count);
-        Assert.All(servers, s => Assert.IsType<Server>(s));
+        Assert.All(servers, s => Assert.IsType<RackPeek.Domain.Resources.Hardware.Models.Server>(s));
         Assert.Contains(servers, s => s.Name == "server1");
         Assert.Contains(servers, s => s.Name == "server2");
     }

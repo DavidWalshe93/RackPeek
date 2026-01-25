@@ -12,7 +12,7 @@ public class GetServerUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        repo.GetByNameAsync("node01").Returns(new Server { Name = "node01" });
+        repo.GetByNameAsync("node01").Returns(new RackPeek.Domain.Resources.Hardware.Models.Server { Name = "node01" });
 
         var sut = new GetServerUseCase(repo);
 
@@ -21,7 +21,7 @@ public class GetServerUseCaseTests
 
         // Assert
         Assert.NotNull(server);
-        Assert.IsType<Server>(server);
+        Assert.IsType<RackPeek.Domain.Resources.Hardware.Models.Server>(server);
         Assert.Equal("node01", server!.Name);
     }
 

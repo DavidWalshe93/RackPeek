@@ -44,6 +44,50 @@ resources:
     ipmi: true
 
   - kind: Server
+    name: dell-c6400-node03
+    cpus:
+      - model: Intel(R) Xeon(R) Silver 4110
+        cores: 8
+        threads: 16
+    ram:
+      size: 64gb
+      mts: 2400
+    drives:
+      - type: ssd
+        size: 480gb
+      - type: ssd
+        size: 480gb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 2
+      - type: sfp+
+        speed: 10gb
+        ports: 2
+    ipmi: true
+
+  - kind: Server
+    name: dell-c6400-node04
+    cpus:
+      - model: Intel(R) Xeon(R) Silver 4110
+        cores: 8
+        threads: 16
+    ram:
+      size: 128gb
+      mts: 2400
+    drives:
+      - type: ssd
+        size: 960gb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 2
+      - type: sfp+
+        speed: 10gb
+        ports: 2
+    ipmi: true
+
+  - kind: Server
     name: truenas-storage01
     cpus:
       - model: Intel(R) Xeon(R) E5-2620 v4
@@ -124,5 +168,213 @@ resources:
       - type: rj45
         speed: 1gb
         ports: 1
+    ipmi: true
+  
+  - kind: Server
+    name: truenas-backup01
+    cpus:
+      - model: Intel(R) Xeon(R) E5-2630 v4
+        cores: 10
+        threads: 20
+    ram:
+      size: 64gb
+      mts: 2133
+    drives:
+      - type: hdd
+        size: 6tb
+      - type: hdd
+        size: 6tb
+      - type: hdd
+        size: 6tb
+      - type: hdd
+        size: 6tb
+      - type: ssd
+        size: 240gb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 2
+      - type: sfp+
+        speed: 10gb
+        ports: 1
+    ipmi: true
+
+  - kind: Server
+    name: compute-gpu01
+    cpus:
+      - model: Intel(R) Xeon(R) Silver 4214
+        cores: 12
+        threads: 24
+    ram:
+      size: 128gb
+      mts: 2666
+    drives:
+      - type: ssd
+        size: 1tb
+    gpus:
+      - model: NVIDIA Tesla P40
+        vram: 24gb
+      - model: NVIDIA Tesla P40
+        vram: 24gb  
+      - model: NVIDIA Tesla P4
+        vram: 8Gb  
+    nics:
+      - type: sfp+
+        speed: 10gb
+        ports: 2
+    ipmi: true
+
+  - kind: Server
+    name: proxmox-lab01
+    cpus:
+      - model: Intel(R) Xeon(R) E3-1240 v5
+        cores: 4
+        threads: 8
+    ram:
+      size: 32gb
+      mts: 2133
+    drives:
+      - type: ssd
+        size: 512gb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 2
+    ipmi: true
+
+  - kind: Server
+    name: k8s-control01
+    cpus:
+      - model: Intel(R) Xeon(R) E-2224
+        cores: 4
+        threads: 4
+    ram:
+      size: 16gb
+      mts: 2666
+    drives:
+      - type: ssd
+        size: 256gb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 2
+    ipmi: true
+
+  - kind: Server
+    name: k8s-control02
+    cpus:
+      - model: Intel(R) Xeon(R) E-2224
+        cores: 4
+        threads: 4
+    ram:
+      size: 16gb
+      mts: 2666
+    drives:
+      - type: ssd
+        size: 256gb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 2
+    ipmi: true
+
+  - kind: Server
+    name: elk-logging01
+    cpus:
+      - model: Intel(R) Xeon(R) Silver 4108
+        cores: 8
+        threads: 16
+    ram:
+      size: 64gb
+      mts: 2400
+    drives:
+      - type: ssd
+        size: 1tb
+      - type: ssd
+        size: 1tb
+    nics:
+      - type: sfp+
+        speed: 10gb
+        ports: 1
+    ipmi: true
+
+  - kind: Server
+    name: edge-node01
+    cpus:
+      - model: Intel(R) Core(TM) i3-8100
+        cores: 4
+        threads: 4
+    ram:
+      size: 16gb
+      mts: 2400
+    drives:
+      - type: ssd
+        size: 256gb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 2
+    ipmi: false
+
+  - kind: Server
+    name: backup-proxmox01
+    cpus:
+      - model: Intel(R) Xeon(R) E5-1650 v3
+        cores: 6
+        threads: 12
+    ram:
+      size: 64gb
+      mts: 2133
+    drives:
+      - type: ssd
+        size: 480gb
+      - type: hdd
+        size: 4tb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 4
+    ipmi: true
+
+  - kind: Server
+    name: lab-general01
+    cpus:
+      - model: Intel(R) Core(TM) i7-8700
+        cores: 6
+        threads: 12
+    ram:
+      size: 32gb
+      mts: 2666
+    drives:
+      - type: ssd
+        size: 512gb
+    nics:
+      - type: rj45
+        speed: 1gb
+        ports: 1
+    ipmi: false
+
+  - kind: Server
+    name: dell-r730-archive01
+    cpus:
+      - model: Intel(R) Xeon(R) E5-2650 v3
+        cores: 10
+        threads: 20
+    ram:
+      size: 128gb
+      mts: 2133
+    drives:
+      - type: hdd
+        size: 4tb
+      - type: hdd
+        size: 4tb
+      - type: hdd
+        size: 4tb
+      - type: hdd
+        size: 4tb
+    nics:
+      - type: sfp+
+        speed: 10gb
+        ports: 2
     ipmi: true
 

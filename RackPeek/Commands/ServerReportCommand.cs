@@ -29,17 +29,21 @@ public class ServerReportCommand(ILogger<ServerReportCommand> logger, IServicePr
             .AddColumn("RAM")
             .AddColumn("Storage")
             .AddColumn("NICs")
+            .AddColumn("GPUs")
             .AddColumn("IPMI");
 
         foreach (var s in report.Servers)
         {
             table.AddRow(
-                s.Name,
-                s.CpuSummary,
-                $"{s.TotalCores}/{s.TotalThreads}",
-                $"{s.RamGb} GB",
-                $"{s.TotalStorageGb} GB (SSD {s.SsdStorageGb} / HDD {s.HddStorageGb})",
-                $"{s.TotalNicPorts}×{s.MaxNicSpeedGb}G",
+                    s.Name,
+                    s.CpuSummary,
+                    $"{s.TotalCores}/{s.TotalThreads}",
+                    $"{s.RamGb} GB",
+                    $"{s.TotalStorageGb} GB (SSD {s.SsdStorageGb} / HDD {s.HddStorageGb})",
+                    $"{s.TotalNicPorts}×{s.MaxNicSpeedGb}G",
+                    s.GpuCount == 0
+                        ? "[grey]none[/]"
+                        : $"{s.GpuSummary} ({s.TotalGpuVramGb} GB VRAM)",
                 s.Ipmi ? "[green]yes[/]" : "[red]no[/]"
             );
         }

@@ -1,4 +1,4 @@
-namespace RackPeek.Domain.Resources.Hardware.Server.Drives;
+namespace RackPeek.Domain.Resources.Hardware.Server.Drive;
 
 public class UpdateDriveUseCase(IHardwareRepository repository)
 {

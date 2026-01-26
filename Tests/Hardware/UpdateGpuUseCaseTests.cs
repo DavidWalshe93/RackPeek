@@ -1,43 +1,47 @@
 using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Hardware.Models;
-using RackPeek.Domain.Resources.Hardware.Server.Drive;
+using RackPeek.Domain.Resources.Hardware.Server.Gpu;
 
 namespace Tests.Hardware;
 
-public class RemoveDriveUseCaseTests
+public class UpdateGpuUseCaseTests
 {
     [Fact]
-    public async Task ExecuteAsync_Removes_drive_when_index_is_valid()
+    public async Task ExecuteAsync_Updates_gpu_when_index_is_valid()
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
         var server = new Server
         {
             Name = "node01",
-            Drives = new List<Drive>
+            Gpus = new List<Gpu>
             {
-                new() { Type = "NVMe", Size = 2000 },
-                new() { Type = "SATA", Size = 500 }
+                new() { Model = "RTX 4090", Vram = 24 }
             }
         };
 
-        
         repo.GetByNameAsync("node01").Returns(server);
 
-        var sut = new RemoveDriveUseCase(repo);
+        var sut = new UpdateGpuUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync("node01", 0);
+        await sut.ExecuteAsync(
+            "node01",
+            0,
+            "RTX 3080",
+            10
+        );
 
         // Assert
-        Assert.Single(server.Drives);
-        Assert.Equal("SATA", server.Drives[0].Type);
+        Assert.Equal("RTX 3080", server.Gpus[0].Model);
+        Assert.Equal(10, server.Gpus[0].Vram);
 
         await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
             s.Name == "node01" &&
-            s.Drives.Count == 1 &&
-            s.Drives[0].Type == "SATA"
+            s.Gpus.Count == 1 &&
+            s.Gpus[0].Model == "RTX 3080" &&
+            s.Gpus[0].Vram == 10
         ));
     }
 
@@ -49,19 +53,24 @@ public class RemoveDriveUseCaseTests
         var server = new Server
         {
             Name = "node01",
-            Drives = new List<Drive>
+            Gpus = new List<Gpu>
             {
-                new() { Type = "NVMe", Size = 2000 }
+                new() { Model = "RTX 4090", Vram = 24 }
             }
         };
 
         repo.GetByNameAsync("node01").Returns(server);
 
-        var sut = new RemoveDriveUseCase(repo);
+        var sut = new UpdateGpuUseCase(repo);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
-            await sut.ExecuteAsync("node01", 1)
+            await sut.ExecuteAsync(
+                "node01",
+                1,
+                "RTX 3080",
+                10
+            )
         );
 
         await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
@@ -73,14 +82,18 @@ public class RemoveDriveUseCaseTests
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
 
-
         repo.GetByNameAsync("node01")
             .Returns((RackPeek.Domain.Resources.Hardware.Models.Hardware?)null);
 
-        var sut = new RemoveDriveUseCase(repo);
+        var sut = new UpdateGpuUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync("node01", 0);
+        await sut.ExecuteAsync(
+            "node01",
+            0,
+            "RTX 3080",
+            10
+        );
 
         // Assert
         await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());

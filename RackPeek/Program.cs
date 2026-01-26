@@ -5,6 +5,7 @@ using RackPeek.Commands;
 using RackPeek.Commands.Server;
 using RackPeek.Commands.Server.Cpus;
 using RackPeek.Commands.Server.Drives;
+using RackPeek.Commands.Server.Gpu;
 using RackPeek.Commands.Server.Nics;
 using RackPeek.Commands.Switches;
 using RackPeek.Domain.Resources.Hardware;
@@ -12,6 +13,7 @@ using RackPeek.Domain.Resources.Hardware.Reports;
 using RackPeek.Domain.Resources.Hardware.Server;
 using RackPeek.Domain.Resources.Hardware.Server.Cpu;
 using RackPeek.Domain.Resources.Hardware.Server.Drive;
+using RackPeek.Domain.Resources.Hardware.Server.Gpu;
 using RackPeek.Domain.Resources.Hardware.Server.Nic;
 using RackPeek.Domain.Resources.Hardware.Switchs;
 using RackPeek.Spectre;
@@ -110,6 +112,11 @@ public static class CliBootstrap
         services.AddScoped<AddDrivesUseCase>();
         services.AddScoped<UpdateDriveUseCase>();
         services.AddScoped<RemoveDriveUseCase>();
+        
+        // GPU use cases
+        services.AddScoped<AddGpuUseCase>();
+        services.AddScoped<UpdateGpuUseCase>();
+        services.AddScoped<RemoveGpuUseCase>();
 
 
         // CPU commands
@@ -141,10 +148,17 @@ public static class CliBootstrap
         services.AddScoped<ServerNicAddCommand>();
         services.AddScoped<ServerNicUpdateCommand>();
         services.AddScoped<ServerNicRemoveCommand>();
+        
         // Drive commands
         services.AddScoped<ServerDriveAddCommand>();
         services.AddScoped<ServerDriveUpdateCommand>();
         services.AddScoped<ServerDriveRemoveCommand>();
+        
+        // GPU commands
+        services.AddScoped<ServerGpuAddCommand>();
+        services.AddScoped<ServerGpuUpdateCommand>();
+        services.AddScoped<ServerGpuRemoveCommand>();
+
 
 
         // Spectre bootstrap
@@ -216,6 +230,20 @@ public static class CliBootstrap
                         drive.AddCommand<ServerDriveRemoveCommand>("del")
                             .WithDescription("Remove a drive from a server");
                     });
+                    server.AddBranch("gpu", gpu =>
+                    {
+                        gpu.SetDescription("Manage server GPUs");
+
+                        gpu.AddCommand<ServerGpuAddCommand>("add")
+                            .WithDescription("Add a GPU to a server");
+
+                        gpu.AddCommand<ServerGpuUpdateCommand>("set")
+                            .WithDescription("Update a GPU on a server");
+
+                        gpu.AddCommand<ServerGpuRemoveCommand>("del")
+                            .WithDescription("Remove a GPU from a server");
+                    });
+
                 });
 
                 config.AddBranch("switches", server =>

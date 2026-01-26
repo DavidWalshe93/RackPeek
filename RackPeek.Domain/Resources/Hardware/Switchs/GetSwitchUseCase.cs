@@ -1,10 +1,12 @@
+using RackPeek.Domain.Resources.Hardware.Models;
+
 namespace RackPeek.Domain.Resources.Hardware.Switchs;
 
 public class GetSwitchUseCase(IHardwareRepository repository)
 {
-    public async Task<Models.Switch?> ExecuteAsync(string name)
+    public async Task<Switch?> ExecuteAsync(string name)
     {
         var hardware = await repository.GetByNameAsync(name);
-        return hardware as Models.Switch;
+        return hardware as Switch;
     }
 }

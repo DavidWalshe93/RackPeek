@@ -1,5 +1,6 @@
 using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
+using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Server.Drive;
 
 namespace Tests.Hardware;
@@ -11,10 +12,10 @@ public class AddDrivesUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        var server = new RackPeek.Domain.Resources.Hardware.Models.Server
+        var server = new Server
         {
             Name = "node01",
-            Drives = new List<RackPeek.Domain.Resources.Hardware.Models.Drive>()
+            Drives = new List<Drive>()
         };
 
         repo.GetByNameAsync("node01").Returns(server);
@@ -23,9 +24,9 @@ public class AddDrivesUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            type: "NVMe",
-            size: 2000
+            "node01",
+            "NVMe",
+            2000
         );
 
         // Assert
@@ -33,7 +34,7 @@ public class AddDrivesUseCaseTests
         Assert.Equal("NVMe", server.Drives[0].Type);
         Assert.Equal(2000, server.Drives[0].Size);
 
-        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+        await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
             s.Name == "node01" &&
             s.Drives.Count == 1 &&
             s.Drives[0].Type == "NVMe" &&
@@ -46,7 +47,7 @@ public class AddDrivesUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        var server = new RackPeek.Domain.Resources.Hardware.Models.Server
+        var server = new Server
         {
             Name = "node01",
             Drives = null
@@ -58,16 +59,16 @@ public class AddDrivesUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            type: "SATA",
-            size: 500
+            "node01",
+            "SATA",
+            500
         );
 
         // Assert
         Assert.NotNull(server.Drives);
         Assert.Single(server.Drives);
 
-        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+        await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
             s.Drives != null &&
             s.Drives.Count == 1 &&
             s.Drives[0].Type == "SATA"
@@ -85,12 +86,12 @@ public class AddDrivesUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            type: "NVMe",
-            size: 2000
+            "node01",
+            "NVMe",
+            2000
         );
 
         // Assert
-        await repo.DidNotReceive().UpdateAsync(Arg.Any<RackPeek.Domain.Resources.Hardware.Models.Server>());
+        await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
     }
 }

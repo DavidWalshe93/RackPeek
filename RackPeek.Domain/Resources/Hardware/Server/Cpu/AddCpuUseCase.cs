@@ -10,13 +10,10 @@ public class AddCpuUseCase(IHardwareRepository repository)
     {
         var hardware = await repository.GetByNameAsync(serverName);
 
-        if (hardware is not Models.Server server)
-        {
-            return;
-        }
+        if (hardware is not Models.Server server) return;
 
         server.Cpus ??= [];
-        
+
         server.Cpus.Add(new Models.Cpu
         {
             Model = model,

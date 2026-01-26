@@ -23,27 +23,18 @@ public sealed class YamlResourceCollection
         foreach (var file in filePaths)
         {
             var yaml = File.ReadAllText(file);
-            foreach (var resource in Deserialize(yaml))
-            {
-                _entries.Add(new ResourceEntry(resource, file));
-            }
+            foreach (var resource in Deserialize(yaml)) _entries.Add(new ResourceEntry(resource, file));
         }
     }
 
     public void Load(string yaml, string file)
     {
-        foreach (var resource in Deserialize(yaml))
-        {
-            _entries.Add(new ResourceEntry(resource, file));
-        }
+        foreach (var resource in Deserialize(yaml)) _entries.Add(new ResourceEntry(resource, file));
     }
 
     public void SaveAll()
     {
-        foreach (var group in _entries.GroupBy(e => e.SourceFile))
-        {
-            SaveToFile(group.Key, group.Select(e => e.Resource));
-        }
+        foreach (var group in _entries.GroupBy(e => e.SourceFile)) SaveToFile(group.Key, group.Select(e => e.Resource));
     }
 
     // ----------------------------

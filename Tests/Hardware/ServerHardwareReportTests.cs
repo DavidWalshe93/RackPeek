@@ -12,29 +12,29 @@ public class ServerHardwareReportTests
     {
         var repo = Substitute.For<IHardwareRepository>();
         repo.GetAllAsync().Returns([
-            new RackPeek.Domain.Resources.Hardware.Models.Server
+            new Server
             {
                 Name = "srv1",
                 Ipmi = true,
-                Cpus = new()
+                Cpus = new List<Cpu>
                 {
-                    new Cpu { Model = "Xeon", Cores = 4, Threads = 8 }
+                    new() { Model = "Xeon", Cores = 4, Threads = 8 }
                 },
                 Ram = new Ram { Size = 32 },
-                Drives = new()
+                Drives = new List<Drive>
                 {
-                    new Drive { Type = "ssd", Size = 256 },
-                    new Drive { Type = "hdd", Size = 2048 }
+                    new() { Type = "ssd", Size = 256 },
+                    new() { Type = "hdd", Size = 2048 }
                 },
-                Nics = new()
+                Nics = new List<Nic>
                 {
-                    new Nic { Speed = 10, Ports = 2 }
+                    new() { Speed = 10, Ports = 2 }
                 },
-                Gpus = new()
+                Gpus = new List<Gpu>
                 {
-                    new Gpu { Model = "NVIDIA Tesla T4", Vram = 16 },
-                    new Gpu { Model = "NVIDIA Tesla T4", Vram = 16 },
-                    new Gpu { Model = "RTX 3080", Vram = 10 }
+                    new() { Model = "NVIDIA Tesla T4", Vram = 16 },
+                    new() { Model = "NVIDIA Tesla T4", Vram = 16 },
+                    new() { Model = "RTX 3080", Vram = 10 }
                 }
             }
         ]);
@@ -51,5 +51,4 @@ public class ServerHardwareReportTests
         Assert.Equal(42, server.TotalGpuVramGb);
         Assert.Equal("2× NVIDIA Tesla T4, 1× RTX 3080", server.GpuSummary);
     }
-
 }

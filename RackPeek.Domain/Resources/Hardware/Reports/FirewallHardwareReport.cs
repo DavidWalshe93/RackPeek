@@ -1,6 +1,7 @@
 using RackPeek.Domain.Resources.Hardware.Models;
 
 namespace RackPeek.Domain.Resources.Hardware.Reports;
+
 public record FirewallHardwareReport(
     IReadOnlyList<FirewallHardwareRow> Firewalls
 );
@@ -14,6 +15,7 @@ public record FirewallHardwareRow(
     int MaxPortSpeedGb,
     string PortSummary
 );
+
 public class FirewallHardwareReportUseCase(IHardwareRepository repository)
 {
     public async Task<FirewallHardwareReport> ExecuteAsync()
@@ -41,13 +43,13 @@ public class FirewallHardwareReportUseCase(IHardwareRepository repository)
                         }));
 
             return new FirewallHardwareRow(
-                Name: sw.Name,
-                Model: sw.Model ?? "Unknown",
-                Managed: sw.Managed ?? false,
-                Poe: sw.Poe ?? false,
-                TotalPorts: totalPorts,
-                MaxPortSpeedGb: maxSpeed,
-                PortSummary: portSummary
+                sw.Name,
+                sw.Model ?? "Unknown",
+                sw.Managed ?? false,
+                sw.Poe ?? false,
+                totalPorts,
+                maxSpeed,
+                portSummary
             );
         }).ToList();
 

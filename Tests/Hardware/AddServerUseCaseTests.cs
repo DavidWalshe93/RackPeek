@@ -1,5 +1,6 @@
 using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
+using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Server;
 
 namespace Tests.Hardware;
@@ -17,11 +18,11 @@ public class AddServerUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            name: "node01"
+            "node01"
         );
 
         // Assert
-        await repo.Received(1).AddAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+        await repo.Received(1).AddAsync(Arg.Is<Server>(s =>
             s.Name == "node01"
         ));
     }
@@ -31,19 +32,19 @@ public class AddServerUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        repo.GetByNameAsync("node01").Returns(new RackPeek.Domain.Resources.Hardware.Models.Server { Name = "node01" });
+        repo.GetByNameAsync("node01").Returns(new Server { Name = "node01" });
 
         var sut = new AddServerUseCase(repo);
 
         // Act
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await sut.ExecuteAsync(
-                name: "node01"
+                "node01"
             )
         );
 
         // Assert
         Assert.Equal("Server 'node01' already exists.", ex.Message);
-        await repo.DidNotReceive().AddAsync(Arg.Any<RackPeek.Domain.Resources.Hardware.Models.Server>());
+        await repo.DidNotReceive().AddAsync(Arg.Any<Server>());
     }
 }

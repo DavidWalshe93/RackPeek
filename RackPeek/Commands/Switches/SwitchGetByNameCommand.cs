@@ -4,6 +4,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Switches;
+
 public class SwitchGetByNameCommand(
     IServiceProvider serviceProvider
 ) : AsyncCommand<SwitchNameSettings>

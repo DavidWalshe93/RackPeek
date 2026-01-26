@@ -7,14 +7,11 @@ namespace RackPeek.Commands.Server.Nics;
 
 public class ServerNicAddSettings : ServerNameSettings
 {
-    [CommandOption("--type <TYPE>")]
-    public string Type { get; set; }
+    [CommandOption("--type <TYPE>")] public string Type { get; set; }
 
-    [CommandOption("--speed <SPEED>")]
-    public int Speed { get; set; }
+    [CommandOption("--speed <SPEED>")] public int Speed { get; set; }
 
-    [CommandOption("--ports <PORTS>")]
-    public int Ports { get; set; }
+    [CommandOption("--ports <PORTS>")] public int Ports { get; set; }
 }
 
 public class ServerNicAddCommand(IServiceProvider serviceProvider)

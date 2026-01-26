@@ -12,14 +12,14 @@ public class UpdateServerUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        repo.GetByNameAsync("node01").Returns(new RackPeek.Domain.Resources.Hardware.Models.Server
+        repo.GetByNameAsync("node01").Returns(new Server
         {
             Name = "node01",
             Ipmi = false,
             Ram = new Ram { Size = 32 },
             Cpus = new List<Cpu>
             {
-                new Cpu { Model = "Old", Cores = 2, Threads = 4 }
+                new() { Model = "Old", Cores = 2, Threads = 4 }
             }
         });
 
@@ -27,13 +27,13 @@ public class UpdateServerUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            name: "node01",
-            ramGb: 64,
-            ipmi: true
+            "node01",
+            64,
+            true
         );
 
         // Assert
-        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+        await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
             s.Name == "node01" &&
             s.Ram.Size == 64 &&
             s.Ipmi == true
@@ -51,12 +51,12 @@ public class UpdateServerUseCaseTests
 
         // Act
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            sut.ExecuteAsync("node01", ramGb: 64)
+            sut.ExecuteAsync("node01", 64)
         );
 
         // Assert
         Assert.Equal("Server 'node01' not found.", ex.Message);
-        await repo.DidNotReceive().UpdateAsync(Arg.Any<RackPeek.Domain.Resources.Hardware.Models.Server>());
+        await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
     }
 
     [Fact]
@@ -64,14 +64,14 @@ public class UpdateServerUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        repo.GetByNameAsync("node01").Returns(new RackPeek.Domain.Resources.Hardware.Models.Server
+        repo.GetByNameAsync("node01").Returns(new Server
         {
             Name = "node01",
             Ipmi = false,
             Ram = new Ram { Size = 32 },
             Cpus = new List<Cpu>
             {
-                new Cpu { Model = "Old", Cores = 2, Threads = 4 }
+                new() { Model = "Old", Cores = 2, Threads = 4 }
             }
         });
 
@@ -79,13 +79,11 @@ public class UpdateServerUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            name: "node01",
-            ramGb: null,
-            ipmi: null
+            "node01"
         );
 
         // Assert
-        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+        await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
             s.Ram.Size == 32 &&
             s.Ipmi == false
         ));

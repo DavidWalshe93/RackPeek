@@ -1,3 +1,5 @@
+using RackPeek.Domain.Resources.Hardware.Models;
+
 namespace RackPeek.Domain.Resources.Hardware.Switchs;
 
 public class AddSwitchUseCase(IHardwareRepository repository)
@@ -9,9 +11,9 @@ public class AddSwitchUseCase(IHardwareRepository repository)
         if (existing != null)
             throw new InvalidOperationException($"Switch '{name}' already exists.");
 
-        var switchResource = new Models.Switch
+        var switchResource = new Switch
         {
-            Name = name,
+            Name = name
         };
 
         await repository.AddAsync(switchResource);

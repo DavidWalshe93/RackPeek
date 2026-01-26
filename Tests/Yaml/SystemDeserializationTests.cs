@@ -1,5 +1,4 @@
-﻿using RackPeek;
-using RackPeek.Domain.Resources.SystemResources;
+﻿using RackPeek.Domain.Resources.SystemResources;
 using RackPeek.Yaml;
 
 namespace Tests.Yaml;
@@ -12,14 +11,14 @@ public class ServiceDeserializationTests
         yamlResourceCollection.Load(yaml, "test.yaml");
         return new YamlSystemRepository(yamlResourceCollection);
     }
-    
+
     [Fact]
     public async Task deserialize_yaml_kind_System()
     {
         // type: Hypervisor | Baremetal | VM | Container 
-        
+
         // Given
-        var yaml = $@"
+        var yaml = @"
 resources:
   - kind: System
     type: Hypervisor
@@ -33,14 +32,14 @@ resources:
     runsOn: dell-c6400-node-01
 ";
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
-        
+
         // Then
         var resource = Assert.Single(resources);
         Assert.IsType<SystemResource>(resource);
-        var system = resource as SystemResource;
+        var system = resource;
         Assert.NotNull(system);
         Assert.Equal("Hypervisor", system.Type);
         Assert.Equal("home-virtualization-host", system.Name);
@@ -52,8 +51,7 @@ resources:
         Assert.NotNull(system.Drives);
         Assert.Equal(2048, system.Drives[0].Size);
         Assert.Equal(1024, system.Drives[1].Size);
-        
-        Assert.Equal("dell-c6400-node-01", system.RunsOn);
 
+        Assert.Equal("dell-c6400-node-01", system.RunsOn);
     }
 }

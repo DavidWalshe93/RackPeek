@@ -13,19 +13,21 @@ public class YamlHardwareRepository : IHardwareRepository
     }
 
     public Task<IReadOnlyList<Hardware>> GetAllAsync()
-        => Task.FromResult(_resources.HardwareResources);
+    {
+        return Task.FromResult(_resources.HardwareResources);
+    }
 
     public Task<Hardware?> GetByNameAsync(string name)
-        => Task.FromResult(_resources.GetByName(name) as Hardware);
+    {
+        return Task.FromResult(_resources.GetByName(name) as Hardware);
+    }
 
     public Task AddAsync(Hardware hardware)
     {
         if (_resources.HardwareResources.Any(r =>
-            r.Name.Equals(hardware.Name, StringComparison.OrdinalIgnoreCase)))
-        {
+                r.Name.Equals(hardware.Name, StringComparison.OrdinalIgnoreCase)))
             throw new InvalidOperationException(
                 $"Hardware with name '{hardware.Name}' already exists.");
-        }
 
         // Use first file as default for new resources
         var targetFile = _resources.SourceFiles.FirstOrDefault()

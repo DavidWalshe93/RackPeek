@@ -1,6 +1,7 @@
 using RackPeek.Domain.Resources.Hardware.Models;
 
 namespace RackPeek.Domain.Resources.Hardware.Reports;
+
 public record SwitchHardwareReport(
     IReadOnlyList<SwitchHardwareRow> Switches
 );
@@ -14,6 +15,7 @@ public record SwitchHardwareRow(
     int MaxPortSpeedGb,
     string PortSummary
 );
+
 public class SwitchHardwareReportUseCase(IHardwareRepository repository)
 {
     public async Task<SwitchHardwareReport> ExecuteAsync()
@@ -41,13 +43,13 @@ public class SwitchHardwareReportUseCase(IHardwareRepository repository)
                         }));
 
             return new SwitchHardwareRow(
-                Name: sw.Name,
-                Model: sw.Model ?? "Unknown",
-                Managed: sw.Managed ?? false,
-                Poe: sw.Poe ?? false,
-                TotalPorts: totalPorts,
-                MaxPortSpeedGb: maxSpeed,
-                PortSummary: portSummary
+                sw.Name,
+                sw.Model ?? "Unknown",
+                sw.Managed ?? false,
+                sw.Poe ?? false,
+                totalPorts,
+                maxSpeed,
+                portSummary
             );
         }).ToList();
 

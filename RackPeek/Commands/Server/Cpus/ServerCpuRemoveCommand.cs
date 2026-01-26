@@ -4,11 +4,12 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Server.Cpus;
+
 public class ServerCpuRemoveSettings : ServerNameSettings
 {
-    [CommandOption("--index <INDEX>")]
-    public int Index { get; set; }
+    [CommandOption("--index <INDEX>")] public int Index { get; set; }
 }
+
 public class ServerCpuRemoveCommand(IServiceProvider serviceProvider) : AsyncCommand<ServerCpuRemoveSettings>
 {
     public override async Task<int> ExecuteAsync(

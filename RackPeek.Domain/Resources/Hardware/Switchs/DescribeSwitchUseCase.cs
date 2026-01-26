@@ -16,7 +16,7 @@ public class DescribeSwitchUseCase(IHardwareRepository repository)
 {
     public async Task<SwitchDescription?> ExecuteAsync(string name)
     {
-        var switchResource = await repository.GetByNameAsync(name) as Models.Switch;
+        var switchResource = await repository.GetByNameAsync(name) as Switch;
         if (switchResource == null)
             return null;
 

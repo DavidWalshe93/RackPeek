@@ -35,7 +35,6 @@ public class SwitchReportCommand(
             .AddColumn("Port Summary");
 
         foreach (var s in report.Switches)
-        {
             table.AddRow(
                 s.Name,
                 s.Model,
@@ -45,7 +44,6 @@ public class SwitchReportCommand(
                 $"{s.MaxPortSpeedGb}G",
                 s.PortSummary
             );
-        }
 
         AnsiConsole.Write(table);
         return 0;

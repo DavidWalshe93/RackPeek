@@ -9,10 +9,7 @@ public class AddDrivesUseCase(IHardwareRepository repository)
     {
         var hardware = await repository.GetByNameAsync(serverName);
 
-        if (hardware is not Models.Server server)
-        {
-            return;
-        }
+        if (hardware is not Models.Server server) return;
 
         server.Drives ??= [];
 
@@ -21,7 +18,7 @@ public class AddDrivesUseCase(IHardwareRepository repository)
             Type = type,
             Size = size
         });
-        
+
         await repository.UpdateAsync(server);
     }
 }

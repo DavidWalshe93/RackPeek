@@ -31,13 +31,11 @@ public class UpsReportCommand(
             .AddColumn("VA");
 
         foreach (var u in report.UpsUnits)
-        {
             table.AddRow(
                 u.Name,
                 u.Model,
                 u.Va.ToString()
             );
-        }
 
         AnsiConsole.Write(table);
         return 0;

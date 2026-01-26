@@ -1,5 +1,3 @@
-using RackPeek.Domain.Resources.Hardware.Models;
-
 namespace RackPeek.Domain.Resources.Hardware.Reports;
 
 public record ServerHardwareReport(
@@ -21,7 +19,6 @@ public record ServerHardwareRow(
     int TotalGpuVramGb,
     string GpuSummary,
     bool Ipmi
-    
 );
 
 public class ServerHardwareReportUseCase(IHardwareRepository repository)
@@ -55,7 +52,7 @@ public class ServerHardwareReportUseCase(IHardwareRepository repository)
 
             var totalNicPorts = server.Nics?.Sum(n => n.Ports) ?? 0;
             var maxNicSpeed = server.Nics?.Max(n => n.Speed) ?? 0;
-            
+
             var gpuCount = server.Gpus?.Count ?? 0;
 
             var totalGpuVram = server.Gpus?
@@ -70,20 +67,20 @@ public class ServerHardwareReportUseCase(IHardwareRepository repository)
 
 
             return new ServerHardwareRow(
-                Name: server.Name,
-                CpuSummary: cpuSummary,
-                TotalCores: totalCores,
-                TotalThreads: totalThreads,
-                RamGb: ramGb,
-                TotalStorageGb: totalStorage,
-                SsdStorageGb: ssdStorage,
-                HddStorageGb: hddStorage,
-                TotalNicPorts: totalNicPorts,
-                MaxNicSpeedGb: maxNicSpeed,
-                GpuCount: gpuCount,
-                TotalGpuVramGb: totalGpuVram,
-                GpuSummary: gpuSummary,
-                Ipmi: server.Ipmi ?? false
+                server.Name,
+                cpuSummary,
+                totalCores,
+                totalThreads,
+                ramGb,
+                totalStorage,
+                ssdStorage,
+                hddStorage,
+                totalNicPorts,
+                maxNicSpeed,
+                gpuCount,
+                totalGpuVram,
+                gpuSummary,
+                server.Ipmi ?? false
             );
         }).ToList();
 

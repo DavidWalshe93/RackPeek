@@ -11,7 +11,7 @@ public class AddServerUseCase(IHardwareRepository repository)
 
         var server = new Models.Server
         {
-            Name = name,
+            Name = name
         };
 
         await repository.AddAsync(server);

@@ -45,17 +45,17 @@ public class UpdateSwitchUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            name: "sw01",
-            model: "NewModel",
+            "sw01",
+            "NewModel",
             poe: true
         );
 
         // Assert
         await repo.Received(1).UpdateAsync(Arg.Is<Switch>(s =>
-            s.Name == "sw01" &&
-            s.Model == "NewModel" &&   // updated
-            s.Managed == false &&      // unchanged
-            s.Poe == true              // updated
+                s.Name == "sw01" &&
+                s.Model == "NewModel" && // updated
+                s.Managed == false && // unchanged
+                s.Poe == true // updated
         ));
     }
 
@@ -78,8 +78,8 @@ public class UpdateSwitchUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            name: "sw01",
-            model: "   "
+            "sw01",
+            "   "
         );
 
         // Assert

@@ -7,11 +7,8 @@ public class RemoveCpuUseCase(IHardwareRepository repository)
         int index)
     {
         var hardware = await repository.GetByNameAsync(serverName);
-        if (hardware is not Models.Server server)
-        {
-            return;
-        }
-        
+        if (hardware is not Models.Server server) return;
+
         server.Cpus ??= [];
 
         if (index < 0 || index >= server.Cpus.Count)

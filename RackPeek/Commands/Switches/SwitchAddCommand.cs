@@ -4,10 +4,10 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Switches;
+
 public class SwitchAddSettings : CommandSettings
 {
-    [CommandArgument(0, "<name>")]
-    public string Name { get; set; } = default!;
+    [CommandArgument(0, "<name>")] public string Name { get; set; } = default!;
 }
 
 public class SwitchAddCommand(

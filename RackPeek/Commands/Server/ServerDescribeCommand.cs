@@ -34,10 +34,8 @@ public class ServerDescribeCommand(
         grid.AddRow("RAM", $"{server.Ram?.Size ?? 0} GB");
 
         if (server.Cpus != null)
-        {
             foreach (var cpu in server.Cpus)
                 grid.AddRow("CPU", $"{cpu.Model} ({cpu.Cores}/{cpu.Threads})");
-        }
 
         AnsiConsole.Write(
             new Panel(grid)

@@ -1,6 +1,7 @@
 using RackPeek.Domain.Resources.Hardware.Models;
 
 namespace RackPeek.Domain.Resources.Hardware.Reports;
+
 public record DesktopHardwareReport(
     IReadOnlyList<DesktopHardwareRow> Desktops
 );
@@ -67,16 +68,16 @@ public class DesktopHardwareReportUseCase(IHardwareRepository repository)
                         .Select(g => $"{g.Count()}× {g.Key}"));
 
             return new DesktopHardwareRow(
-                Name: desktop.Name,
-                CpuSummary: cpuSummary,
-                TotalCores: totalCores,
-                TotalThreads: totalThreads,
-                RamGb: ramGb,
-                TotalStorageGb: totalStorage,
-                SsdStorageGb: ssdStorage,
-                HddStorageGb: hddStorage,
-                NicSummary: nicSummary,
-                GpuSummary: gpuSummary
+                desktop.Name,
+                cpuSummary,
+                totalCores,
+                totalThreads,
+                ramGb,
+                totalStorage,
+                ssdStorage,
+                hddStorage,
+                nicSummary,
+                gpuSummary
             );
         }).ToList();
 

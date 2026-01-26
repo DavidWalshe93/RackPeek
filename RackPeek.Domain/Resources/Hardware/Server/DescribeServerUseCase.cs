@@ -27,14 +27,14 @@ public class DescribeServerUseCase(IHardwareRepository repository)
                     .Select(g => $"{g.Count()}× {g.Key}"));
 
         return new ServerDescription(
-            Name: server.Name,
-            CpuSummary: cpuSummary,
-            TotalCores: server.Cpus?.Sum(c => c.Cores) ?? 0,
-            TotalThreads: server.Cpus?.Sum(c => c.Threads) ?? 0,
-            RamGb: server.Ram?.Size ?? 0,
-            TotalStorageGb: server.Drives?.Sum(d => d.Size) ?? 0,
-            NicPorts: server.Nics?.Sum(n => n.Ports) ?? 0,
-            Ipmi: server.Ipmi ?? false
+            server.Name,
+            cpuSummary,
+            server.Cpus?.Sum(c => c.Cores) ?? 0,
+            server.Cpus?.Sum(c => c.Threads) ?? 0,
+            server.Ram?.Size ?? 0,
+            server.Drives?.Sum(d => d.Size) ?? 0,
+            server.Nics?.Sum(n => n.Ports) ?? 0,
+            server.Ipmi ?? false
         );
     }
 }

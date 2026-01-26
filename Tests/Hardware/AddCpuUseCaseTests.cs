@@ -1,5 +1,6 @@
 using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
+using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Server.Cpu;
 
 namespace Tests.Hardware;
@@ -11,10 +12,10 @@ public class AddCpuUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        var server = new RackPeek.Domain.Resources.Hardware.Models.Server
+        var server = new Server
         {
             Name = "node01",
-            Cpus = new List<RackPeek.Domain.Resources.Hardware.Models.Cpu>()
+            Cpus = new List<Cpu>()
         };
 
         repo.GetByNameAsync("node01").Returns(server);
@@ -23,10 +24,10 @@ public class AddCpuUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            model: "7950x",
-            cores: 8,
-            threads: 16
+            "node01",
+            "7950x",
+            8,
+            16
         );
 
         // Assert
@@ -35,7 +36,7 @@ public class AddCpuUseCaseTests
         Assert.Equal(8, server.Cpus[0].Cores);
         Assert.Equal(16, server.Cpus[0].Threads);
 
-        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+        await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
             s.Name == "node01" &&
             s.Cpus.Count == 1 &&
             s.Cpus[0].Model == "7950x" &&
@@ -49,7 +50,7 @@ public class AddCpuUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        var server = new RackPeek.Domain.Resources.Hardware.Models.Server
+        var server = new Server
         {
             Name = "node01",
             Cpus = null
@@ -61,17 +62,17 @@ public class AddCpuUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            model: "7950x",
-            cores: 8,
-            threads: 16
+            "node01",
+            "7950x",
+            8,
+            16
         );
 
         // Assert
         Assert.NotNull(server.Cpus);
         Assert.Single(server.Cpus);
 
-        await repo.Received(1).UpdateAsync(Arg.Is<RackPeek.Domain.Resources.Hardware.Models.Server>(s =>
+        await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
             s.Cpus != null &&
             s.Cpus.Count == 1 &&
             s.Cpus[0].Model == "7950x"
@@ -89,13 +90,13 @@ public class AddCpuUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            model: "7950x",
-            cores: 8,
-            threads: 16
+            "node01",
+            "7950x",
+            8,
+            16
         );
 
         // Assert
-        await repo.DidNotReceive().UpdateAsync(Arg.Any<RackPeek.Domain.Resources.Hardware.Models.Server>());
+        await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
     }
 }

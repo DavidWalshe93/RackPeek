@@ -35,7 +35,6 @@ public class ServerGetCommand(
             .AddColumn("IPMI");
 
         foreach (var s in report.Servers)
-        {
             table.AddRow(
                 s.Name,
                 s.CpuSummary,
@@ -45,7 +44,6 @@ public class ServerGetCommand(
                 $"{s.TotalNicPorts}×{s.MaxNicSpeedGb}G",
                 s.Ipmi ? "[green]yes[/]" : "[red]no[/]"
             );
-        }
 
         AnsiConsole.Write(table);
         return 0;

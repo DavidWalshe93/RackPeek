@@ -4,16 +4,14 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Server.Cpus;
+
 public class ServerCpuAddSettings : ServerNameSettings
 {
-    [CommandOption("--model <MODEL>")]
-    public string Model { get; set; }
+    [CommandOption("--model <MODEL>")] public string Model { get; set; }
 
-    [CommandOption("--cores <CORES>")]
-    public int Cores { get; set; }
-    
-    [CommandOption("--threads <THREADS>")]
-    public int Threads { get; set; }
+    [CommandOption("--cores <CORES>")] public int Cores { get; set; }
+
+    [CommandOption("--threads <THREADS>")] public int Threads { get; set; }
 }
 
 public class ServerCpuAddCommand(

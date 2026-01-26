@@ -12,24 +12,24 @@ public class DescribeServerUseCaseTests
     {
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
-        repo.GetByNameAsync("node01").Returns(new RackPeek.Domain.Resources.Hardware.Models.Server
+        repo.GetByNameAsync("node01").Returns(new Server
         {
             Name = "node01",
             Ipmi = true,
-            Cpus = new()
+            Cpus = new List<Cpu>
             {
-                new Cpu { Model = "Xeon", Cores = 4, Threads = 8 },
-                new Cpu { Model = "Xeon", Cores = 4, Threads = 8 }
+                new() { Model = "Xeon", Cores = 4, Threads = 8 },
+                new() { Model = "Xeon", Cores = 4, Threads = 8 }
             },
             Ram = new Ram { Size = 32 },
-            Drives = new()
+            Drives = new List<Drive>
             {
-                new Drive { Type = "ssd", Size = 256 },
-                new Drive { Type = "hdd", Size = 2048 }
+                new() { Type = "ssd", Size = 256 },
+                new() { Type = "hdd", Size = 2048 }
             },
-            Nics = new()
+            Nics = new List<Nic>
             {
-                new Nic { Speed = 10, Ports = 2 }
+                new() { Speed = 10, Ports = 2 }
             }
         });
 

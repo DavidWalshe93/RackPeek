@@ -7,17 +7,13 @@ namespace RackPeek.Commands.Server.Nics;
 
 public class ServerNicUpdateSettings : ServerNameSettings
 {
-    [CommandOption("--index <INDEX>")]
-    public int Index { get; set; }
+    [CommandOption("--index <INDEX>")] public int Index { get; set; }
 
-    [CommandOption("--type <TYPE>")]
-    public string Type { get; set; }
+    [CommandOption("--type <TYPE>")] public string Type { get; set; }
 
-    [CommandOption("--speed <SPEED>")]
-    public int Speed { get; set; }
+    [CommandOption("--speed <SPEED>")] public int Speed { get; set; }
 
-    [CommandOption("--ports <PORTS>")]
-    public int Ports { get; set; }
+    [CommandOption("--ports <PORTS>")] public int Ports { get; set; }
 }
 
 public class ServerNicUpdateCommand(IServiceProvider serviceProvider)

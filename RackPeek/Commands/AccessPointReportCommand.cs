@@ -31,13 +31,11 @@ public class AccessPointReportCommand(
             .AddColumn("Speed (Gb)");
 
         foreach (var ap in report.AccessPoints)
-        {
             table.AddRow(
                 ap.Name,
                 ap.Model,
                 $"{ap.SpeedGb}G"
             );
-        }
 
         AnsiConsole.Write(table);
         return 0;

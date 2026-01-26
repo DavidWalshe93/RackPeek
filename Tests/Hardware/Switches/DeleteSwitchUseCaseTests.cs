@@ -18,7 +18,7 @@ public class DeleteSwitchUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            name: "sw01"
+            "sw01"
         );
 
         // Assert
@@ -37,7 +37,7 @@ public class DeleteSwitchUseCaseTests
         // Act
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await sut.ExecuteAsync(
-                name: "sw01"
+                "sw01"
             )
         );
 

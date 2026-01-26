@@ -4,20 +4,18 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Server.Cpus;
+
 public class ServerCpuSetSettings : ServerNameSettings
 {
-    [CommandOption("--index <INDEX>")]
-    public int Index { get; set; }
+    [CommandOption("--index <INDEX>")] public int Index { get; set; }
 
-    [CommandOption("--model <MODEL>")]
-    public string Model { get; set; }
+    [CommandOption("--model <MODEL>")] public string Model { get; set; }
 
-    [CommandOption("--cores <CORES>")]
-    public int Cores { get; set; }
-    
-    [CommandOption("--threads <THREADS>")]
-    public int Threads { get; set; }
+    [CommandOption("--cores <CORES>")] public int Cores { get; set; }
+
+    [CommandOption("--threads <THREADS>")] public int Threads { get; set; }
 }
+
 public class ServerCpuSetCommand(IServiceProvider serviceProvider) : AsyncCommand<ServerCpuSetSettings>
 {
     public override async Task<int> ExecuteAsync(

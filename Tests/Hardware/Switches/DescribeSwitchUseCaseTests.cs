@@ -83,8 +83,8 @@ public class DescribeSwitchUseCaseTests
         Assert.True(result.Managed);
         Assert.True(result.Poe);
 
-        Assert.Equal(28, result.TotalPorts);          // 24 + 4
-        Assert.Equal(64, result.TotalSpeedGb);        // (24 * 1) + (4 * 10)
+        Assert.Equal(28, result.TotalPorts); // 24 + 4
+        Assert.Equal(64, result.TotalSpeedGb); // (24 * 1) + (4 * 10)
 
         Assert.Equal(
             "RJ45: 24 ports (24 Gb total), SFP+: 4 ports (40 Gb total)",

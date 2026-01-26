@@ -2,7 +2,6 @@ using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Server.Nic;
-using Xunit;
 
 namespace Tests.Hardware;
 
@@ -17,8 +16,8 @@ public class RemoveNicUseCaseTests
             Name = "node01",
             Nics = new List<Nic>
             {
-                new Nic { Type = "10GBase-T", Speed = 10000, Ports = 2 },
-                new Nic { Type = "SFP+", Speed = 10000, Ports = 1 }
+                new() { Type = "10GBase-T", Speed = 10000, Ports = 2 },
+                new() { Type = "SFP+", Speed = 10000, Ports = 1 }
             }
         };
 
@@ -41,7 +40,7 @@ public class RemoveNicUseCaseTests
         var server = new Server
         {
             Name = "node01",
-            Nics = new List<Nic> { new Nic() }
+            Nics = new List<Nic> { new() }
         };
 
         repo.GetByNameAsync("node01").Returns(server);

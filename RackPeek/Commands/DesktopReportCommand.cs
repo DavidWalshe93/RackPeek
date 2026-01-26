@@ -35,7 +35,6 @@ public class DesktopReportCommand(
             .AddColumn("GPU");
 
         foreach (var d in report.Desktops)
-        {
             table.AddRow(
                 d.Name,
                 d.CpuSummary,
@@ -45,7 +44,6 @@ public class DesktopReportCommand(
                 d.NicSummary,
                 d.GpuSummary
             );
-        }
 
         AnsiConsole.Write(table);
         return 0;

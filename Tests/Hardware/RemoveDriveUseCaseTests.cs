@@ -2,7 +2,6 @@ using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Server.Drive;
-using Xunit;
 
 namespace Tests.Hardware;
 
@@ -18,8 +17,8 @@ public class RemoveDriveUseCaseTests
             Name = "node01",
             Drives = new List<Drive>
             {
-                new Drive { Type = "NVMe", Size = 2000 },
-                new Drive { Type = "SATA", Size = 500 }
+                new() { Type = "NVMe", Size = 2000 },
+                new() { Type = "SATA", Size = 500 }
             }
         };
 
@@ -29,7 +28,7 @@ public class RemoveDriveUseCaseTests
         var sut = new RemoveDriveUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync("node01", index: 0);
+        await sut.ExecuteAsync("node01", 0);
 
         // Assert
         Assert.Single(server.Drives);
@@ -52,7 +51,7 @@ public class RemoveDriveUseCaseTests
             Name = "node01",
             Drives = new List<Drive>
             {
-                new Drive { Type = "NVMe", Size = 2000 }
+                new() { Type = "NVMe", Size = 2000 }
             }
         };
 
@@ -62,7 +61,7 @@ public class RemoveDriveUseCaseTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
-            await sut.ExecuteAsync("node01", index: 1)
+            await sut.ExecuteAsync("node01", 1)
         );
 
         await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
@@ -74,14 +73,14 @@ public class RemoveDriveUseCaseTests
         // Arrange
         var repo = Substitute.For<IHardwareRepository>();
 
-        
+
         repo.GetByNameAsync("node01")
             .Returns((RackPeek.Domain.Resources.Hardware.Models.Hardware?)null);
 
         var sut = new RemoveDriveUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync("node01", index: 0);
+        await sut.ExecuteAsync("node01", 0);
 
         // Assert
         await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());

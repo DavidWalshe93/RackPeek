@@ -2,7 +2,6 @@ using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Server.Cpu;
-using Xunit;
 
 namespace Tests.Hardware;
 
@@ -18,7 +17,7 @@ public class UpdateCpuUseCaseTests
             Name = "node01",
             Cpus = new List<Cpu>
             {
-                new Cpu { Model = "7950x", Cores = 8, Threads = 16 }
+                new() { Model = "7950x", Cores = 8, Threads = 16 }
             }
         };
 
@@ -28,11 +27,11 @@ public class UpdateCpuUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            index: 0,
-            model: "7900x",
-            cores: 12,
-            threads: 24
+            "node01",
+            0,
+            "7900x",
+            12,
+            24
         );
 
         // Assert
@@ -59,7 +58,7 @@ public class UpdateCpuUseCaseTests
             Name = "node01",
             Cpus = new List<Cpu>
             {
-                new Cpu { Model = "7950x", Cores = 8, Threads = 16 }
+                new() { Model = "7950x", Cores = 8, Threads = 16 }
             }
         };
 
@@ -70,11 +69,11 @@ public class UpdateCpuUseCaseTests
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
             await sut.ExecuteAsync(
-                serverName: "node01",
-                index: 1,
-                model: "7900x",
-                cores: 12,
-                threads: 24
+                "node01",
+                1,
+                "7900x",
+                12,
+                24
             )
         );
 
@@ -92,11 +91,11 @@ public class UpdateCpuUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            index: 0,
-            model: "7900x",
-            cores: 12,
-            threads: 24
+            "node01",
+            0,
+            "7900x",
+            12,
+            24
         );
 
         // Assert

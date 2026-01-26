@@ -7,11 +7,9 @@ namespace RackPeek.Commands.Server.Drives;
 
 public class ServerDriveAddSettings : ServerNameSettings
 {
-    [CommandOption("--type <TYPE>")]
-    public string Type { get; set; }
+    [CommandOption("--type <TYPE>")] public string Type { get; set; }
 
-    [CommandOption("--size <SIZE>")]
-    public int Size { get; set; }
+    [CommandOption("--size <SIZE>")] public int Size { get; set; }
 }
 
 public class ServerDriveAddCommand(IServiceProvider serviceProvider)

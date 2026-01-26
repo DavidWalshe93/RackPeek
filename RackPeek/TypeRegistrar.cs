@@ -28,13 +28,13 @@ public sealed class TypeRegistrar(IServiceCollection services) : ITypeRegistrar
 
 public sealed class TypeResolver(ServiceProvider provider) : ITypeResolver, IDisposable
 {
-    public object? Resolve(Type? type)
-    {
-        return type == null ? null : provider.GetService(type);
-    }
-
     public void Dispose()
     {
         provider.Dispose();
+    }
+
+    public object? Resolve(Type? type)
+    {
+        return type == null ? null : provider.GetService(type);
     }
 }

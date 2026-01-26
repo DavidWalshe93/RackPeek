@@ -7,8 +7,7 @@ namespace RackPeek.Commands.Server.Nics;
 
 public class ServerNicRemoveSettings : ServerNameSettings
 {
-    [CommandOption("--index <INDEX>")]
-    public int Index { get; set; }
+    [CommandOption("--index <INDEX>")] public int Index { get; set; }
 }
 
 public class ServerNicRemoveCommand(IServiceProvider serviceProvider)

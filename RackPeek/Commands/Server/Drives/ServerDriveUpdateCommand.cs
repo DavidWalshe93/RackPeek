@@ -7,14 +7,11 @@ namespace RackPeek.Commands.Server.Drives;
 
 public class ServerDriveUpdateSettings : ServerNameSettings
 {
-    [CommandOption("--index <INDEX>")]
-    public int Index { get; set; }
+    [CommandOption("--index <INDEX>")] public int Index { get; set; }
 
-    [CommandOption("--type <TYPE>")]
-    public string Type { get; set; }
+    [CommandOption("--type <TYPE>")] public string Type { get; set; }
 
-    [CommandOption("--size <SIZE>")]
-    public int Size { get; set; }
+    [CommandOption("--size <SIZE>")] public int Size { get; set; }
 }
 
 public class ServerDriveUpdateCommand(IServiceProvider serviceProvider)

@@ -26,11 +26,13 @@ public static class StorageSizeParser
 
 public class StorageSizeYamlConverter : IYamlTypeConverter
 {
-    public bool Accepts(Type type) =>
-        type == typeof(int) ||
-        type == typeof(int?) ||
-        type == typeof(double) ||
-        type == typeof(double?);
+    public bool Accepts(Type type)
+    {
+        return type == typeof(int) ||
+               type == typeof(int?) ||
+               type == typeof(double) ||
+               type == typeof(double?);
+    }
 
     public object? ReadYaml(IParser parser, Type type, ObjectDeserializer rootDeserializer)
     {

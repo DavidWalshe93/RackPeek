@@ -2,7 +2,6 @@ using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Server.Cpu;
-using Xunit;
 
 namespace Tests.Hardware;
 
@@ -18,8 +17,8 @@ public class RemoveCpuUseCaseTests
             Name = "node01",
             Cpus = new List<Cpu>
             {
-                new Cpu { Model = "7950x", Cores = 8, Threads = 16 },
-                new Cpu { Model = "7900x", Cores = 12, Threads = 24 }
+                new() { Model = "7950x", Cores = 8, Threads = 16 },
+                new() { Model = "7900x", Cores = 12, Threads = 24 }
             }
         };
 
@@ -28,7 +27,7 @@ public class RemoveCpuUseCaseTests
         var sut = new RemoveCpuUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync("node01", index: 0);
+        await sut.ExecuteAsync("node01", 0);
 
         // Assert
         Assert.Single(server.Cpus);
@@ -51,7 +50,7 @@ public class RemoveCpuUseCaseTests
             Name = "node01",
             Cpus = new List<Cpu>
             {
-                new Cpu { Model = "7950x", Cores = 8, Threads = 16 }
+                new() { Model = "7950x", Cores = 8, Threads = 16 }
             }
         };
 
@@ -61,7 +60,7 @@ public class RemoveCpuUseCaseTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
-            await sut.ExecuteAsync("node01", index: 1)
+            await sut.ExecuteAsync("node01", 1)
         );
 
         await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
@@ -77,9 +76,9 @@ public class RemoveCpuUseCaseTests
         var sut = new RemoveCpuUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync("node01", index: 0);
+        await sut.ExecuteAsync("node01", 0);
 
         // Assert
-        await repo.DidNotReceive().UpdateAsync(Arg.Any<RackPeek.Domain.Resources.Hardware.Models.Server>());
+        await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
     }
 }

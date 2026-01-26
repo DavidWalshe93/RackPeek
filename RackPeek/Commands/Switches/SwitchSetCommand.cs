@@ -5,15 +5,14 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Switches;
+
 public class SwitchSetSettings : ServerNameSettings
 {
     [CommandOption("--Model")] public string Model { get; set; } = default!;
 
-    [CommandOption("--managed")]
-    public bool Managed { get; set; }
-    
-    [CommandOption("--poe")]
-    public bool Poe { get; set; }
+    [CommandOption("--managed")] public bool Managed { get; set; }
+
+    [CommandOption("--poe")] public bool Poe { get; set; }
 }
 
 public class SwitchSetCommand(

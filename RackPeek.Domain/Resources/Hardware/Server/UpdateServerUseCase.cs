@@ -22,10 +22,7 @@ public class UpdateServerUseCase(IHardwareRepository repository)
         }
 
         // ---- IPMI ----
-        if (ipmi.HasValue)
-        {
-            server.Ipmi = ipmi.Value;
-        }
+        if (ipmi.HasValue) server.Ipmi = ipmi.Value;
 
         await repository.UpdateAsync(server);
     }

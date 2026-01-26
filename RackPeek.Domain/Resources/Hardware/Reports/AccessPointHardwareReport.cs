@@ -1,6 +1,7 @@
 using RackPeek.Domain.Resources.Hardware.Models;
 
 namespace RackPeek.Domain.Resources.Hardware.Reports;
+
 public record AccessPointHardwareReport(
     IReadOnlyList<AccessPointHardwareRow> AccessPoints
 );
@@ -21,9 +22,9 @@ public class AccessPointHardwareReportUseCase(IHardwareRepository repository)
         var rows = aps.Select(ap =>
         {
             return new AccessPointHardwareRow(
-                Name: ap.Name,
-                Model: ap.Model ?? "Unknown",
-                SpeedGb: ap.Speed ?? 0
+                ap.Name,
+                ap.Model ?? "Unknown",
+                ap.Speed ?? 0
             );
         }).ToList();
 

@@ -1,5 +1,4 @@
-﻿using RackPeek;
-using RackPeek.Domain.Resources.Hardware;
+﻿using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Yaml;
 
@@ -13,7 +12,7 @@ public class HardwareDeserializationTests
         yamlResourceCollection.Load(yaml, "test.yaml");
         return new YamlHardwareRepository(yamlResourceCollection);
     }
-    
+
     [Theory]
     [InlineData("Server", typeof(Server))]
     [InlineData("Switch", typeof(Switch))]
@@ -30,22 +29,22 @@ public class HardwareDeserializationTests
 resources:
   - kind: {kind}
 ";
-        
+
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
-        
+
         // Then
         var hardware = Assert.Single(resources);
         Assert.IsType(type, hardware);
     }
-    
+
     [Fact]
     public async Task deserialize_yaml_kind_server()
     {
         // Given
-        var yaml = $@"
+        var yaml = @"
 resources:
   - kind: Server
     name: dell-c6400-node01
@@ -74,11 +73,11 @@ resources:
     ipmi: true
 ";
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
 
-        
+
         // Then
         var hardware = Assert.Single(resources);
         Assert.IsType<Server>(hardware);
@@ -91,12 +90,12 @@ resources:
         Assert.Equal("Intel(R) Xeon(R) CPU E3-1270 v6", cpu.Model);
         Assert.Equal(4, cpu.Cores);
         Assert.Equal(8, cpu.Threads);
-        
+
         // Ram
         Assert.NotNull(server.Ram);
         Assert.Equal(32, server.Ram.Size);
         Assert.Equal(2400, server.Ram.Mts);
-        
+
         // Drives
         Assert.NotNull(server.Drives);
         var hdd = server.Drives[0];
@@ -105,7 +104,7 @@ resources:
         var ssd = server.Drives[1];
         Assert.Equal("ssd", ssd.Type);
         Assert.Equal(256, ssd.Size);
-        
+
         //GPUs
         Assert.NotNull(server.Gpus);
         var gpu = server.Gpus[0];
@@ -114,7 +113,7 @@ resources:
 
         // ipmi
         Assert.True(server.Ipmi);
-        
+
         // Nics
         Assert.NotNull(server.Nics);
         var nic0 = server.Nics[0];
@@ -126,7 +125,7 @@ resources:
         Assert.Equal(10, nic1.Speed);
         Assert.Equal(2, nic1.Ports);
     }
-    
+
     [Fact]
     public async Task deserialize_yaml_kind_switch()
     {
@@ -148,7 +147,7 @@ resources:
 ";
 
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
 
@@ -164,7 +163,7 @@ resources:
         Assert.Equal("GS324", sw.Model);
         Assert.Equal(true, sw.Managed);
         Assert.Equal(true, sw.Poe);
-        
+
         // Nics
         Assert.NotNull(sw.Ports);
         var nic0 = sw.Ports[0];
@@ -175,8 +174,8 @@ resources:
         Assert.Equal("sfp", nic1.Type);
         Assert.Equal(10, nic1.Speed);
         Assert.Equal(2, nic1.Count);
-        
     }
+
     [Fact]
     public async Task deserialize_yaml_kind_firewall()
     {
@@ -198,7 +197,7 @@ resources:
 ";
 
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
 
@@ -214,7 +213,7 @@ resources:
         Assert.Equal("pfSense-1100", fw.Model);
         Assert.Equal(true, fw.Managed);
         Assert.Equal(true, fw.Poe);
-        
+
         // Nics
         Assert.NotNull(fw.Ports);
         var nic0 = fw.Ports[0];
@@ -226,6 +225,7 @@ resources:
         Assert.Equal(10, nic1.Speed);
         Assert.Equal(2, nic1.Count);
     }
+
     [Fact]
     public async Task deserialize_yaml_kind_router()
     {
@@ -247,7 +247,7 @@ resources:
 ";
 
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
 
@@ -263,7 +263,7 @@ resources:
         Assert.Equal("ER-4", router.Model);
         Assert.Equal(true, router.Managed);
         Assert.Equal(true, router.Poe);
-        
+
         // Nics
         Assert.NotNull(router.Ports);
         var nic0 = router.Ports[0];
@@ -275,7 +275,7 @@ resources:
         Assert.Equal(10, nic1.Speed);
         Assert.Equal(2, nic1.Count);
     }
-    
+
     [Fact]
     public async Task deserialize_yaml_kind_desktop()
     {
@@ -304,7 +304,7 @@ resources:
 ";
 
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
 
@@ -340,6 +340,7 @@ resources:
         Assert.Equal(1, desktop.Nics[0].Speed);
         Assert.Equal(1, desktop.Nics[0].Ports);
     }
+
     [Fact]
     public async Task deserialize_yaml_kind_laptop()
     {
@@ -364,7 +365,7 @@ resources:
 ";
 
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
 
@@ -394,7 +395,7 @@ resources:
         Assert.Equal("ssd", laptop.Drives[0].Type);
         Assert.Equal(1024, laptop.Drives[0].Size);
     }
-    
+
     [Fact]
     public async Task deserialize_yaml_kind_accesspoint()
     {
@@ -408,7 +409,7 @@ resources:
 ";
 
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
 
@@ -423,9 +424,8 @@ resources:
         Assert.Equal("lounge-ap", accessPoint.Name);
         Assert.Equal("Unifi-Ap-Pro", accessPoint.Model);
         Assert.Equal(2.5, accessPoint.Speed);
-
     }
-    
+
     [Fact]
     public async Task deserialize_yaml_kind_ups()
     {
@@ -439,7 +439,7 @@ resources:
 ";
 
         var sut = CreateSut(yaml);
-        
+
         // When
         var resources = await sut.GetAllAsync();
 
@@ -454,6 +454,5 @@ resources:
         Assert.Equal("rack-ups", ups.Name);
         Assert.Equal("Volta", ups.Model);
         Assert.Equal(2200, ups.Va);
-
     }
 }

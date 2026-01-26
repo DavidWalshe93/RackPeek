@@ -4,6 +4,7 @@ using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Switches;
+
 public class SwitchDescribeCommand(
     IServiceProvider serviceProvider
 ) : AsyncCommand<SwitchNameSettings>
@@ -30,8 +31,8 @@ public class SwitchDescribeCommand(
 
         grid.AddRow("Name:", sw.Name);
         grid.AddRow("Model:", sw.Model ?? "Unknown");
-        grid.AddRow("Managed:", sw.Managed.HasValue ? (sw.Managed.Value ? "Yes" : "No") : "Unknown");
-        grid.AddRow("PoE:", sw.Poe.HasValue ? (sw.Poe.Value ? "Yes" : "No") : "Unknown");
+        grid.AddRow("Managed:", sw.Managed.HasValue ? sw.Managed.Value ? "Yes" : "No" : "Unknown");
+        grid.AddRow("PoE:", sw.Poe.HasValue ? sw.Poe.Value ? "Yes" : "No" : "Unknown");
         grid.AddRow("Total Ports:", sw.TotalPorts.ToString());
         grid.AddRow("Total Speed (Gb):", sw.TotalSpeedGb.ToString());
         grid.AddRow("Ports:", sw.PortSummary);

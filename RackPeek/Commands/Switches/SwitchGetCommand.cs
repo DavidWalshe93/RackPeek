@@ -34,16 +34,14 @@ public class SwitchGetCommand(
             .AddColumn("Port Summary");
 
         foreach (var s in report.Switches)
-        {
             table.AddRow(
                 s.Name,
                 s.Model ?? "Unknown",
-                s.Managed == true ? "[green]yes[/]" : "[red]no[/]",
-                s.Poe == true ? "[green]yes[/]" : "[red]no[/]",
+                s.Managed ? "[green]yes[/]" : "[red]no[/]",
+                s.Poe ? "[green]yes[/]" : "[red]no[/]",
                 s.TotalPorts.ToString(),
                 s.PortSummary
             );
-        }
 
         AnsiConsole.Write(table);
         return 0;

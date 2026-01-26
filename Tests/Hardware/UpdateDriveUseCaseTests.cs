@@ -2,7 +2,6 @@ using NSubstitute;
 using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Server.Drive;
-using Xunit;
 
 namespace Tests.Hardware;
 
@@ -18,7 +17,7 @@ public class UpdateDriveUseCaseTests
             Name = "node01",
             Drives = new List<Drive>
             {
-                new Drive { Type = "NVMe", Size = 2000 }
+                new() { Type = "NVMe", Size = 2000 }
             }
         };
 
@@ -28,10 +27,10 @@ public class UpdateDriveUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            index: 0,
-            type: "SATA",
-            size: 500
+            "node01",
+            0,
+            "SATA",
+            500
         );
 
         // Assert
@@ -56,7 +55,7 @@ public class UpdateDriveUseCaseTests
             Name = "node01",
             Drives = new List<Drive>
             {
-                new Drive { Type = "NVMe", Size = 2000 }
+                new() { Type = "NVMe", Size = 2000 }
             }
         };
 
@@ -67,10 +66,10 @@ public class UpdateDriveUseCaseTests
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () =>
             await sut.ExecuteAsync(
-                serverName: "node01",
-                index: 1,
-                type: "SATA",
-                size: 500
+                "node01",
+                1,
+                "SATA",
+                500
             )
         );
 
@@ -90,10 +89,10 @@ public class UpdateDriveUseCaseTests
 
         // Act
         await sut.ExecuteAsync(
-            serverName: "node01",
-            index: 0,
-            type: "SATA",
-            size: 500
+            "node01",
+            0,
+            "SATA",
+            500
         );
 
         // Assert

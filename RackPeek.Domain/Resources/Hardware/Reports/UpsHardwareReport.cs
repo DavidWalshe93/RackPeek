@@ -1,6 +1,7 @@
 using RackPeek.Domain.Resources.Hardware.Models;
 
 namespace RackPeek.Domain.Resources.Hardware.Reports;
+
 public record UpsHardwareReport(
     IReadOnlyList<UpsHardwareRow> UpsUnits
 );
@@ -21,9 +22,9 @@ public class UpsHardwareReportUseCase(IHardwareRepository repository)
         var rows = upsUnits.Select(ups =>
         {
             return new UpsHardwareRow(
-                Name: ups.Name,
-                Model: ups.Model ?? "Unknown",
-                Va: ups.Va ?? 0
+                ups.Name,
+                ups.Model ?? "Unknown",
+                ups.Va ?? 0
             );
         }).ToList();
 

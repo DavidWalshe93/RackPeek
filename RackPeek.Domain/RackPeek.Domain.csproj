@@ -6,4 +6,10 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources\Hardware\AccessPoint\" />
+      <Folder Include="Resources\Hardware\Desktop\" />
+      <Folder Include="Resources\Hardware\Ups\" />
+    </ItemGroup>
+
 </Project>

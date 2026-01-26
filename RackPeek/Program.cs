@@ -105,7 +105,9 @@ public static class CliBootstrap
 
         services.AddScoped<UpdateServerUseCase>();
         services.AddScoped<ServerSetCommand>();
-
+        services.AddScoped<GetServerSystemTreeUseCase>();
+        services.AddScoped<ServerTreeCommand>();
+        
         // CPU use cases
         services.AddScoped<AddCpuUseCase>();
         services.AddScoped<UpdateCpuUseCase>();
@@ -213,6 +215,9 @@ public static class CliBootstrap
 
                 server.AddCommand<ServerDeleteCommand>("del")
                     .WithDescription("Delete a server");
+                
+                server.AddCommand<ServerTreeCommand>("tree")
+                    .WithDescription("Displays a dependency tree for the server.");
 
                 server.AddBranch("cpu", cpu =>
                 {

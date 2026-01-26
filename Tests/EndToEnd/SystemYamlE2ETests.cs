@@ -27,6 +27,8 @@ public class SystemYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
 [Fact]
 public async Task systems_cli_workflow_test()
 {
+    await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+    
     // Add system
     var (output, yaml) = await ExecuteAsync("systems", "add", "host01");
     Assert.Equal("System 'host01' added.\n", output);

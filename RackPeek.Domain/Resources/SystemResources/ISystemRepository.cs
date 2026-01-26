@@ -7,5 +7,7 @@ public interface ISystemRepository
     Task UpdateAsync(SystemResource systemResource);
     Task DeleteAsync(string name);
     Task<SystemResource?> GetByNameAsync(string name);
+    Task<IReadOnlyList<SystemResource>> GetByPhysicalHostAsync(string name);
+
 }
 

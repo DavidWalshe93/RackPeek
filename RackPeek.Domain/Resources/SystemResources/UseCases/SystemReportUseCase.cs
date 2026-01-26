@@ -1,10 +1,10 @@
 namespace RackPeek.Domain.Resources.SystemResources.UseCases;
 
 public record SystemReport(
-    IReadOnlyList<SystemHardwareRow> Systems
+    IReadOnlyList<SystemReportRow> Systems
 );
 
-public record SystemHardwareRow(
+public record SystemReportRow(
     string Name,
     string? Type,
     string? Os,
@@ -24,7 +24,7 @@ public class SystemReportUseCase(ISystemRepository repository)
         {
             var totalStorage = system.Drives?.Sum(d => d.Size) ?? 0;
 
-            return new SystemHardwareRow(
+            return new SystemReportRow(
                 system.Name,
                 system.Type,
                 system.Os,

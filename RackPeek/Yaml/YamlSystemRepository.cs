@@ -14,6 +14,14 @@ public class YamlSystemRepository(YamlResourceCollection resources) : ISystemRep
         return Task.FromResult(resources.GetByName(name) as SystemResource);
     }
 
+    public Task<IReadOnlyList<SystemResource>> GetByPhysicalHostAsync(string physicalHostName)
+    {
+        var physicalHostNameLower = physicalHostName.ToLower().Trim();
+        var results = resources.SystemResources
+            .Where(s => s.RunsOn != null && s.RunsOn.ToLower().Equals(physicalHostNameLower)).ToList();
+        return Task.FromResult<IReadOnlyList<SystemResource>>(results);
+    }
+
     public Task AddAsync(SystemResource systemResource)
     {
         if (resources.SystemResources.Any(r =>

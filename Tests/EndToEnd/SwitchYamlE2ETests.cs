@@ -27,6 +27,8 @@ public class SwitchYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
     [Fact]
     public async Task switches_cli_workflow_test()
     {
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+        
         // Add switch
         var (output, yaml) = await ExecuteAsync("switches", "add", "sw01");
         Assert.Equal("Switch 'sw01' added.\n", output);

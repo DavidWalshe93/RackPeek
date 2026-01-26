@@ -12,6 +12,16 @@ using RackPeek.Domain.Resources.Hardware.Reports;
 using RackPeek.Domain.Resources.Hardware.Server;
 using RackPeek.Domain.Resources.Hardware.Server.Cpu;
 using RackPeek.Domain.Resources.Hardware.Switchs;
+using RackPeek.Commands.Server.Nics;
+using RackPeek.Domain.Resources.Hardware.Reports;
+using RackPeek.Domain.Resources.Hardware.Server;
+using RackPeek.Domain.Resources.Hardware.Server.Cpu;
+using RackPeek.Domain.Resources.Hardware.Server.Nic;
+using RackPeek.Commands.Server.Drives;
+using RackPeek.Domain.Resources.Hardware.Reports;
+using RackPeek.Domain.Resources.Hardware.Server;
+using RackPeek.Domain.Resources.Hardware.Server.Cpu;
+using RackPeek.Domain.Resources.Hardware.Server.Drive;
 using RackPeek.Yaml;
 
 namespace RackPeek;
@@ -87,6 +97,12 @@ public static class Program
         services.AddScoped<AddCpuUseCase>();
         services.AddScoped<UpdateCpuUseCase>();
         services.AddScoped<RemoveCpuUseCase>();
+        
+        // Drive use cases
+        services.AddScoped<AddDrivesUseCase>();
+        services.AddScoped<UpdateDriveUseCase>();
+        services.AddScoped<RemoveDriveUseCase>();
+
 
         // CPU commands
         services.AddScoped<ServerCpuAddCommand>();
@@ -108,6 +124,21 @@ public static class Program
         services.AddScoped<GetSwitchesUseCase>();
         services.AddScoped<UpdateSwitchUseCase>();
 
+        // NIC use cases
+        services.AddScoped<AddNicUseCase>();
+        services.AddScoped<UpdateNicUseCase>();
+        services.AddScoped<RemoveNicUseCase>();
+        
+        // NIC commands
+        services.AddScoped<ServerNicAddCommand>();
+        services.AddScoped<ServerNicUpdateCommand>();
+        services.AddScoped<ServerNicRemoveCommand>();
+        // Drive commands
+        services.AddScoped<ServerDriveAddCommand>();
+        services.AddScoped<ServerDriveUpdateCommand>();
+        services.AddScoped<ServerDriveRemoveCommand>();
+
+        
         // Spectre bootstrap
         var registrar = new TypeRegistrar(services);
         var app = new CommandApp(registrar);
@@ -154,6 +185,33 @@ public static class Program
                     cpu.AddCommand<ServerCpuRemoveCommand>("del")
                         .WithDescription("Remove a CPU from a server");
                 });
+                
+                server.AddBranch("nic", nic =>
+                {
+                    nic.SetDescription("Manage server NICs");
+
+                    nic.AddCommand<ServerNicAddCommand>("add")
+                        .WithDescription("Add a NIC to a server");
+
+                    nic.AddCommand<ServerNicUpdateCommand>("set")
+                        .WithDescription("Update a NIC on a server");
+
+                    nic.AddCommand<ServerNicRemoveCommand>("del")
+                        .WithDescription("Remove a NIC from a server");
+                server.AddBranch("drive", drive =>
+                {
+                    drive.SetDescription("Manage server drives");
+
+                    drive.AddCommand<ServerDriveAddCommand>("add")
+                        .WithDescription("Add a drive to a server");
+
+                    drive.AddCommand<ServerDriveUpdateCommand>("set")
+                        .WithDescription("Update a drive on a server");
+
+                    drive.AddCommand<ServerDriveRemoveCommand>("del")
+                        .WithDescription("Remove a drive from a server");
+                });
+
             });
 
             config.AddBranch("switches", server =>

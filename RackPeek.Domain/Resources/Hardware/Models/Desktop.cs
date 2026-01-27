@@ -8,5 +8,4 @@ public class Desktop : Hardware
     public List<Nic>? Nics { get; set; }
     public List<Gpu>? Gpus { get; set; }
     public string Model { get; set; }
-
 }

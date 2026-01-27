@@ -1,5 +1,6 @@
+using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
-using RackPeek.Commands.Server;
+using RackPeek.Commands.Servers;
 using RackPeek.Domain.Resources.Hardware.AccessPoints;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -8,10 +9,12 @@ namespace RackPeek.Commands.AccessPoints;
 
 public class AccessPointSetSettings : ServerNameSettings
 {
-    [CommandOption("--model")] 
+    [CommandOption("--model")]
+    [Description("The access point model name.")]
     public string? Model { get; set; }
 
-    [CommandOption("--speed")] 
+    [CommandOption("--speed")]
+    [Description("The speed of the access point in Gb.")]
     public double? Speed { get; set; }
 }
 

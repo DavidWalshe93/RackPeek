@@ -31,10 +31,7 @@ public sealed class YamlResourceCollection
             var yaml = File.Exists(file) ? File.ReadAllText(file) : "";
             var resources = Deserialize(yaml);
 
-            foreach (var resource in resources)
-            {
-                _entries.Add(new ResourceEntry(resource, file));
-            }
+            foreach (var resource in resources) _entries.Add(new ResourceEntry(resource, file));
         }
     }
 

@@ -8,6 +8,4 @@ public interface ISystemRepository
     Task DeleteAsync(string name);
     Task<SystemResource?> GetByNameAsync(string name);
     Task<IReadOnlyList<SystemResource>> GetByPhysicalHostAsync(string name);
-
 }
-

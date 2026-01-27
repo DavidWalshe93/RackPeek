@@ -1,3 +1,5 @@
+using RackPeek.Domain.Resources.Hardware.Models;
+
 namespace RackPeek.Domain.Resources.Hardware.Reports;
 
 public record ServerHardwareReport(
@@ -26,7 +28,7 @@ public class ServerHardwareReportUseCase(IHardwareRepository repository)
     public async Task<ServerHardwareReport> ExecuteAsync()
     {
         var hardware = await repository.GetAllAsync();
-        var servers = hardware.OfType<Models.Server>();
+        var servers = hardware.OfType<Server>();
 
         var rows = servers.Select(server =>
         {

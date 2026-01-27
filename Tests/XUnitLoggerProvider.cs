@@ -13,14 +13,18 @@ public sealed class XUnitLoggerProvider : ILoggerProvider
     }
 
     public ILogger CreateLogger(string categoryName)
-        => new XUnitLogger(_output, categoryName);
+    {
+        return new XUnitLogger(_output, categoryName);
+    }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 
     private sealed class XUnitLogger : ILogger
     {
-        private readonly ITestOutputHelper _output;
         private readonly string _category;
+        private readonly ITestOutputHelper _output;
 
         public XUnitLogger(ITestOutputHelper output, string category)
         {
@@ -28,9 +32,15 @@ public sealed class XUnitLoggerProvider : ILoggerProvider
             _category = category;
         }
 
-        public IDisposable BeginScope<TState>(TState state) => null!;
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return null!;
+        }
 
-        public bool IsEnabled(LogLevel logLevel) => true;
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true;
+        }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId,
             TState state, Exception? exception, Func<TState, Exception?, string> formatter)

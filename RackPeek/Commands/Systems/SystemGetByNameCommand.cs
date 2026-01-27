@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using RackPeek.Commands.Switches;
 using RackPeek.Domain.Resources.SystemResources.UseCases;
 using Spectre.Console;
 using Spectre.Console.Cli;

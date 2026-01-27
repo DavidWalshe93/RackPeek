@@ -1,0 +1,26 @@
+using RackPeek.Domain.Resources.Hardware.Models;
+
+namespace RackPeek.Domain.Resources.Hardware.Servers.Drives;
+
+public class AddDrivesUseCase(IHardwareRepository repository)
+{
+    public async Task ExecuteAsync(
+        string serverName,
+        string type,
+        int size)
+    {
+        var hardware = await repository.GetByNameAsync(serverName);
+
+        if (hardware is not Server server) return;
+
+        server.Drives ??= [];
+
+        server.Drives.Add(new Drive
+        {
+            Type = type,
+            Size = size
+        });
+
+        await repository.UpdateAsync(server);
+    }
+}

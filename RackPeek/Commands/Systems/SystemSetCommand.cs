@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using RackPeek.Commands.Server;
+using RackPeek.Commands.Servers;
 using RackPeek.Domain.Resources.SystemResources.UseCases;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -8,20 +8,15 @@ namespace RackPeek.Commands.Systems;
 
 public class SystemSetSettings : ServerNameSettings
 {
-    [CommandOption("--type")]
-    public string? Type { get; set; }
+    [CommandOption("--type")] public string? Type { get; set; }
 
-    [CommandOption("--os")]
-    public string? Os { get; set; }
+    [CommandOption("--os")] public string? Os { get; set; }
 
-    [CommandOption("--cores")]
-    public int? Cores { get; set; }
+    [CommandOption("--cores")] public int? Cores { get; set; }
 
-    [CommandOption("--ram")]
-    public int? Ram { get; set; }
+    [CommandOption("--ram")] public int? Ram { get; set; }
 
-    [CommandOption("--runs-on")]
-    public string? RunsOn { get; set; }
+    [CommandOption("--runs-on")] public string? RunsOn { get; set; }
 }
 
 public class SystemSetCommand(

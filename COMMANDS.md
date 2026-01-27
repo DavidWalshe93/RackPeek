@@ -59,6 +59,14 @@
   - [`rpk desktops nic add`](#rpk-desktops-nic-add)
   - [`rpk desktops nic set`](#rpk-desktops-nic-set)
   - [`rpk desktops nic del`](#rpk-desktops-nic-del)
+  - [`rpk services`](#rpk-services)
+  - [`rpk services summary`](#rpk-services-summary)
+  - [`rpk services add`](#rpk-services-add)
+  - [`rpk services list`](#rpk-services-list)
+  - [`rpk services get`](#rpk-services-get)
+  - [`rpk services describe`](#rpk-services-describe)
+  - [`rpk services set`](#rpk-services-set)
+  - [`rpk services del`](#rpk-services-del)
   - [`rpk ap`](#rpk-ap)
   - [`rpk servers`](#rpk-servers)
   - [`rpk servers summary`](#rpk-servers-summary)
@@ -100,7 +108,7 @@ COMMANDS:
     systems         Manage systems                   
     accesspoints    Manage access points             
     ups             Manage UPS units                 
-    desktops                                         
+    services        Manage services                  
     ap              Show access point hardware report
     desktops        Show desktop hardware report     
     ups             Show UPS hardware report         
@@ -913,6 +921,131 @@ USAGE:
 ARGUMENTS:
     <desktop>    The desktop name              
     <index>      The index of the nic to remove
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk services`
+```
+DESCRIPTION:
+Manage services
+
+USAGE:
+    rpk services [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    summary            Show service summary report              
+    add <name>         Add a new service                        
+    list               List all services                        
+    get <name>         Get a service by name                    
+    describe <name>    Show detailed information about a service
+    set <name>         Update service properties                
+    del <name>         Delete a service                         
+```
+
+## `rpk services summary`
+```
+DESCRIPTION:
+Show service summary report
+
+USAGE:
+    rpk services summary [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk services add`
+```
+DESCRIPTION:
+Add a new service
+
+USAGE:
+    rpk services add <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>    The name of the service
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk services list`
+```
+DESCRIPTION:
+List all services
+
+USAGE:
+    rpk services list [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk services get`
+```
+DESCRIPTION:
+Get a service by name
+
+USAGE:
+    rpk services get <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>    The name of the service
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk services describe`
+```
+DESCRIPTION:
+Show detailed information about a service
+
+USAGE:
+    rpk services describe <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>    The name of the service
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk services set`
+```
+DESCRIPTION:
+Update service properties
+
+USAGE:
+    rpk services set <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help        Prints help information             
+        --ip          The ip address of the service       
+        --port        The port the service is running on  
+        --protocol    The service protocol                
+        --url         The service URL                     
+        --runs-on     The system the service is running on
+```
+
+## `rpk services del`
+```
+DESCRIPTION:
+Delete a service
+
+USAGE:
+    rpk services del <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>    The name of the service
 
 OPTIONS:
     -h, --help    Prints help information

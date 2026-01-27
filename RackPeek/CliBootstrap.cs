@@ -155,7 +155,7 @@ public static class CliBootstrap
         services.AddScoped<GetSystemUseCase>();
         services.AddScoped<UpdateSystemUseCase>();
         services.AddScoped<SystemReportUseCase>();
-
+        services.AddScoped<GetSystemServiceTreeUseCase>();
 
         // System commands
         services.AddScoped<SystemSetCommand>();
@@ -165,6 +165,7 @@ public static class CliBootstrap
         services.AddScoped<SystemDeleteCommand>();
         services.AddScoped<SystemAddCommand>();
         services.AddScoped<SystemReportCommand>();
+        services.AddScoped<SystemTreeCommand>();
 
         // AccessPoint use cases
         services.AddScoped<AddAccessPointUseCase>();
@@ -271,7 +272,6 @@ public static class CliBootstrap
         services.AddScoped<ServiceDeleteCommand>();
         services.AddScoped<ServiceAddCommand>();
         services.AddScoped<ServiceReportCommand>();
-        
         // Spectre bootstrap
         app.Configure(config =>
         {
@@ -409,6 +409,9 @@ public static class CliBootstrap
 
                     system.AddCommand<SystemDeleteCommand>("del")
                         .WithDescription("Delete a system");
+                    
+                    system.AddCommand<SystemTreeCommand>("tree")
+                        .WithDescription("Displays a dependency tree for the system.");
                 });
 
                 config.AddBranch("accesspoints", ap =>
@@ -532,6 +535,7 @@ public static class CliBootstrap
 
                     service.AddCommand<ServiceDeleteCommand>("del")
                         .WithDescription("Delete a service");
+
                 });
 
                 // ----------------------------

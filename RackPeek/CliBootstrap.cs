@@ -12,6 +12,7 @@ using RackPeek.Commands.Servers.Cpus;
 using RackPeek.Commands.Servers.Drives;
 using RackPeek.Commands.Servers.Gpus;
 using RackPeek.Commands.Servers.Nics;
+using RackPeek.Commands.Services;
 using RackPeek.Commands.Switches;
 using RackPeek.Commands.Systems;
 using RackPeek.Commands.Ups;
@@ -30,6 +31,8 @@ using RackPeek.Domain.Resources.Hardware.Servers.Gpus;
 using RackPeek.Domain.Resources.Hardware.Servers.Nics;
 using RackPeek.Domain.Resources.Hardware.Switches;
 using RackPeek.Domain.Resources.Hardware.UpsUnits;
+using RackPeek.Domain.Resources.Services;
+using RackPeek.Domain.Resources.Services.UseCases;
 using RackPeek.Domain.Resources.SystemResources;
 using RackPeek.Domain.Resources.SystemResources.UseCases;
 using RackPeek.Yaml;
@@ -56,6 +59,7 @@ public static class CliBootstrap
         // Infrastructure
         services.AddScoped<IHardwareRepository>(_ => new YamlHardwareRepository(collection));
         services.AddScoped<ISystemRepository>(_ => new YamlSystemRepository(collection));
+        services.AddScoped<IServiceRepository>(_ => new YamlServiceRepository(collection));
 
         // Application
         services.AddScoped<ServerHardwareReportUseCase>();
@@ -250,7 +254,24 @@ public static class CliBootstrap
         services.AddScoped<DesktopNicSetCommand>();
         services.AddScoped<DesktopNicRemoveCommand>();
 
+        // Service use cases
+        services.AddScoped<AddServiceUseCase>();
+        services.AddScoped<DeleteServiceUseCase>();
+        services.AddScoped<DescribeServiceUseCase>();
+        services.AddScoped<GetServiceUseCase>();
+        services.AddScoped<GetServiceUseCase>();
+        services.AddScoped<UpdateServiceUseCase>();
+        services.AddScoped<ServiceReportUseCase>();
 
+        // Service commands
+        services.AddScoped<ServiceSetCommand>();
+        services.AddScoped<ServiceGetCommand>();
+        services.AddScoped<ServiceGetByNameCommand>();
+        services.AddScoped<ServiceDescribeCommand>();
+        services.AddScoped<ServiceDeleteCommand>();
+        services.AddScoped<ServiceAddCommand>();
+        services.AddScoped<ServiceReportCommand>();
+        
         // Spectre bootstrap
         app.Configure(config =>
         {
@@ -485,6 +506,33 @@ public static class CliBootstrap
                     });
                 });
 
+                config.AddBranch("services", service =>
+                {
+                    service.SetDescription(
+                        "Manage services."
+                    );
+
+                    service.AddCommand<ServiceReportCommand>("summary")
+                        .WithDescription("Show service summary report");
+
+                    service.AddCommand<ServiceAddCommand>("add")
+                        .WithDescription("Add a new service");
+
+                    service.AddCommand<ServiceGetCommand>("list")
+                        .WithDescription("List all services");
+
+                    service.AddCommand<ServiceGetByNameCommand>("get")
+                        .WithDescription("Get a service by name");
+
+                    service.AddCommand<ServiceDescribeCommand>("describe")
+                        .WithDescription("Show detailed information about a service");
+
+                    service.AddCommand<ServiceSetCommand>("set")
+                        .WithDescription("Update service properties");
+
+                    service.AddCommand<ServiceDeleteCommand>("del")
+                        .WithDescription("Delete a service");
+                });
 
                 // ----------------------------
                 // Reports (read-only summaries)

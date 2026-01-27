@@ -1,6 +1,7 @@
 using System.Collections.Specialized;
 using RackPeek.Domain.Resources;
 using RackPeek.Domain.Resources.Hardware.Models;
+using RackPeek.Domain.Resources.Services;
 using RackPeek.Domain.Resources.SystemResources;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -20,6 +21,8 @@ public sealed class YamlResourceCollection
     public IReadOnlyList<SystemResource> SystemResources =>
         _entries.Select(e => e.Resource).OfType<SystemResource>().ToList();
 
+    public IReadOnlyList<Service> ServiceResources =>
+        _entries.Select(e => e.Resource).OfType<Service>().ToList();
     public void LoadFiles(IEnumerable<string> filePaths)
     {
         foreach (var file in filePaths)
@@ -131,6 +134,8 @@ public sealed class YamlResourceCollection
                 AccessPoint => "AccessPoint",
                 Ups => "Ups",
                 SystemResource => "System",
+                Service => "Service",
+
                 _ => throw new InvalidOperationException($"Unknown resource type: {resource.GetType().Name}")
             }
         };
@@ -153,6 +158,7 @@ public sealed class YamlResourceCollection
 
         return map;
     }
+
 
     private static List<Resource> Deserialize(string yaml)
     {
@@ -192,6 +198,7 @@ public sealed class YamlResourceCollection
                 "AccessPoint" => deserializer.Deserialize<AccessPoint>(typedYaml),
                 "Ups" => deserializer.Deserialize<Ups>(typedYaml),
                 "System" => deserializer.Deserialize<SystemResource>(typedYaml),
+                "Service" => deserializer.Deserialize<Service>(typedYaml),
                 _ => throw new InvalidOperationException($"Unknown kind: {kind}")
             };
 

@@ -3,7 +3,7 @@ using RackPeek.Yaml;
 
 namespace Tests.Yaml;
 
-public class ServiceDeserializationTests
+public class SystemDeserializationTests
 {
     public static ISystemRepository CreateSut(string yaml)
     {

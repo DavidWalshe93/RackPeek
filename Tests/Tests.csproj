@@ -24,8 +24,4 @@
         <ProjectReference Include="..\RackPeek\RackPeek.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Hardware\Desktop\" />
-    </ItemGroup>
-
 </Project>

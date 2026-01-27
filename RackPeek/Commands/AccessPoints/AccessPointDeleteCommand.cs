@@ -19,7 +19,7 @@ public class AccessPointDeleteCommand(
 
         await useCase.ExecuteAsync(settings.Name);
 
-        AnsiConsole.MarkupLine($"[green]Access point '{settings.Name}' deleted.[/]");
+        AnsiConsole.MarkupLine($"[green]Access Point '{settings.Name}' deleted.[/]");
         return 0;
     }
 }

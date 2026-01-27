@@ -21,12 +21,12 @@ public class AccessPointGetByNameCommand(
 
         if (ap == null)
         {
-            AnsiConsole.MarkupLine($"[red]Access point '{settings.Name}' not found.[/]");
+            AnsiConsole.MarkupLine($"[red]Access Point '{settings.Name}' not found.[/]");
             return 1;
         }
 
         AnsiConsole.MarkupLine(
-            $"[green]{ap.Name}[/]  Model: {ap.Model ?? "Unknown"}, Speed: {ap.Speed?.ToString() ?? "Unknown"} Gbps");
+            $"[green]{ap.Name}[/]  Model: {ap.Model ?? "Unknown"}, Speed: {(ap.Speed?.ToString() ?? "Unknown")}Gbps");
 
         return 0;
     }

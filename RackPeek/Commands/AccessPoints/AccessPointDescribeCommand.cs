@@ -21,7 +21,7 @@ public class AccessPointDescribeCommand(
 
         if (ap == null)
         {
-            AnsiConsole.MarkupLine($"[red]Access point '{settings.Name}' not found.[/]");
+            AnsiConsole.MarkupLine($"[red]Access Point '{settings.Name}' not found.[/]");
             return 1;
         }
 

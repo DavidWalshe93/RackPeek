@@ -27,7 +27,7 @@ public class AccessPointAddCommand(
 
         await useCase.ExecuteAsync(settings.Name);
 
-        AnsiConsole.MarkupLine($"[green]Access point '{settings.Name}' added.[/]");
+        AnsiConsole.MarkupLine($"[green]Access Point '{settings.Name}' added.[/]");
         return 0;
     }
 }

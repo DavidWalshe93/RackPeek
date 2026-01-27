@@ -28,13 +28,13 @@ public class AccessPointReportCommand(
             .Border(TableBorder.Rounded)
             .AddColumn("Name")
             .AddColumn("Model")
-            .AddColumn("Speed (Gb)");
+            .AddColumn("Speed (Gbps)");
 
         foreach (var ap in report.AccessPoints)
             table.AddRow(
                 ap.Name,
                 ap.Model,
-                $"{ap.SpeedGb}G"
+                $"{ap.SpeedGb}"
             );
 
         AnsiConsole.Write(table);

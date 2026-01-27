@@ -15,18 +15,16 @@ public sealed class TempYamlCliFixture : IAsyncLifetime
         // Create empty YAML files so repo loads cleanly
         foreach (var file in new[]
                  {
-                     "config.yaml",
-                 }) 
-        {
+                     "config.yaml"
+                 })
             File.WriteAllText(Path.Combine(Root, file), "");
-        }
 
         return Task.CompletedTask;
     }
 
     public Task DisposeAsync()
     {
-        Directory.Delete(Root, recursive: true);
+        Directory.Delete(Root, true);
         return Task.CompletedTask;
     }
 }

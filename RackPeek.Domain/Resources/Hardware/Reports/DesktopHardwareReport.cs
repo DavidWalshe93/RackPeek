@@ -24,7 +24,7 @@ public class DesktopHardwareReportUseCase(IHardwareRepository repository)
     public async Task<DesktopHardwareReport> ExecuteAsync()
     {
         var hardware = await repository.GetAllAsync();
-        var desktops = hardware.OfType<Models.Desktop>();
+        var desktops = hardware.OfType<Desktop>();
 
         var rows = desktops.Select(desktop =>
         {

@@ -1,4 +1,5 @@
 namespace RackPeek.Domain.Resources.SystemResources.UseCases;
+
 public class UpdateSystemUseCase(ISystemRepository repository)
 {
     public async Task ExecuteAsync(

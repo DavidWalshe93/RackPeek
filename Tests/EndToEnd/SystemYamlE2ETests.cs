@@ -4,7 +4,8 @@ using Xunit.Abstractions;
 namespace Tests.EndToEnd;
 
 [Collection("Yaml CLI tests")]
-public class SystemYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputHelper) : IClassFixture<TempYamlCliFixture>
+public class SystemYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputHelper)
+    : IClassFixture<TempYamlCliFixture>
 {
     private async Task<(string, string)> ExecuteAsync(params string[] args)
     {
@@ -19,101 +20,102 @@ public class SystemYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
         );
 
         outputHelper.WriteLine(output);
-        
+
         var yaml = await File.ReadAllTextAsync(Path.Combine(fs.Root, "config.yaml"));
         return (output, yaml);
     }
-    
-[Fact]
-public async Task systems_cli_workflow_test()
-{
-    await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
-    
-    // Add system
-    var (output, yaml) = await ExecuteAsync("systems", "add", "host01");
-    Assert.Equal("System 'host01' added.\n", output);
-    Assert.Equal("""
-                    resources:
-                    - kind: System
-                      type: 
-                      os: 
-                      cores: 
-                      ram: 
-                      drives: 
-                      runsOn: 
-                      name: host01
-                      tags: 
-                    
-                    """, yaml);
 
-    // Update system
-    (output, yaml) = await ExecuteAsync(
-        "systems", "set", "host01",
-        "--type", "server",
-        "--os", "ubuntu-22.04",
-        "--cores", "4",
-        "--ram", "8192",
-        "--runs-on", "hypervisor01"
-    );
+    [Fact]
+    public async Task systems_cli_workflow_test()
+    {
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
 
-    Assert.Equal("System 'host01' updated.\n", output);
-    Assert.Equal("""
-                 resources:
-                 - kind: System
-                   type: server
-                   os: ubuntu-22.04
-                   cores: 4
-                   ram: 8192
-                   drives: 
-                   runsOn: hypervisor01
-                   name: host01
-                   tags: 
-                 
-                 """, yaml);
+        // Add system
+        var (output, yaml) = await ExecuteAsync("systems", "add", "host01");
+        Assert.Equal("System 'host01' added.\n", output);
+        Assert.Equal("""
+                     resources:
+                     - kind: System
+                       type: 
+                       os: 
+                       cores: 
+                       ram: 
+                       drives: 
+                       runsOn: 
+                       name: host01
+                       tags: 
 
-    // Get system by name
-    (output, yaml) = await ExecuteAsync("systems", "get", "host01");
-    Assert.Equal("host01  Type: server, OS: ubuntu-22.04, Cores: 4, RAM: 8192GB, Storage: 0GB, \nRunsOn: hypervisor01\n", output);
+                     """, yaml);
 
-    // List systems
-    (output, yaml) = await ExecuteAsync("systems", "list");
-    Assert.Equal("""
-                 ╭────────┬────────┬─────────────┬───────┬──────────┬─────────────┬─────────────╮
-                 │ Name   │ Type   │ OS          │ Cores │ RAM (GB) │ Storage     │ Runs On     │
-                 │        │        │             │       │          │ (GB)        │             │
-                 ├────────┼────────┼─────────────┼───────┼──────────┼─────────────┼─────────────┤
-                 │ host01 │ server │ ubuntu-22.0 │ 4     │ 8192     │ 0           │ hypervisor0 │
-                 │        │        │ 4           │       │          │             │ 1           │
-                 ╰────────┴────────┴─────────────┴───────┴──────────┴─────────────┴─────────────╯
-                 
-                 """, output);
+        // Update system
+        (output, yaml) = await ExecuteAsync(
+            "systems", "set", "host01",
+            "--type", "server",
+            "--os", "ubuntu-22.04",
+            "--cores", "4",
+            "--ram", "8192",
+            "--runs-on", "hypervisor01"
+        );
 
-    // Report systems
-    (output, yaml) = await ExecuteAsync("systems", "summary");
-    Assert.Equal("""
-                 ╭────────┬────────┬─────────────┬───────┬──────────┬─────────────┬─────────────╮
-                 │ Name   │ Type   │ OS          │ Cores │ RAM (GB) │ Storage     │ Runs On     │
-                 │        │        │             │       │          │ (GB)        │             │
-                 ├────────┼────────┼─────────────┼───────┼──────────┼─────────────┼─────────────┤
-                 │ host01 │ server │ ubuntu-22.0 │ 4     │ 8192     │ 0           │ hypervisor0 │
-                 │        │        │ 4           │       │          │             │ 1           │
-                 ╰────────┴────────┴─────────────┴───────┴──────────┴─────────────┴─────────────╯
+        Assert.Equal("System 'host01' updated.\n", output);
+        Assert.Equal("""
+                     resources:
+                     - kind: System
+                       type: server
+                       os: ubuntu-22.04
+                       cores: 4
+                       ram: 8192
+                       drives: 
+                       runsOn: hypervisor01
+                       name: host01
+                       tags: 
 
-                 """, output);
+                     """, yaml);
 
-    // Delete system
-    (output, yaml) = await ExecuteAsync("systems", "del", "host01");
-    Assert.Equal("""
-                    System 'host01' deleted.
-                    
-                    """, output);
+        // Get system by name
+        (output, yaml) = await ExecuteAsync("systems", "get", "host01");
+        Assert.Equal(
+            "host01  Type: server, OS: ubuntu-22.04, Cores: 4, RAM: 8192GB, Storage: 0GB, \nRunsOn: hypervisor01\n",
+            output);
 
-    // Ensure list is empty
-    (output, yaml) = await ExecuteAsync("systems", "list");
-    Assert.Equal("""
-                 No systems found.
-                 
-                 """, output);
-}
+        // List systems
+        (output, yaml) = await ExecuteAsync("systems", "list");
+        Assert.Equal("""
+                     ╭────────┬────────┬─────────────┬───────┬──────────┬─────────────┬─────────────╮
+                     │ Name   │ Type   │ OS          │ Cores │ RAM (GB) │ Storage     │ Runs On     │
+                     │        │        │             │       │          │ (GB)        │             │
+                     ├────────┼────────┼─────────────┼───────┼──────────┼─────────────┼─────────────┤
+                     │ host01 │ server │ ubuntu-22.0 │ 4     │ 8192     │ 0           │ hypervisor0 │
+                     │        │        │ 4           │       │          │             │ 1           │
+                     ╰────────┴────────┴─────────────┴───────┴──────────┴─────────────┴─────────────╯
 
+                     """, output);
+
+        // Report systems
+        (output, yaml) = await ExecuteAsync("systems", "summary");
+        Assert.Equal("""
+                     ╭────────┬────────┬─────────────┬───────┬──────────┬─────────────┬─────────────╮
+                     │ Name   │ Type   │ OS          │ Cores │ RAM (GB) │ Storage     │ Runs On     │
+                     │        │        │             │       │          │ (GB)        │             │
+                     ├────────┼────────┼─────────────┼───────┼──────────┼─────────────┼─────────────┤
+                     │ host01 │ server │ ubuntu-22.0 │ 4     │ 8192     │ 0           │ hypervisor0 │
+                     │        │        │ 4           │       │          │             │ 1           │
+                     ╰────────┴────────┴─────────────┴───────┴──────────┴─────────────┴─────────────╯
+
+                     """, output);
+
+        // Delete system
+        (output, yaml) = await ExecuteAsync("systems", "del", "host01");
+        Assert.Equal("""
+                     System 'host01' deleted.
+
+                     """, output);
+
+        // Ensure list is empty
+        (output, yaml) = await ExecuteAsync("systems", "list");
+        Assert.Equal("""
+                     No systems found.
+
+                     """, output);
+    }
 }

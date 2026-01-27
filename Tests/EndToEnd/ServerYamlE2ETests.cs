@@ -4,7 +4,8 @@ using Xunit.Abstractions;
 namespace Tests.EndToEnd;
 
 [Collection("Yaml CLI tests")]
-public class ServerYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputHelper) : IClassFixture<TempYamlCliFixture>
+public class ServerYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputHelper)
+    : IClassFixture<TempYamlCliFixture>
 {
     private async Task<(string, string)> ExecuteAsync(params string[] args)
     {
@@ -19,11 +20,11 @@ public class ServerYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
         );
 
         outputHelper.WriteLine(output);
-        
+
         var yaml = await File.ReadAllTextAsync(Path.Combine(fs.Root, "config.yaml"));
         return (output, yaml);
     }
-    
+
     [Fact]
     public async Task servers_cli_workflow_test()
     {
@@ -34,7 +35,7 @@ public class ServerYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
         Assert.Equal("Server 'node01' added.\n", output);
         Assert.Contains("name: node01", yaml);
     }
-    
+
     [Fact]
     public async Task servers_tree_cli_workflow_test()
     {
@@ -43,16 +44,16 @@ public class ServerYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
         var (output, yaml) = await ExecuteAsync("servers", "add", "node01");
         Assert.Equal("Server 'node01' added.\n", output);
         Assert.Contains("name: node01", yaml);
-        
+
         (output, yaml) = await ExecuteAsync("systems", "add", "host01");
         Assert.Equal("System 'host01' added.\n", output);
-        
+
         (output, yaml) = await ExecuteAsync("systems", "add", "host02");
         Assert.Equal("System 'host02' added.\n", output);
-        
+
         (output, yaml) = await ExecuteAsync("systems", "add", "host03");
         Assert.Equal("System 'host03' added.\n", output);
-        
+
         (output, yaml) = await ExecuteAsync(
             "systems", "set", "host01",
             "--runs-on", "node01"
@@ -68,14 +69,14 @@ public class ServerYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
             "--runs-on", "node01"
         );
         Assert.Equal("System 'host03' updated.\n", output);
-        
+
         (output, yaml) = await ExecuteAsync("servers", "tree", "node01");
         Assert.Equal("""
                      node01
                      ├── System: host01
                      ├── System: host02
                      └── System: host03
-                     
+
                      """, output);
     }
 }

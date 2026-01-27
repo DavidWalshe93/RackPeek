@@ -14,7 +14,7 @@ public static class YamlCliTestHost
 {
     public static async Task<string> RunAsync(
         string[] args,
-        string hardwarePath, 
+        string hardwarePath,
         ITestOutputHelper output,
         string configFile
     )
@@ -32,19 +32,19 @@ public static class YamlCliTestHost
 
         var registrar = new TypeRegistrar(services);
         var app = new CommandApp(registrar);
-        
+
         AnsiConsole.Console = console;
         app.Configure(c => c.Settings.Console = console);
-        
+
         CliBootstrap.BuildApp(app, services, config, [configFile]);
-        
+
         services.AddLogging(builder =>
         {
             builder.ClearProviders();
             builder.AddProvider(new XUnitLoggerProvider(output));
         });
 
-        
+
         await app.RunAsync(args);
 
         return console.Output;

@@ -3,6 +3,95 @@
 RackPeek is a lightweight CLI tool for managing and documenting your IT infrastructure and home lab.
 Track servers, switches, routers, desktops, access points, UPS systems, and more — including software systems, services, and networks — all from the command line.
 It’s designed to help you inventory, configure, and audit your environment in a consistent, reusable way.
+# CLI Commands
+
+## Command Tree
+
+- [RackPeek](#rackpeek)
+- [CLI Commands](#cli-commands)
+  - [Command Tree](#command-tree)
+  - [`rpk`](#rpk)
+  - [`rpk switches`](#rpk-switches)
+  - [`rpk switches summary`](#rpk-switches-summary)
+  - [`rpk switches add`](#rpk-switches-add)
+  - [`rpk switches list`](#rpk-switches-list)
+  - [`rpk switches get`](#rpk-switches-get)
+  - [`rpk switches describe`](#rpk-switches-describe)
+  - [`rpk switches set`](#rpk-switches-set)
+  - [`rpk switches del`](#rpk-switches-del)
+  - [`rpk systems`](#rpk-systems)
+  - [`rpk systems summary`](#rpk-systems-summary)
+  - [`rpk systems add`](#rpk-systems-add)
+  - [`rpk systems list`](#rpk-systems-list)
+  - [`rpk systems get`](#rpk-systems-get)
+  - [`rpk systems describe`](#rpk-systems-describe)
+  - [`rpk systems set`](#rpk-systems-set)
+  - [`rpk systems del`](#rpk-systems-del)
+  - [`rpk accesspoints`](#rpk-accesspoints)
+  - [`rpk accesspoints summary`](#rpk-accesspoints-summary)
+  - [`rpk accesspoints add`](#rpk-accesspoints-add)
+  - [`rpk accesspoints list`](#rpk-accesspoints-list)
+  - [`rpk accesspoints get`](#rpk-accesspoints-get)
+  - [`rpk accesspoints describe`](#rpk-accesspoints-describe)
+  - [`rpk accesspoints set`](#rpk-accesspoints-set)
+  - [`rpk accesspoints del`](#rpk-accesspoints-del)
+  - [`rpk ups`](#rpk-ups)
+  - [`rpk ups summary`](#rpk-ups-summary)
+  - [`rpk ups add`](#rpk-ups-add)
+  - [`rpk ups list`](#rpk-ups-list)
+  - [`rpk ups get`](#rpk-ups-get)
+  - [`rpk ups describe`](#rpk-ups-describe)
+  - [`rpk ups set`](#rpk-ups-set)
+  - [`rpk ups del`](#rpk-ups-del)
+  - [`rpk desktops`](#rpk-desktops)
+  - [`rpk desktops add`](#rpk-desktops-add)
+  - [`rpk desktops list`](#rpk-desktops-list)
+  - [`rpk desktops get`](#rpk-desktops-get)
+  - [`rpk desktops describe`](#rpk-desktops-describe)
+  - [`rpk desktops set`](#rpk-desktops-set)
+  - [`rpk desktops del`](#rpk-desktops-del)
+  - [`rpk desktops cpu`](#rpk-desktops-cpu)
+  - [`rpk desktops cpu add`](#rpk-desktops-cpu-add)
+  - [`rpk desktops cpu set`](#rpk-desktops-cpu-set)
+  - [`rpk desktops cpu del`](#rpk-desktops-cpu-del)
+  - [`rpk desktops drive`](#rpk-desktops-drive)
+  - [`rpk desktops drive add`](#rpk-desktops-drive-add)
+  - [`rpk desktops drive set`](#rpk-desktops-drive-set)
+  - [`rpk desktops drive del`](#rpk-desktops-drive-del)
+  - [`rpk desktops gpu`](#rpk-desktops-gpu)
+  - [`rpk desktops gpu add`](#rpk-desktops-gpu-add)
+  - [`rpk desktops gpu set`](#rpk-desktops-gpu-set)
+  - [`rpk desktops gpu del`](#rpk-desktops-gpu-del)
+  - [`rpk desktops nic`](#rpk-desktops-nic)
+  - [`rpk desktops nic add`](#rpk-desktops-nic-add)
+  - [`rpk desktops nic set`](#rpk-desktops-nic-set)
+  - [`rpk desktops nic del`](#rpk-desktops-nic-del)
+  - [`rpk ap`](#rpk-ap)
+  - [`rpk servers`](#rpk-servers)
+  - [`rpk servers summary`](#rpk-servers-summary)
+  - [`rpk servers add`](#rpk-servers-add)
+  - [`rpk servers get`](#rpk-servers-get)
+  - [`rpk servers describe`](#rpk-servers-describe)
+  - [`rpk servers set`](#rpk-servers-set)
+  - [`rpk servers del`](#rpk-servers-del)
+  - [`rpk servers tree`](#rpk-servers-tree)
+  - [`rpk servers cpu`](#rpk-servers-cpu)
+  - [`rpk servers cpu add`](#rpk-servers-cpu-add)
+  - [`rpk servers cpu set`](#rpk-servers-cpu-set)
+  - [`rpk servers cpu del`](#rpk-servers-cpu-del)
+  - [`rpk servers drive`](#rpk-servers-drive)
+  - [`rpk servers drive add`](#rpk-servers-drive-add)
+  - [`rpk servers drive set`](#rpk-servers-drive-set)
+  - [`rpk servers drive del`](#rpk-servers-drive-del)
+  - [`rpk servers gpu`](#rpk-servers-gpu)
+  - [`rpk servers gpu add`](#rpk-servers-gpu-add)
+  - [`rpk servers gpu set`](#rpk-servers-gpu-set)
+  - [`rpk servers gpu del`](#rpk-servers-gpu-del)
+  - [`rpk servers nic`](#rpk-servers-nic)
+  - [`rpk servers nic add`](#rpk-servers-nic-add)
+  - [`rpk servers nic set`](#rpk-servers-nic-set)
+  - [`rpk servers nic del`](#rpk-servers-nic-del)
+
 
 ## `rpk`
 ```
@@ -13,12 +102,15 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    switches    Manage switches                  
-    systems     Manage systems                   
-    ap          Show access point hardware report
-    desktops    Show desktop hardware report     
-    ups         Show UPS hardware report         
-    servers     Manage servers                   
+    switches        Manage switches                  
+    systems         Manage systems                   
+    accesspoints    Manage access points             
+    ups             Manage UPS units                 
+    desktops                                         
+    ap              Show access point hardware report
+    desktops        Show desktop hardware report     
+    ups             Show UPS hardware report         
+    servers         Manage servers                   
 ```
 
 ## `rpk switches`
@@ -269,25 +361,123 @@ OPTIONS:
     -h, --help    Prints help information
 ```
 
-## `rpk ap`
+## `rpk accesspoints`
+```
+DESCRIPTION:
+Manage access points
+
+USAGE:
+    rpk accesspoints [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    summary            Show access point hardware report              
+    add <name>         Add a new access point                         
+    list               List access points                             
+    get <name>         Get an access point by name                    
+    describe <name>    Show detailed information about an access point
+    set <name>         Update access point properties                 
+    del <name>         Delete an access point                         
+```
+
+## `rpk accesspoints summary`
 ```
 DESCRIPTION:
 Show access point hardware report
 
 USAGE:
-    rpk ap [OPTIONS]
+    rpk accesspoints summary [OPTIONS]
 
 OPTIONS:
     -h, --help    Prints help information
 ```
 
-## `rpk desktops`
+## `rpk accesspoints add`
 ```
 DESCRIPTION:
-Show desktop hardware report
+Add a new access point
 
 USAGE:
-    rpk desktops [OPTIONS]
+    rpk accesspoints add <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>    The access point name
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk accesspoints list`
+```
+DESCRIPTION:
+List access points
+
+USAGE:
+    rpk accesspoints list [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk accesspoints get`
+```
+DESCRIPTION:
+Get an access point by name
+
+USAGE:
+    rpk accesspoints get <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>    The access point name
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk accesspoints describe`
+```
+DESCRIPTION:
+Show detailed information about an access point
+
+USAGE:
+    rpk accesspoints describe <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>    The access point name
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk accesspoints set`
+```
+DESCRIPTION:
+Update access point properties
+
+USAGE:
+    rpk accesspoints set <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help     Prints help information            
+        --model    The access point model name        
+        --speed    The speed of the access point in Gb
+```
+
+## `rpk accesspoints del`
+```
+DESCRIPTION:
+Delete an access point
+
+USAGE:
+    rpk accesspoints del <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>    The access point name
 
 OPTIONS:
     -h, --help    Prints help information
@@ -296,10 +486,451 @@ OPTIONS:
 ## `rpk ups`
 ```
 DESCRIPTION:
+Manage UPS units
+
+USAGE:
+    rpk ups [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    summary            Show UPS hardware report             
+    add <name>         Add a new UPS                        
+    list               List UPS units                       
+    get <name>         Get a UPS by name                    
+    describe <name>    Show detailed information about a UPS
+    set <name>         Update UPS properties                
+    del <name>         Delete a UPS                         
+```
+
+## `rpk ups summary`
+```
+DESCRIPTION:
 Show UPS hardware report
 
 USAGE:
-    rpk ups [OPTIONS]
+    rpk ups summary [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk ups add`
+```
+DESCRIPTION:
+Add a new UPS
+
+USAGE:
+    rpk ups add <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk ups list`
+```
+DESCRIPTION:
+List UPS units
+
+USAGE:
+    rpk ups list [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk ups get`
+```
+DESCRIPTION:
+Get a UPS by name
+
+USAGE:
+    rpk ups get <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk ups describe`
+```
+DESCRIPTION:
+Show detailed information about a UPS
+
+USAGE:
+    rpk ups describe <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk ups set`
+```
+DESCRIPTION:
+Update UPS properties
+
+USAGE:
+    rpk ups set <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help     Prints help information
+        --model                           
+        --va                              
+```
+
+## `rpk ups del`
+```
+DESCRIPTION:
+Delete a UPS
+
+USAGE:
+    rpk ups del <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops`
+```
+USAGE:
+    rpk desktops [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <name>          
+    list                
+    get <name>          
+    describe <name>     
+    set <name>          
+    del <name>          
+    cpu                 
+    drive               
+    gpu                 
+    nic                 
+```
+
+## `rpk desktops add`
+```
+USAGE:
+    rpk desktops add <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops list`
+```
+USAGE:
+    rpk desktops list [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops get`
+```
+USAGE:
+    rpk desktops get <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops describe`
+```
+USAGE:
+    rpk desktops describe <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops set`
+```
+USAGE:
+    rpk desktops set <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help     Prints help information
+        --model                           
+```
+
+## `rpk desktops del`
+```
+USAGE:
+    rpk desktops del <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops cpu`
+```
+USAGE:
+    rpk desktops cpu [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <desktop>             
+    set <desktop> <index>     
+    del <desktop> <index>     
+```
+
+## `rpk desktops cpu add`
+```
+USAGE:
+    rpk desktops cpu add <desktop> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The desktop name
+
+OPTIONS:
+    -h, --help       Prints help information  
+        --model      The model name           
+        --cores      The number of cpu cores  
+        --threads    The number of cpu threads
+```
+
+## `rpk desktops cpu set`
+```
+USAGE:
+    rpk desktops cpu set <desktop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The desktop name            
+    <index>      The index of the desktop cpu
+
+OPTIONS:
+    -h, --help       Prints help information  
+        --model      The cpu model            
+        --cores      The number of cpu cores  
+        --threads    The number of cpu threads
+```
+
+## `rpk desktops cpu del`
+```
+USAGE:
+    rpk desktops cpu del <desktop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The name of the desktop               
+    <index>      The index of the desktop cpu to remove
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops drive`
+```
+USAGE:
+    rpk desktops drive [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <desktop>             
+    set <desktop> <index>     
+    del <desktop> <index>     
+```
+
+## `rpk desktops drive add`
+```
+USAGE:
+    rpk desktops drive add <desktop> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The name of the desktop
+
+OPTIONS:
+    -h, --help    Prints help information     
+        --type    The drive type e.g hdd / ssd
+        --size    The drive capacity in Gb    
+```
+
+## `rpk desktops drive set`
+```
+USAGE:
+    rpk desktops drive set <desktop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The desktop name         
+    <index>      The drive index to update
+
+OPTIONS:
+    -h, --help    Prints help information     
+        --type    The drive type e.g hdd / ssd
+        --size    The drive capacity in Gb    
+```
+
+## `rpk desktops drive del`
+```
+USAGE:
+    rpk desktops drive del <desktop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The name of the desktop         
+    <index>      The index of the drive to remove
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops gpu`
+```
+USAGE:
+    rpk desktops gpu [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <desktop>             
+    set <desktop> <index>     
+    del <desktop> <index>     
+```
+
+## `rpk desktops gpu add`
+```
+USAGE:
+    rpk desktops gpu add <desktop> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The name of the desktop
+
+OPTIONS:
+    -h, --help     Prints help information     
+        --model    The Gpu model               
+        --vram     The amount of gpu vram in Gb
+```
+
+## `rpk desktops gpu set`
+```
+USAGE:
+    rpk desktops gpu set <desktop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The desktop name              
+    <index>      The index of the gpu to update
+
+OPTIONS:
+    -h, --help     Prints help information     
+        --model    The gpu model name          
+        --vram     The amount of gpu vram in Gb
+```
+
+## `rpk desktops gpu del`
+```
+USAGE:
+    rpk desktops gpu del <desktop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The desktop name              
+    <index>      The index of the Gpu to remove
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops nic`
+```
+USAGE:
+    rpk desktops nic [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <desktop>             
+    set <desktop> <index>     
+    del <desktop> <index>     
+```
+
+## `rpk desktops nic add`
+```
+USAGE:
+    rpk desktops nic add <desktop> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The desktop name
+
+OPTIONS:
+    -h, --help     Prints help information          
+        --type     The nic port type e.g rj45 / sfp+
+        --speed    The port speed                   
+        --ports    The number of ports              
+```
+
+## `rpk desktops nic set`
+```
+USAGE:
+    rpk desktops nic set <desktop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The desktop name              
+    <index>      The index of the nic to remove
+
+OPTIONS:
+    -h, --help     Prints help information          
+        --type     The nic port type e.g rj45 / sfp+
+        --speed    The speed of the nic in Gb/s     
+        --ports    The number of ports              
+```
+
+## `rpk desktops nic del`
+```
+USAGE:
+    rpk desktops nic del <desktop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <desktop>    The desktop name              
+    <index>      The index of the nic to remove
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk ap`
+```
+DESCRIPTION:
+Show access point hardware report
+
+USAGE:
+    rpk ap [OPTIONS]
 
 OPTIONS:
     -h, --help    Prints help information
@@ -317,23 +948,23 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    summary            Show server hardware report              
-    add <name>         Add a new server                         
-    get <name>         List servers or get a server by name     
-    describe <name>    Show detailed information about a server 
-    set <name>         Update server properties                 
-    del <name>         Delete a server                          
-    tree <name>        Displays a dependency tree for the server
-    cpu                Manage server CPUs                       
-    drive              Manage server drives                     
-    gpu                Manage server GPUs                       
-    nic                Manage server NICs                       
+    summary            Show a summarized hardware report for all servers
+    add <name>         Add a new server                                 
+    get <name>         List servers or get a server by name             
+    describe <name>    Show detailed information about a server         
+    set <name>         Update server properties                         
+    del <name>         Delete a server                                  
+    tree <name>        Displays a dependency tree for the server        
+    cpu                Manage server CPUs                               
+    drive              Manage server drives                             
+    gpu                Manage server GPUs                               
+    nic                Manage server NICs                               
 ```
 
 ## `rpk servers summary`
 ```
 DESCRIPTION:
-Show server hardware report
+Show a summarized hardware report for all servers
 
 USAGE:
     rpk servers summary [OPTIONS]

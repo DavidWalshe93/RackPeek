@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using RackPeek.Domain.Resources.Hardware.AccessPoints;
 using Spectre.Console;
@@ -7,7 +8,8 @@ namespace RackPeek.Commands.AccessPoints;
 
 public class AccessPointAddSettings : CommandSettings
 {
-    [CommandArgument(0, "<name>")] 
+    [CommandArgument(0, "<name>")]
+    [Description("The access point name.")]
     public string Name { get; set; } = default!;
 }
 

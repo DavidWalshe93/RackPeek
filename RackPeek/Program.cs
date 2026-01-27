@@ -52,6 +52,7 @@ public static class Program
         var app = new CommandApp(registrar);
         
         CliBootstrap.BuildApp(app, services, configuration, [
+            "accesspoints.yaml",
             "servers.yaml",
             "desktops.yaml",
             "switches.yaml",

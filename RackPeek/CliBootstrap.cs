@@ -271,6 +271,8 @@ public static class CliBootstrap
                     desktops.AddCommand<DesktopDeleteCommand>("del");
                     desktops.AddCommand<DesktopReportCommand>("summary")
                         .WithDescription("Show desktop hardware report");
+                    desktops.AddCommand<DesktopTreeCommand>("tree");
+
 
                     // CPU
                     desktops.AddBranch("cpu", cpu =>

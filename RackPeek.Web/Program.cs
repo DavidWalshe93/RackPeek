@@ -1,5 +1,10 @@
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
+using RackPeek.Domain;
+using RackPeek.Domain.Resources.Hardware;
+using RackPeek.Domain.Resources.Services;
+using RackPeek.Domain.Resources.SystemResources;
 using RackPeek.Web.Components;
+using RackPeek.Yaml;
 
 namespace RackPeek.Web;
 
@@ -13,7 +18,37 @@ public class Program
             builder.Environment,
             builder.Configuration
         );
+
+        var yamlDir = "./config";
         
+        var collection = new YamlResourceCollection();
+        var basePath = Directory.GetCurrentDirectory();
+
+        // Resolve yamlDir as relative to basePath
+        var yamlPath = Path.IsPathRooted(yamlDir)
+            ? yamlDir
+            : Path.Combine(basePath, yamlDir);
+
+        if (!Directory.Exists(yamlPath))
+            throw new DirectoryNotFoundException(
+                $"YAML directory not found: {yamlPath}"
+            );
+
+        // Load all .yml and .yaml files
+        var yamlFiles = Directory.EnumerateFiles(yamlPath, "*.yml")
+            .Concat(Directory.EnumerateFiles(yamlPath, "*.yaml"))
+            .ToArray();
+        
+        collection.LoadFiles(yamlFiles.Select(f => Path.Combine(basePath, f)));
+
+        // Infrastructure
+        builder.Services.AddScoped<IHardwareRepository>(_ => new YamlHardwareRepository(collection));
+        builder.Services.AddScoped<ISystemRepository>(_ => new YamlSystemRepository(collection));
+        builder.Services.AddScoped<IServiceRepository>(_ => new YamlServiceRepository(collection));
+
+        
+        builder.Services.AddUseCases();
+
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();

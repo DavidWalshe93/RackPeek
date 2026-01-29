@@ -6,6 +6,18 @@ namespace RackPeek.Yaml;
 
 public class YamlHardwareRepository(YamlResourceCollection resources) : IHardwareRepository
 {
+    public Task<int> GetCountAsync()
+    {
+        return Task.FromResult(resources.HardwareResources.Count);
+    }
+
+    public Task<Dictionary<string, int>> GetKindCountAsync()
+    {
+        return Task.FromResult(resources.HardwareResources
+            .GroupBy(h => h.Kind)
+            .ToDictionary(k => k.Key, v => v.Count()));
+    }
+
     public Task<IReadOnlyList<Hardware>> GetAllAsync()
     {
         return Task.FromResult(resources.HardwareResources);

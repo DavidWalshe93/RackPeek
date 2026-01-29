@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RackPeek.Commands;
 using RackPeek.Commands.AccessPoints;
 using RackPeek.Commands.Desktops;
 using RackPeek.Commands.Desktops.Cpus;
@@ -70,6 +71,9 @@ public static class CliBootstrap
             config.SetApplicationName("rpk");
             config.ValidateExamples();
 
+
+            config.AddCommand<GetTotalSummaryCommand>("summary")
+                .WithDescription("Show a summarized report for all resources");
             // ----------------------------
             // Server commands (CRUD-style)
             // ----------------------------

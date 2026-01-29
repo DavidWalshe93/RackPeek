@@ -2,6 +2,9 @@ namespace RackPeek.Domain.Resources.Hardware;
 
 public interface IHardwareRepository
 {
+    Task<int> GetCountAsync();
+    Task<Dictionary<string, int>> GetKindCountAsync();
+
     Task<IReadOnlyList<Models.Hardware>> GetAllAsync();
     Task AddAsync(Models.Hardware hardware);
     Task UpdateAsync(Models.Hardware hardware);

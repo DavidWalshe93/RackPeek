@@ -2,6 +2,10 @@ namespace RackPeek.Domain.Resources.SystemResources;
 
 public interface ISystemRepository
 {
+    Task<int> GetSystemCountAsync();
+    Task<Dictionary<string, int>> GetSystemTypeCountAsync();
+    Task<Dictionary<string, int>> GetSystemOsCountAsync();
+
     Task<IReadOnlyList<SystemResource>> GetAllAsync();
     Task AddAsync(SystemResource systemResource);
     Task UpdateAsync(SystemResource systemResource);

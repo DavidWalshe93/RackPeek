@@ -4,6 +4,20 @@ namespace RackPeek.Yaml;
 
 public class YamlServiceRepository(YamlResourceCollection resources) : IServiceRepository
 {
+    public Task<int> GetCountAsync()
+    {
+        return Task.FromResult(resources.ServiceResources.Count);
+    }
+
+    public Task<int> GetIpAddressCountAsync()
+    {
+        return Task.FromResult(resources.ServiceResources
+            .Where(i => i.Network?.Ip != null)
+            .Select(i => i.Network!.Ip)
+            .Distinct()
+            .Count());
+    }
+    
     public Task<IReadOnlyList<Service>> GetAllAsync()
     {
         return Task.FromResult(resources.ServiceResources);

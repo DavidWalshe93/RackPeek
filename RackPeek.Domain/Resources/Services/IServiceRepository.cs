@@ -2,6 +2,9 @@ namespace RackPeek.Domain.Resources.Services;
 
 public interface IServiceRepository
 {
+    Task<int> GetCountAsync();
+    Task<int> GetIpAddressCountAsync();
+
     Task<IReadOnlyList<Service>> GetAllAsync();
     Task AddAsync(Service service);
     Task UpdateAsync(Service service);

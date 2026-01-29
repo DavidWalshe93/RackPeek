@@ -4,6 +4,26 @@ namespace RackPeek.Yaml;
 
 public class YamlSystemRepository(YamlResourceCollection resources) : ISystemRepository
 {
+    public Task<int> GetSystemCountAsync()
+    {
+        return Task.FromResult(resources.SystemResources.Count);    }
+
+    public Task<Dictionary<string, int>> GetSystemTypeCountAsync()
+    {
+        return Task.FromResult(resources.SystemResources
+            .Where(s => !string.IsNullOrEmpty(s.Type))
+            .GroupBy(h => h.Type!)
+            .ToDictionary(k => k.Key, v => v.Count()));
+    }
+
+    public Task<Dictionary<string, int>> GetSystemOsCountAsync()
+    {
+        return Task.FromResult(resources.SystemResources
+            .Where(s => !string.IsNullOrEmpty(s.Os))
+            .GroupBy(h => h.Os!)
+            .ToDictionary(k => k.Key, v => v.Count()));
+    }
+    
     public Task<IReadOnlyList<SystemResource>> GetAllAsync()
     {
         return Task.FromResult(resources.SystemResources);

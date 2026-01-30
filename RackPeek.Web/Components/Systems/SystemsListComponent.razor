@@ -2,8 +2,12 @@
 @using RackPeek.Domain.Resources.SystemResources.UseCases
 @inject ISystemRepository SystemRepository
 @inject UpdateSystemUseCase UpdateSystemUseCase
+@inject NavigationManager Nav
 
-<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
+<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6 space-y-6">
+    
+    <AddSystemComponent OnCreated="NavigateToNewResource" />
+    
     @if (_systems is null)
     {
         <div class="text-zinc-500">loading systems…</div>
@@ -44,5 +48,9 @@
             edit.RunsOn
         );
     }
-
+    private Task NavigateToNewResource(string serverName)
+    {
+        Nav.NavigateTo($"/resources/systems/{serverName}");
+        return Task.CompletedTask;
+    }
 }

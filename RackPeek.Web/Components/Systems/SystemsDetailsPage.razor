@@ -8,6 +8,10 @@
 @inject GetSystemServiceTreeUseCase GetSystemServiceTreeUseCase
 <PageTitle>System Details</PageTitle>
 
+<ResourceBreadCrumbComponent
+    ResourceType="ResourceType.System"
+    ResourceName="@SystemName" />
+
 <div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
     @if (_system is null && !_loading)
     {

@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using System.Collections.Concurrent;
 using RackPeek.Domain.Resources;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Services;
@@ -8,10 +9,16 @@ using YamlDotNet.Serialization.NamingConventions;
 
 namespace RackPeek.Yaml;
 
-public sealed class YamlResourceCollection
+public sealed class YamlResourceCollection(bool watch) : IDisposable
 {
+    private readonly bool _watch = watch;
+    
     private readonly List<ResourceEntry> _entries = [];
     private readonly List<string> _knownFiles = [];
+    private readonly Dictionary<string, FileSystemWatcher> _watchers = [];
+    private readonly ConcurrentDictionary<string, DateTime> _reloadQueue = [];
+
+    private static readonly TimeSpan ReloadDebounce = TimeSpan.FromMilliseconds(300);
 
     public IReadOnlyList<string> SourceFiles => _knownFiles.ToList();
 
@@ -24,48 +31,111 @@ public sealed class YamlResourceCollection
     public IReadOnlyList<Service> ServiceResources =>
         _entries.Select(e => e.Resource).OfType<Service>().ToList();
 
+    // ----------------------------
+    // Loading
+    // ----------------------------
+
     public void LoadFiles(IEnumerable<string> filePaths)
     {
         foreach (var file in filePaths)
         {
-            // Track the file even if it is empty
-            if (!_knownFiles.Contains(file))
-                _knownFiles.Add(file);
+            TrackFile(file);
 
-            var yaml = File.Exists(file) ? File.ReadAllText(file) : "";
-            var resources = Deserialize(yaml);
-
-            foreach (var resource in resources) _entries.Add(new ResourceEntry(resource, file));
+            LoadFile(file);
         }
     }
 
     public void Load(string yaml, string file)
     {
-        if (!_knownFiles.Contains(file))
-            _knownFiles.Add(file);
+        TrackFile(file);
+        foreach (var resource in Deserialize(yaml))
+            _entries.Add(new ResourceEntry(resource, file));
+    }
+
+    private void LoadFile(string file)
+    {
+        RemoveEntriesFromFile(file);
+
+        var yaml = File.Exists(file)
+            ? SafeReadAllText(file)
+            : string.Empty;
 
         foreach (var resource in Deserialize(yaml))
             _entries.Add(new ResourceEntry(resource, file));
     }
 
-    public void SaveAll()
-    {
-        foreach (var file in _knownFiles)
-        {
-            var resources = _entries
-                .Where(e => e.SourceFile == file)
-                .Select(e => e.Resource);
+    // ----------------------------
+    // Watching
+    // ----------------------------
 
-            SaveToFile(file, resources);
+    private void TrackFile(string file)
+    {
+        if (!_knownFiles.Contains(file))
+            _knownFiles.Add(file);
+
+        var directory = Path.GetDirectoryName(file)!;
+
+        if (_watchers.ContainsKey(directory) || !_watch)
+            return;
+
+        var watcher = new FileSystemWatcher(directory)
+        {
+            EnableRaisingEvents = true,
+            NotifyFilter = NotifyFilters.LastWrite
+                         | NotifyFilters.FileName
+                         | NotifyFilters.Size
+        };
+
+        watcher.Changed += OnFileChanged;
+        watcher.Created += OnFileChanged;
+        watcher.Deleted += OnFileChanged;
+        watcher.Renamed += OnFileRenamed;
+
+        _watchers[directory] = watcher;
+    }
+
+    private void OnFileChanged(object sender, FileSystemEventArgs e)
+    {
+        if (!_knownFiles.Contains(e.FullPath))
+            return;
+
+        QueueReload(e.FullPath);
+    }
+
+    private void OnFileRenamed(object sender, RenamedEventArgs e)
+    {
+        if (_knownFiles.Contains(e.OldFullPath))
+        {
+            RemoveEntriesFromFile(e.OldFullPath);
+            _knownFiles.Remove(e.OldFullPath);
         }
+
+        if (_knownFiles.Contains(e.FullPath))
+            QueueReload(e.FullPath);
+    }
+
+    private void QueueReload(string file)
+    {
+        _reloadQueue[file] = DateTime.UtcNow;
+
+        Task.Delay(ReloadDebounce).ContinueWith(_ =>
+        {
+            if (_reloadQueue.TryGetValue(file, out var timestamp) &&
+                DateTime.UtcNow - timestamp >= ReloadDebounce)
+            {
+                _reloadQueue.TryRemove(file, out var _);
+                LoadFile(file);
+            }
+        });
     }
 
     // ----------------------------
-    // CRUD operations
+    // CRUD
     // ----------------------------
 
     public void Add(Resource resource, string sourceFile)
     {
+        TrackFile(sourceFile);
         _entries.Add(new ResourceEntry(resource, sourceFile));
     }
 
@@ -77,7 +147,6 @@ public sealed class YamlResourceCollection
         if (existing == null)
             throw new InvalidOperationException($"Resource '{resource.Name}' not found.");
 
-        // keep file ownership
         _entries.Remove(existing);
         _entries.Add(new ResourceEntry(resource, existing.SourceFile));
     }
@@ -100,9 +169,26 @@ public sealed class YamlResourceCollection
             .FirstOrDefault(r => r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
     }
 
+    private void RemoveEntriesFromFile(string file)
+    {
+        _entries.RemoveAll(e => e.SourceFile == file);
+    }
+
     // ----------------------------
-    // Serialization helpers
+    // Serialization
     // ----------------------------
+
+    public void SaveAll()
+    {
+        foreach (var file in _knownFiles)
+        {
+            var resources = _entries
+                .Where(e => e.SourceFile == file)
+                .Select(e => e.Resource);
+
+            SaveToFile(file, resources);
+        }
+    }
 
     private static void SaveToFile(string filePath, IEnumerable<Resource> resources)
     {
@@ -112,9 +198,7 @@ public sealed class YamlResourceCollection
 
         var payload = new OrderedDictionary
         {
-            ["resources"] = resources
-                .Select(SerializeResource)
-                .ToList()
+            ["resources"] = resources.Select(SerializeResource).ToList()
         };
 
         File.WriteAllText(filePath, serializer.Serialize(payload));
@@ -136,7 +220,6 @@ public sealed class YamlResourceCollection
                 Ups => "Ups",
                 SystemResource => "System",
                 Service => "Service",
-
                 _ => throw new InvalidOperationException($"Unknown resource type: {resource.GetType().Name}")
             }
         };
@@ -153,18 +236,17 @@ public sealed class YamlResourceCollection
 
         foreach (var (key, value) in props)
         {
-            if (key == "kind") continue;
-            map[key] = value;
+            if (key != "kind")
+                map[key] = value;
         }
 
         return map;
     }
 
-
     private static List<Resource> Deserialize(string yaml)
     {
         if (string.IsNullOrWhiteSpace(yaml))
-            return new List<Resource>();
+            return [];
 
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
@@ -176,7 +258,7 @@ public sealed class YamlResourceCollection
             Dictionary<string, List<Dictionary<string, object>>>>(yaml);
 
         if (raw == null || !raw.TryGetValue("resources", out var items))
-            return new List<Resource>();
+            return [];
 
         var resources = new List<Resource>();
 
@@ -188,7 +270,7 @@ public sealed class YamlResourceCollection
                 .Build()
                 .Serialize(item);
 
-            Resource resource = kind switch
+            resources.Add(kind switch
             {
                 "Server" => deserializer.Deserialize<Server>(typedYaml),
                 "Switch" => deserializer.Deserialize<Switch>(typedYaml),
@@ -201,12 +283,33 @@ public sealed class YamlResourceCollection
                 "System" => deserializer.Deserialize<SystemResource>(typedYaml),
                 "Service" => deserializer.Deserialize<Service>(typedYaml),
                 _ => throw new InvalidOperationException($"Unknown kind: {kind}")
-            };
-
-            resources.Add(resource);
+            });
         }
 
         return resources;
+    }
+
+    private static string SafeReadAllText(string file)
+    {
+        for (var i = 0; i < 5; i++)
+        {
+            try
+            {
+                return File.ReadAllText(file);
+            }
+            catch (IOException)
+            {
+                Thread.Sleep(50);
+            }
+        }
+
+        return string.Empty;
+    }
+
+    public void Dispose()
+    {
+        foreach (var watcher in _watchers.Values)
+            watcher.Dispose();
     }
 
     private sealed record ResourceEntry(Resource Resource, string SourceFile);

@@ -1,0 +1,102 @@
+﻿@using RackPeek.Domain.Resources.Hardware
+@using RackPeek.Domain.Resources.Services
+@using RackPeek.Domain.Resources.SystemResources
+@inject IHardwareRepository HardwareRepository
+@inject ISystemRepository SystemRepository
+@inject IServiceRepository ServiceRepository
+@inject NavigationManager Nav
+
+<div class="text-sm text-zinc-300 flex gap-1 items-center">
+    @foreach (var crumb in Breadcrumbs)
+    {
+        <span class="text-zinc-500">/</span>
+
+        <a class="hover:text-white transition-colors"
+           href="@crumb.Href">
+            @crumb.Label
+        </a>
+    }
+</div>
+
+@code {
+    [Parameter][EditorRequired]
+    public ResourceType ResourceType { get; set; }
+
+    [Parameter][EditorRequired]
+    public string ResourceName { get; set; } = default!;
+
+    private List<Breadcrumb> Breadcrumbs { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Breadcrumbs.Clear();
+
+        switch (ResourceType)
+        {
+            case ResourceType.Hardware:
+                await BuildHardwarePath(ResourceName);
+                break;
+
+            case ResourceType.System:
+                await BuildSystemPath(ResourceName);
+                break;
+
+            case ResourceType.Service:
+                await BuildServicePath(ResourceName);
+                break;
+        }
+    }
+
+    private async Task BuildHardwarePath(string hardwareName)
+    {
+        Breadcrumbs.Add(new(hardwareName, $"resources/hardware/{hardwareName}"));
+    }
+
+    private async Task BuildSystemPath(string systemName)
+    {
+        var system = await SystemRepository.GetByNameAsync(systemName);
+
+        if (system?.RunsOn is not null)
+        {
+            Breadcrumbs.Add(new(
+                system.RunsOn,
+                $"resources/hardware/{system.RunsOn}"
+            ));
+        }
+
+        Breadcrumbs.Add(new(
+            systemName,
+            $"resources/systems/{systemName}"
+        ));
+    }
+
+    private async Task BuildServicePath(string serviceName)
+    {
+        var service = await ServiceRepository.GetByNameAsync(serviceName);
+
+        if (service?.RunsOn is not null)
+        {
+            var system = await SystemRepository.GetByNameAsync(service.RunsOn);
+
+            if (system?.RunsOn is not null)
+            {
+                Breadcrumbs.Add(new(
+                    system.RunsOn,
+                    $"resources/hardware/{system.RunsOn}"
+                ));
+            }
+
+            Breadcrumbs.Add(new(
+                service.RunsOn,
+                $"resources/systems/{service.RunsOn}"
+            ));
+        }
+
+        Breadcrumbs.Add(new(
+            serviceName,
+            $"resources/services/{serviceName}"
+        ));
+    }
+
+    private record Breadcrumb(string Label, string Href);
+}

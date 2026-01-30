@@ -21,7 +21,7 @@ public class Program
 
         var yamlDir = "./config";
 
-        var collection = new YamlResourceCollection();
+        var collection = new YamlResourceCollection(true);
         var basePath = Directory.GetCurrentDirectory();
 
         // Resolve yamlDir as relative to basePath

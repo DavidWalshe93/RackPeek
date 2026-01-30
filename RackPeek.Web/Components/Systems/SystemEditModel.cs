@@ -1,6 +1,6 @@
 using RackPeek.Domain.Resources.SystemResources;
 
-namespace RackPeek.Web.Components.Components;
+namespace RackPeek.Web.Components.Systems;
 
 public sealed class SystemEditModel
 {

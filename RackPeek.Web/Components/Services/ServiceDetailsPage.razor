@@ -6,6 +6,10 @@
 @inject UpdateServiceUseCase UpdateServiceUseCase
 <PageTitle>Service Details</PageTitle>
 
+<ResourceBreadCrumbComponent
+    ResourceType="ResourceType.Service"
+    ResourceName="@ServiceName" />
+
 <div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
     @if (_service is null && !_loading)
     {

@@ -1,0 +1,37 @@
+﻿@using RackPeek.Domain.Resources.Hardware.AccessPoints
+@using RackPeek.Domain.Resources.Hardware.Models
+@inject GetAccessPointsUseCase GetAccessPoints
+
+<PageTitle>Access Points</PageTitle>
+
+<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
+    @if (_AccessPoints is null)
+    {
+        <div class="text-zinc-500">loading AccessPoints…</div>
+    }
+    else if (_AccessPoints.Count == 0)
+    {
+        <div class="text-zinc-500">no AccessPoints found</div>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var accessPoint in _AccessPoints.OrderBy(s => s.Name))
+            {
+                <NavLink href="@($"/resources/hardware/{accessPoint.Name}")" class="block">
+                    <AccessPointCardComponent AccessPoint="accessPoint"/>
+                </NavLink>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private IReadOnlyList<AccessPoint>? _AccessPoints;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _AccessPoints = await GetAccessPoints.ExecuteAsync();
+    }
+
+}

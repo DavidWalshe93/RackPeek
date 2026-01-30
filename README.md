@@ -7,6 +7,7 @@ It’s designed to help you inventory, configure, and audit your environment in 
 ## Command Tree
 
 - [rpk](Commands.md#rpk)
+  - [summary](Commands.md#rpk-summary)
   - [servers](Commands.md#rpk-servers)
     - [summary](Commands.md#rpk-servers-summary)
     - [add](Commands.md#rpk-servers-add)
@@ -72,6 +73,7 @@ It’s designed to help you inventory, configure, and audit your environment in 
     - [set](Commands.md#rpk-desktops-set)
     - [del](Commands.md#rpk-desktops-del)
     - [summary](Commands.md#rpk-desktops-summary)
+    - [tree](Commands.md#rpk-desktops-tree)
     - [cpu](Commands.md#rpk-desktops-cpu)
       - [add](Commands.md#rpk-desktops-cpu-add)
       - [set](Commands.md#rpk-desktops-cpu-set)

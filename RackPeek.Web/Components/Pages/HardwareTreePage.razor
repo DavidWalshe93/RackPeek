@@ -2,10 +2,27 @@
 @using RackPeek.Domain.Resources.Hardware
 @inject IHardwareRepository HardwareRepository
 
-<PageTitle>Hardware Tree</PageTitle>
-
+<PageTitle>Hardware</PageTitle>
+<h1 class="text-lg text-zinc-100">
+    Hardware
+</h1>
 <div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
 
+    <nav class="space-x-6 text-sm mb-4">
+        <NavLink href="/servers/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
+            Servers
+        </NavLink>
+        <NavLink href="/switches/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
+            Switches
+        </NavLink>
+        <NavLink href="/desktops/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
+            Desktops
+        </NavLink>     
+        <NavLink href="/accesspoints/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
+            AccessPoints
+        </NavLink>
+    </nav>
+    
     @if (_tree is null)
     {
         <div class="text-zinc-500">loading tree…</div>
@@ -33,9 +50,20 @@
                         <li>
                             <!-- Hardware -->
                             <NavLink href="@($"/resources/hardware/{hardware.HardwareName}")" class="block">
-                                <div class="text-zinc-100">
-                                    @hardware.HardwareName
-                                </div>
+                               
+                                @if (hardware.Systems.Any())
+                                {
+                                    <div class="text-zinc-100">
+                                        @hardware.HardwareName (@hardware.Systems.Count / @hardware.Systems.Sum(s => s.Services.Count))
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-zinc-100">
+                                        @hardware.HardwareName
+                                    </div>
+                                }
+               
                             </NavLink>
 
                             @if (hardware.Systems.Any())
@@ -46,9 +74,19 @@
                                         <li>
                                             <!-- System -->
                                             <NavLink href="@($"/resources/systems/{system.SystemName}")" class="block">
-                                                <div class="text-zinc-300">
-                                                    └─ @system.SystemName
-                                                </div>
+                                                @if (system.Services.Any())
+                                                {
+                                                    <div class="text-zinc-300">
+                                                        └─ @system.SystemName (@system.Services.Count)
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="text-zinc-300">
+                                                        └─ @system.SystemName
+                                                    </div>
+                                                }
+                                 
                                             </NavLink>
 
                                             @if (system.Services.Any())

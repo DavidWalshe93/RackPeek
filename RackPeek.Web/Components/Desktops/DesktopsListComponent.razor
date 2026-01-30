@@ -1,0 +1,37 @@
+﻿@using RackPeek.Domain.Resources.Hardware.Desktops
+@using RackPeek.Domain.Resources.Hardware.Models
+@inject GetDesktopsUseCase GetDesktops
+
+<PageTitle>Desktops</PageTitle>
+
+<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
+    @if (_desktops is null)
+    {
+        <div class="text-zinc-500">loading desktops…</div>
+    }
+    else if (_desktops.Count == 0)
+    {
+        <div class="text-zinc-500">no desktops found</div>
+    }
+    else
+    {
+        <div class="space-y-4">
+            @foreach (var desktop in _desktops.OrderBy(s => s.Name))
+            {
+                <NavLink href="@($"/resources/hardware/{desktop.Name}")" class="block">
+                    <DesktopCardComponent Desktop="desktop"/>
+                </NavLink>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private IReadOnlyList<Desktop>? _desktops;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _desktops = await GetDesktops.ExecuteAsync();
+    }
+
+}

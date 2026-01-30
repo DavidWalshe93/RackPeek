@@ -1,0 +1,76 @@
+﻿@using RackPeek.Domain.Resources.Hardware
+@using RackPeek.Domain.Resources.Services
+@using RackPeek.Domain.Resources.Services.UseCases
+@if (Tree is null)
+{
+    <div class="text-zinc-500 text-sm">
+        No data.
+    </div>
+}
+else
+{
+    <div class="ml-4 border-l border-zinc-800 pl-4 space-y-2">
+
+        @if (Tree.Services.Any())
+        {
+            @foreach (var service in Tree.Services)
+            {
+                var url = service.NetworkString();
+                <NavLink href="@($"/resources/services/{service.Name}")" class="block">
+                    <div class="border border-zinc-800 rounded bg-zinc-900 p-2 hover:border-zinc-700">
+        
+                        <div class="text-zinc-200 text-sm">
+                            @service.Name
+                        </div>
+
+                        @{
+                            var srv = BuildServiceSubtitle(service);
+                        }
+                
+
+                        <div class="text-xs text-zinc-500 mt-1">
+                            Service - 
+                            @if (!string.IsNullOrEmpty(srv))
+                            {
+                                <a href="@url"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="underline hover:text-emerald-400"
+                                   @onclick:stopPropagation>
+                                    @srv
+                                </a>
+
+                            }
+
+                        </div>
+
+                            </div>
+                </NavLink>
+
+            }
+
+        }
+        else
+        {
+            <div class="text-xs text-zinc-600 italic">
+                No services
+            </div>
+        }
+
+    </div>
+}
+
+@code {
+    [Parameter][EditorRequired] public SystemDependencyTree? Tree { get; set; }
+    
+    
+    private static string? BuildServiceSubtitle(Service service)
+    {
+        var endpoint = service.NetworkString();
+
+        if (string.IsNullOrWhiteSpace(endpoint))
+            return null;
+
+        return endpoint;
+    }
+}

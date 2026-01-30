@@ -9,13 +9,26 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    servers         Manage servers      
-    switches        Manage switches     
-    systems         Manage systems      
-    accesspoints    Manage access points
-    ups             Manage UPS units    
-    desktops                            
-    services        Manage services     
+    summary         Show a summarized report for all resources
+    servers         Manage servers                            
+    switches        Manage switches                           
+    systems         Manage systems                            
+    accesspoints    Manage access points                      
+    ups             Manage UPS units                          
+    desktops                                                  
+    services        Manage services                           
+```
+
+## `rpk summary`
+```
+DESCRIPTION:
+Show a summarized report for all resources
+
+USAGE:
+    rpk summary [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
 ```
 
 ## `rpk servers`
@@ -947,6 +960,7 @@ COMMANDS:
     set <name>                                     
     del <name>                                     
     summary            Show desktop hardware report
+    tree <name>                                    
     cpu                                            
     drive                                          
     gpu                                            
@@ -1030,6 +1044,18 @@ Show desktop hardware report
 
 USAGE:
     rpk desktops summary [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk desktops tree`
+```
+USAGE:
+    rpk desktops tree <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
 
 OPTIONS:
     -h, --help    Prints help information

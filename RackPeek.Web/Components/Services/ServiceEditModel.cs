@@ -1,6 +1,6 @@
 using RackPeek.Domain.Resources.Services;
 
-namespace RackPeek.Web.Components.Components;
+namespace RackPeek.Web.Components.Services;
 
 public sealed class ServiceEditModel
 {

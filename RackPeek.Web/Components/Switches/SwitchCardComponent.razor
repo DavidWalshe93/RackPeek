@@ -1,0 +1,59 @@
+﻿@using RackPeek.Domain.Resources.Hardware.Models
+
+<div class="border border-zinc-800 rounded p-4 bg-zinc-900">
+    <div class="flex justify-between items-center mb-3">
+        <div class="text-zinc-100">
+            @Switch.Name
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Switch.Model))
+        {
+            <span class="text-xs text-zinc-400">
+                @Switch.Model
+            </span>
+        }
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+
+        @if (Switch.Managed is not null || Switch.Poe is not null)
+        {
+            <div>
+                <div class="text-zinc-400 mb-1">Features</div>
+                <div class="flex gap-2 flex-wrap">
+                    @if (Switch.Managed == true)
+                    {
+                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                            Managed
+                        </span>
+                    }
+                    @if (Switch.Poe == true)
+                    {
+                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                            PoE
+                        </span>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Switch.Ports?.Any() == true)
+        {
+            <div>
+                <div class="text-zinc-400 mb-1">Ports</div>
+                @foreach (var port in Switch.Ports)
+                {
+                    <div class="text-zinc-300">
+                        @port.Count× @port.Type — @port.Speed Gbps
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter][EditorRequired]
+    public Switch Switch { get; set; } = default!;
+}

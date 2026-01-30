@@ -1,10 +1,14 @@
 ﻿@using RackPeek.Domain.Resources.Hardware.Models
 @using RackPeek.Domain.Resources.Hardware.Servers
 @inject GetServersUseCase GetServers
+@inject NavigationManager Nav
 
 <PageTitle>Servers</PageTitle>
 
-<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
+<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6 space-y-6">
+
+    <AddServerComponent OnCreated="NavigateToNewResource" />
+
     @if (_servers is null)
     {
         <div class="text-zinc-500">loading servers…</div>
@@ -19,7 +23,7 @@
             @foreach (var server in _servers.OrderBy(s => s.Name))
             {
                 <NavLink href="@($"/resources/hardware/{server.Name}")" class="block">
-                    <ServerCardComponent Server="server"/>
+                    <ServerCardComponent Server="server" />
                 </NavLink>
             }
         </div>
@@ -34,4 +38,9 @@
         _servers = await GetServers.ExecuteAsync();
     }
 
+    private Task NavigateToNewResource(string serverName)
+    {
+        Nav.NavigateTo($"/resources/hardware/{serverName}");
+        return Task.CompletedTask;
+    }
 }

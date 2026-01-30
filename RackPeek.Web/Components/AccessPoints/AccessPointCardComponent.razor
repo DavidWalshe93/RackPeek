@@ -1,0 +1,35 @@
+﻿@using RackPeek.Domain.Resources.Hardware.Models
+
+<div class="border border-zinc-800 rounded p-4 bg-zinc-900">
+    <div class="flex justify-between items-center mb-3">
+        <div class="text-zinc-100">
+            @AccessPoint.Name
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(AccessPoint.Model))
+        {
+            <span class="text-xs text-zinc-400">
+                @AccessPoint.Model
+            </span>
+        }
+    </div>
+
+    <div class="text-sm">
+
+        @if (AccessPoint.Speed is not null)
+        {
+            <div>
+                <div class="text-zinc-400 mb-1">Speed</div>
+                <div class="text-zinc-300">
+                    @AccessPoint.Speed Gbps
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    [Parameter][EditorRequired]
+    public AccessPoint AccessPoint { get; set; } = default!;
+}

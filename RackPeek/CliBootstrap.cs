@@ -31,12 +31,13 @@ public static class CliBootstrap
         CommandApp app,
         IServiceCollection services,
         IConfiguration configuration,
-        string yamlDir
+        string yamlDir,
+        bool watch = false
     )
     {
         services.AddSingleton(configuration);
 
-        var collection = new YamlResourceCollection();
+        var collection = new YamlResourceCollection(watch);
         var basePath = configuration["HardwarePath"] ?? Directory.GetCurrentDirectory();
 
         // Resolve yamlDir as relative to basePath

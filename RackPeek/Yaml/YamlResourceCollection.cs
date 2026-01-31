@@ -1,5 +1,5 @@
-using System.Collections.Specialized;
 using System.Collections.Concurrent;
+using System.Collections.Specialized;
 using RackPeek.Domain.Resources;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Services;
@@ -11,14 +11,13 @@ namespace RackPeek.Yaml;
 
 public sealed class YamlResourceCollection(bool watch) : IDisposable
 {
-    private readonly bool _watch = watch;
-    
+    private static readonly TimeSpan ReloadDebounce = TimeSpan.FromMilliseconds(300);
+
     private readonly List<ResourceEntry> _entries = [];
     private readonly List<string> _knownFiles = [];
-    private readonly Dictionary<string, FileSystemWatcher> _watchers = [];
     private readonly ConcurrentDictionary<string, DateTime> _reloadQueue = [];
-
-    private static readonly TimeSpan ReloadDebounce = TimeSpan.FromMilliseconds(300);
+    private readonly bool _watch = watch;
+    private readonly Dictionary<string, FileSystemWatcher> _watchers = [];
 
     public IReadOnlyList<string> SourceFiles => _knownFiles.ToList();
 
@@ -30,6 +29,12 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
 
     public IReadOnlyList<Service> ServiceResources =>
         _entries.Select(e => e.Resource).OfType<Service>().ToList();
+
+    public void Dispose()
+    {
+        foreach (var watcher in _watchers.Values)
+            watcher.Dispose();
+    }
 
     // ----------------------------
     // Loading
@@ -82,8 +87,8 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
         {
             EnableRaisingEvents = true,
             NotifyFilter = NotifyFilters.LastWrite
-                         | NotifyFilters.FileName
-                         | NotifyFilters.Size
+                           | NotifyFilters.FileName
+                           | NotifyFilters.Size
         };
 
         watcher.Changed += OnFileChanged;
@@ -235,10 +240,8 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
             .Deserialize<Dictionary<string, object?>>(yaml);
 
         foreach (var (key, value) in props)
-        {
             if (key != "kind")
                 map[key] = value;
-        }
 
         return map;
     }
@@ -292,7 +295,6 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
     private static string SafeReadAllText(string file)
     {
         for (var i = 0; i < 5; i++)
-        {
             try
             {
                 return File.ReadAllText(file);
@@ -301,15 +303,8 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
             {
                 Thread.Sleep(50);
             }
-        }
 
         return string.Empty;
-    }
-
-    public void Dispose()
-    {
-        foreach (var watcher in _watchers.Values)
-            watcher.Dispose();
     }
 
     private sealed record ResourceEntry(Resource Resource, string SourceFile);

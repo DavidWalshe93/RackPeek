@@ -30,7 +30,7 @@ public class LaptopHardwareReportUseCase(IHardwareRepository repository) : IUseC
             var hddStorage = Laptop.Drives?
                 .Where(d => d.Type == "hdd")
                 .Sum(d => d.Size) ?? 0;
-            
+
             var gpuSummary = Laptop.Gpus == null
                 ? "None"
                 : string.Join(", ",

@@ -37,7 +37,7 @@ else
                                 var url = service.NetworkString();
                                 <NavLink href="@($"/resources/services/{service.Name}")" class="block">
                                     <div class="border border-zinc-800 rounded bg-zinc-900 p-2 hover:border-zinc-700">
-        
+
                                         <div class="text-zinc-200 text-sm">
                                             @service.Name
                                         </div>
@@ -45,10 +45,10 @@ else
                                         @{
                                             var srv = BuildServiceSubtitle(service);
                                         }
-                
+
 
                                         <div class="text-xs text-zinc-500 mt-1">
-                                            Service - 
+                                            Service -
                                             @if (!string.IsNullOrEmpty(srv))
                                             {
                                                 <a href="@url"
@@ -58,7 +58,6 @@ else
                                                    @onclick:stopPropagation>
                                                     @srv
                                                 </a>
-
                                             }
 
                                         </div>
@@ -82,8 +81,8 @@ else
 }
 
 @code {
-    [Parameter][EditorRequired] public HardwareDependencyTree? Tree { get; set; }
-    
+    [Parameter] [EditorRequired] public HardwareDependencyTree? Tree { get; set; }
+
     private static string? BuildServiceSubtitle(Service service)
     {
         var endpoint = service.NetworkString();
@@ -93,4 +92,5 @@ else
 
         return endpoint;
     }
+
 }

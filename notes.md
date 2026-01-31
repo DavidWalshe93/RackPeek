@@ -7,5 +7,18 @@ sudo chmod +x /usr/local/bin/rpk
 
 ```
 cd vhs
+brew install vhs
 vhs ./rpk.tape
+
+brew install imagemagick
+brew install --cask google-chrome # if chrome not installed
+chmod +x webui_capture.sh
+./webui_capture.sh
+
+```
+
+```
+
+
+
 ```

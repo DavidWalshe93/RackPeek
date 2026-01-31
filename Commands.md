@@ -9,20 +9,20 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    summary         Show a summarized report for all resources
-    servers         Manage servers                            
-    switches        Manage switches                           
-    systems         Manage systems                            
-    accesspoints    Manage access points                      
-    ups             Manage UPS units                          
-    desktops        Manage Desktops                           
-    services        Manage services                           
+    summary         Show a summarized report of all resources in the system
+    servers         Manage servers and their components                    
+    switches        Manage network switches                                
+    systems         Manage systems and their dependencies                  
+    accesspoints    Manage access points                                   
+    ups             Manage UPS units                                       
+    desktops        Manage desktop computers and their components          
+    services        Manage services and their configurations               
 ```
 
 ## `rpk summary`
 ```
 DESCRIPTION:
-Show a summarized report for all resources
+Show a summarized report of all resources in the system
 
 USAGE:
     rpk summary [OPTIONS]
@@ -34,7 +34,7 @@ OPTIONS:
 ## `rpk servers`
 ```
 DESCRIPTION:
-Manage servers
+Manage servers and their components
 
 USAGE:
     rpk servers [OPTIONS] <COMMAND>
@@ -43,17 +43,17 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    summary            Show a summarized hardware report for all servers
-    add <name>         Add a new server                                 
-    get <name>         List servers or get a server by name             
-    describe <name>    Show detailed information about a server         
-    set <name>         Update server properties                         
-    del <name>         Delete a server                                  
-    tree <name>        Displays a dependency tree for the server        
-    cpu                Manage server CPUs                               
-    drive              Manage server drives                             
-    gpu                Manage server GPUs                               
-    nic                Manage server NICs                               
+    summary            Show a summarized hardware report for all servers     
+    add <name>         Add a new server to the inventory                     
+    get <name>         List all servers or retrieve a specific server by name
+    describe <name>    Display detailed information about a specific server  
+    set <name>         Update properties of an existing server               
+    del <name>         Delete a server from the inventory                    
+    tree <name>        Display the dependency tree of a server               
+    cpu                Manage CPUs attached to a server                      
+    drive              Manage drives attached to a server                    
+    gpu                Manage GPUs attached to a server                      
+    nic                Manage network interface cards (NICs) for a server    
 ```
 
 ## `rpk servers summary`
@@ -71,7 +71,7 @@ OPTIONS:
 ## `rpk servers add`
 ```
 DESCRIPTION:
-Add a new server
+Add a new server to the inventory
 
 USAGE:
     rpk servers add <name> [OPTIONS]
@@ -86,7 +86,7 @@ OPTIONS:
 ## `rpk servers get`
 ```
 DESCRIPTION:
-List servers or get a server by name
+List all servers or retrieve a specific server by name
 
 USAGE:
     rpk servers get <name> [OPTIONS]
@@ -101,7 +101,7 @@ OPTIONS:
 ## `rpk servers describe`
 ```
 DESCRIPTION:
-Show detailed information about a server
+Display detailed information about a specific server
 
 USAGE:
     rpk servers describe <name> [OPTIONS]
@@ -116,7 +116,7 @@ OPTIONS:
 ## `rpk servers set`
 ```
 DESCRIPTION:
-Update server properties
+Update properties of an existing server
 
 USAGE:
     rpk servers set <name> [OPTIONS]
@@ -133,7 +133,7 @@ OPTIONS:
 ## `rpk servers del`
 ```
 DESCRIPTION:
-Delete a server
+Delete a server from the inventory
 
 USAGE:
     rpk servers del <name> [OPTIONS]
@@ -148,7 +148,7 @@ OPTIONS:
 ## `rpk servers tree`
 ```
 DESCRIPTION:
-Displays a dependency tree for the server
+Display the dependency tree of a server
 
 USAGE:
     rpk servers tree <name> [OPTIONS]
@@ -163,7 +163,7 @@ OPTIONS:
 ## `rpk servers cpu`
 ```
 DESCRIPTION:
-Manage server CPUs
+Manage CPUs attached to a server
 
 USAGE:
     rpk servers cpu [OPTIONS] <COMMAND>
@@ -172,15 +172,15 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <name>    Add a CPU to a server     
-    set <name>    Update a CPU on a server  
-    del <name>    Remove a CPU from a server
+    add <name>    Add a CPU to a specific server      
+    set <name>    Update configuration of a server CPU
+    del <name>    Remove a CPU from a server          
 ```
 
 ## `rpk servers cpu add`
 ```
 DESCRIPTION:
-Add a CPU to a server
+Add a CPU to a specific server
 
 USAGE:
     rpk servers cpu add <name> [OPTIONS]
@@ -198,7 +198,7 @@ OPTIONS:
 ## `rpk servers cpu set`
 ```
 DESCRIPTION:
-Update a CPU on a server
+Update configuration of a server CPU
 
 USAGE:
     rpk servers cpu set <name> [OPTIONS]
@@ -233,7 +233,7 @@ OPTIONS:
 ## `rpk servers drive`
 ```
 DESCRIPTION:
-Manage server drives
+Manage drives attached to a server
 
 USAGE:
     rpk servers drive [OPTIONS] <COMMAND>
@@ -242,15 +242,15 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <name>    Add a drive to a server     
-    set <name>    Update a drive on a server  
-    del <name>    Remove a drive from a server
+    add <name>    Add a storage drive to a server    
+    set <name>    Update properties of a server drive
+    del <name>    Remove a drive from a server       
 ```
 
 ## `rpk servers drive add`
 ```
 DESCRIPTION:
-Add a drive to a server
+Add a storage drive to a server
 
 USAGE:
     rpk servers drive add <name> [OPTIONS]
@@ -267,7 +267,7 @@ OPTIONS:
 ## `rpk servers drive set`
 ```
 DESCRIPTION:
-Update a drive on a server
+Update properties of a server drive
 
 USAGE:
     rpk servers drive set <name> [OPTIONS]
@@ -301,7 +301,7 @@ OPTIONS:
 ## `rpk servers gpu`
 ```
 DESCRIPTION:
-Manage server GPUs
+Manage GPUs attached to a server
 
 USAGE:
     rpk servers gpu [OPTIONS] <COMMAND>
@@ -310,9 +310,9 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <name>    Add a GPU to a server     
-    set <name>    Update a GPU on a server  
-    del <name>    Remove a GPU from a server
+    add <name>    Add a GPU to a server            
+    set <name>    Update properties of a server GPU
+    del <name>    Remove a GPU from a server       
 ```
 
 ## `rpk servers gpu add`
@@ -335,7 +335,7 @@ OPTIONS:
 ## `rpk servers gpu set`
 ```
 DESCRIPTION:
-Update a GPU on a server
+Update properties of a server GPU
 
 USAGE:
     rpk servers gpu set <name> [OPTIONS]
@@ -369,7 +369,7 @@ OPTIONS:
 ## `rpk servers nic`
 ```
 DESCRIPTION:
-Manage server NICs
+Manage network interface cards (NICs) for a server
 
 USAGE:
     rpk servers nic [OPTIONS] <COMMAND>
@@ -378,9 +378,9 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <name>    Add a NIC to a server     
-    set <name>    Update a NIC on a server  
-    del <name>    Remove a NIC from a server
+    add <name>    Add a NIC to a server            
+    set <name>    Update properties of a server NIC
+    del <name>    Remove a NIC from a server       
 ```
 
 ## `rpk servers nic add`
@@ -404,7 +404,7 @@ OPTIONS:
 ## `rpk servers nic set`
 ```
 DESCRIPTION:
-Update a NIC on a server
+Update properties of a server NIC
 
 USAGE:
     rpk servers nic set <name> [OPTIONS]
@@ -439,7 +439,7 @@ OPTIONS:
 ## `rpk switches`
 ```
 DESCRIPTION:
-Manage switches
+Manage network switches
 
 USAGE:
     rpk switches [OPTIONS] <COMMAND>
@@ -448,19 +448,19 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    summary            Show switch hardware report             
-    add <name>         Add a new switch                        
-    list               List switches                           
-    get <name>         Get a switches by name                  
-    describe <name>    Show detailed information about a switch
-    set <name>         Update switch properties                
-    del <name>         Delete a switch                         
+    summary            Show a hardware report for all switches      
+    add <name>         Add a new network switch to the inventory    
+    list               List all switches in the system              
+    get <name>         Retrieve details of a specific switch by name
+    describe <name>    Show detailed information about a switch     
+    set <name>         Update properties of a switch                
+    del <name>         Delete a switch from the inventory           
 ```
 
 ## `rpk switches summary`
 ```
 DESCRIPTION:
-Show switch hardware report
+Show a hardware report for all switches
 
 USAGE:
     rpk switches summary [OPTIONS]
@@ -472,7 +472,7 @@ OPTIONS:
 ## `rpk switches add`
 ```
 DESCRIPTION:
-Add a new switch
+Add a new network switch to the inventory
 
 USAGE:
     rpk switches add <name> [OPTIONS]
@@ -487,7 +487,7 @@ OPTIONS:
 ## `rpk switches list`
 ```
 DESCRIPTION:
-List switches
+List all switches in the system
 
 USAGE:
     rpk switches list [OPTIONS]
@@ -499,7 +499,7 @@ OPTIONS:
 ## `rpk switches get`
 ```
 DESCRIPTION:
-Get a switches by name
+Retrieve details of a specific switch by name
 
 USAGE:
     rpk switches get <name> [OPTIONS]
@@ -529,7 +529,7 @@ OPTIONS:
 ## `rpk switches set`
 ```
 DESCRIPTION:
-Update switch properties
+Update properties of a switch
 
 USAGE:
     rpk switches set <name> [OPTIONS]
@@ -547,7 +547,7 @@ OPTIONS:
 ## `rpk switches del`
 ```
 DESCRIPTION:
-Delete a switch
+Delete a switch from the inventory
 
 USAGE:
     rpk switches del <name> [OPTIONS]
@@ -562,7 +562,7 @@ OPTIONS:
 ## `rpk systems`
 ```
 DESCRIPTION:
-Manage systems
+Manage systems and their dependencies
 
 USAGE:
     rpk systems [OPTIONS] <COMMAND>
@@ -571,20 +571,20 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    summary            Show system report                       
-    add <name>         Add a new system                         
-    list               List systems                             
-    get <name>         Get a system by name                     
-    describe <name>    Show detailed information about a system 
-    set <name>         Update system properties                 
-    del <name>         Delete a system                          
-    tree <name>        Displays a dependency tree for the system
+    summary            Show a summary report for all systems      
+    add <name>         Add a new system to the inventory          
+    list               List all systems                           
+    get <name>         Retrieve a system by name                  
+    describe <name>    Display detailed information about a system
+    set <name>         Update properties of a system              
+    del <name>         Delete a system from the inventory         
+    tree <name>        Display the dependency tree for a system   
 ```
 
 ## `rpk systems summary`
 ```
 DESCRIPTION:
-Show system report
+Show a summary report for all systems
 
 USAGE:
     rpk systems summary [OPTIONS]
@@ -596,7 +596,7 @@ OPTIONS:
 ## `rpk systems add`
 ```
 DESCRIPTION:
-Add a new system
+Add a new system to the inventory
 
 USAGE:
     rpk systems add <name> [OPTIONS]
@@ -611,7 +611,7 @@ OPTIONS:
 ## `rpk systems list`
 ```
 DESCRIPTION:
-List systems
+List all systems
 
 USAGE:
     rpk systems list [OPTIONS]
@@ -623,7 +623,7 @@ OPTIONS:
 ## `rpk systems get`
 ```
 DESCRIPTION:
-Get a system by name
+Retrieve a system by name
 
 USAGE:
     rpk systems get <name> [OPTIONS]
@@ -638,7 +638,7 @@ OPTIONS:
 ## `rpk systems describe`
 ```
 DESCRIPTION:
-Show detailed information about a system
+Display detailed information about a system
 
 USAGE:
     rpk systems describe <name> [OPTIONS]
@@ -653,7 +653,7 @@ OPTIONS:
 ## `rpk systems set`
 ```
 DESCRIPTION:
-Update system properties
+Update properties of a system
 
 USAGE:
     rpk systems set <name> [OPTIONS]
@@ -673,7 +673,7 @@ OPTIONS:
 ## `rpk systems del`
 ```
 DESCRIPTION:
-Delete a system
+Delete a system from the inventory
 
 USAGE:
     rpk systems del <name> [OPTIONS]
@@ -688,7 +688,7 @@ OPTIONS:
 ## `rpk systems tree`
 ```
 DESCRIPTION:
-Displays a dependency tree for the system
+Display the dependency tree for a system
 
 USAGE:
     rpk systems tree <name> [OPTIONS]
@@ -712,19 +712,19 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    summary            Show access point hardware report              
+    summary            Show a hardware report for all access points   
     add <name>         Add a new access point                         
-    list               List access points                             
-    get <name>         Get an access point by name                    
+    list               List all access points                         
+    get <name>         Retrieve an access point by name               
     describe <name>    Show detailed information about an access point
-    set <name>         Update access point properties                 
+    set <name>         Update properties of an access point           
     del <name>         Delete an access point                         
 ```
 
 ## `rpk accesspoints summary`
 ```
 DESCRIPTION:
-Show access point hardware report
+Show a hardware report for all access points
 
 USAGE:
     rpk accesspoints summary [OPTIONS]
@@ -751,7 +751,7 @@ OPTIONS:
 ## `rpk accesspoints list`
 ```
 DESCRIPTION:
-List access points
+List all access points
 
 USAGE:
     rpk accesspoints list [OPTIONS]
@@ -763,7 +763,7 @@ OPTIONS:
 ## `rpk accesspoints get`
 ```
 DESCRIPTION:
-Get an access point by name
+Retrieve an access point by name
 
 USAGE:
     rpk accesspoints get <name> [OPTIONS]
@@ -793,7 +793,7 @@ OPTIONS:
 ## `rpk accesspoints set`
 ```
 DESCRIPTION:
-Update access point properties
+Update properties of an access point
 
 USAGE:
     rpk accesspoints set <name> [OPTIONS]
@@ -834,19 +834,19 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    summary            Show UPS hardware report             
-    add <name>         Add a new UPS                        
-    list               List UPS units                       
-    get <name>         Get a UPS by name                    
-    describe <name>    Show detailed information about a UPS
-    set <name>         Update UPS properties                
-    del <name>         Delete a UPS                         
+    summary            Show a hardware report for all UPS units  
+    add <name>         Add a new UPS unit                        
+    list               List all UPS units                        
+    get <name>         Retrieve a UPS unit by name               
+    describe <name>    Show detailed information about a UPS unit
+    set <name>         Update properties of a UPS unit           
+    del <name>         Delete a UPS unit                         
 ```
 
 ## `rpk ups summary`
 ```
 DESCRIPTION:
-Show UPS hardware report
+Show a hardware report for all UPS units
 
 USAGE:
     rpk ups summary [OPTIONS]
@@ -858,7 +858,7 @@ OPTIONS:
 ## `rpk ups add`
 ```
 DESCRIPTION:
-Add a new UPS
+Add a new UPS unit
 
 USAGE:
     rpk ups add <name> [OPTIONS]
@@ -873,7 +873,7 @@ OPTIONS:
 ## `rpk ups list`
 ```
 DESCRIPTION:
-List UPS units
+List all UPS units
 
 USAGE:
     rpk ups list [OPTIONS]
@@ -885,7 +885,7 @@ OPTIONS:
 ## `rpk ups get`
 ```
 DESCRIPTION:
-Get a UPS by name
+Retrieve a UPS unit by name
 
 USAGE:
     rpk ups get <name> [OPTIONS]
@@ -900,7 +900,7 @@ OPTIONS:
 ## `rpk ups describe`
 ```
 DESCRIPTION:
-Show detailed information about a UPS
+Show detailed information about a UPS unit
 
 USAGE:
     rpk ups describe <name> [OPTIONS]
@@ -915,7 +915,7 @@ OPTIONS:
 ## `rpk ups set`
 ```
 DESCRIPTION:
-Update UPS properties
+Update properties of a UPS unit
 
 USAGE:
     rpk ups set <name> [OPTIONS]
@@ -932,7 +932,7 @@ OPTIONS:
 ## `rpk ups del`
 ```
 DESCRIPTION:
-Delete a UPS
+Delete a UPS unit
 
 USAGE:
     rpk ups del <name> [OPTIONS]
@@ -947,7 +947,7 @@ OPTIONS:
 ## `rpk desktops`
 ```
 DESCRIPTION:
-Manage Desktops
+Manage desktop computers and their components
 
 USAGE:
     rpk desktops [OPTIONS] <COMMAND>
@@ -956,22 +956,25 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <name>                                     
-    list                                           
-    get <name>                                     
-    describe <name>                                
-    set <name>                                     
-    del <name>                                     
-    summary            Show desktop hardware report
-    tree <name>                                    
-    cpu                                            
-    drive                                          
-    gpu                                            
-    nic                                            
+    add <name>         Add a new desktop                                 
+    list               List all desktops                                 
+    get <name>         Retrieve a desktop by name                        
+    describe <name>    Show detailed information about a desktop         
+    set <name>         Update properties of a desktop                    
+    del <name>         Delete a desktop from the inventory               
+    summary            Show a summarized hardware report for all desktops
+    tree <name>        Display the dependency tree for a desktop         
+    cpu                Manage CPUs attached to desktops                  
+    drive              Manage storage drives attached to desktops        
+    gpu                Manage GPUs attached to desktops                  
+    nic                Manage network interface cards (NICs) for desktops
 ```
 
 ## `rpk desktops add`
 ```
+DESCRIPTION:
+Add a new desktop
+
 USAGE:
     rpk desktops add <name> [OPTIONS]
 
@@ -984,6 +987,9 @@ OPTIONS:
 
 ## `rpk desktops list`
 ```
+DESCRIPTION:
+List all desktops
+
 USAGE:
     rpk desktops list [OPTIONS]
 
@@ -993,6 +999,9 @@ OPTIONS:
 
 ## `rpk desktops get`
 ```
+DESCRIPTION:
+Retrieve a desktop by name
+
 USAGE:
     rpk desktops get <name> [OPTIONS]
 
@@ -1005,6 +1014,9 @@ OPTIONS:
 
 ## `rpk desktops describe`
 ```
+DESCRIPTION:
+Show detailed information about a desktop
+
 USAGE:
     rpk desktops describe <name> [OPTIONS]
 
@@ -1017,6 +1029,9 @@ OPTIONS:
 
 ## `rpk desktops set`
 ```
+DESCRIPTION:
+Update properties of a desktop
+
 USAGE:
     rpk desktops set <name> [OPTIONS]
 
@@ -1030,6 +1045,9 @@ OPTIONS:
 
 ## `rpk desktops del`
 ```
+DESCRIPTION:
+Delete a desktop from the inventory
+
 USAGE:
     rpk desktops del <name> [OPTIONS]
 
@@ -1043,7 +1061,7 @@ OPTIONS:
 ## `rpk desktops summary`
 ```
 DESCRIPTION:
-Show desktop hardware report
+Show a summarized hardware report for all desktops
 
 USAGE:
     rpk desktops summary [OPTIONS]
@@ -1054,6 +1072,9 @@ OPTIONS:
 
 ## `rpk desktops tree`
 ```
+DESCRIPTION:
+Display the dependency tree for a desktop
+
 USAGE:
     rpk desktops tree <name> [OPTIONS]
 
@@ -1066,6 +1087,9 @@ OPTIONS:
 
 ## `rpk desktops cpu`
 ```
+DESCRIPTION:
+Manage CPUs attached to desktops
+
 USAGE:
     rpk desktops cpu [OPTIONS] <COMMAND>
 
@@ -1073,13 +1097,16 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <desktop>             
-    set <desktop> <index>     
-    del <desktop> <index>     
+    add <desktop>            Add a CPU to a desktop     
+    set <desktop> <index>    Update a desktop CPU       
+    del <desktop> <index>    Remove a CPU from a desktop
 ```
 
 ## `rpk desktops cpu add`
 ```
+DESCRIPTION:
+Add a CPU to a desktop
+
 USAGE:
     rpk desktops cpu add <desktop> [OPTIONS]
 
@@ -1095,6 +1122,9 @@ OPTIONS:
 
 ## `rpk desktops cpu set`
 ```
+DESCRIPTION:
+Update a desktop CPU
+
 USAGE:
     rpk desktops cpu set <desktop> <index> [OPTIONS]
 
@@ -1111,6 +1141,9 @@ OPTIONS:
 
 ## `rpk desktops cpu del`
 ```
+DESCRIPTION:
+Remove a CPU from a desktop
+
 USAGE:
     rpk desktops cpu del <desktop> <index> [OPTIONS]
 
@@ -1124,6 +1157,9 @@ OPTIONS:
 
 ## `rpk desktops drive`
 ```
+DESCRIPTION:
+Manage storage drives attached to desktops
+
 USAGE:
     rpk desktops drive [OPTIONS] <COMMAND>
 
@@ -1131,13 +1167,16 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <desktop>             
-    set <desktop> <index>     
-    del <desktop> <index>     
+    add <desktop>            Add a drive to a desktop     
+    set <desktop> <index>    Update a desktop drive       
+    del <desktop> <index>    Remove a drive from a desktop
 ```
 
 ## `rpk desktops drive add`
 ```
+DESCRIPTION:
+Add a drive to a desktop
+
 USAGE:
     rpk desktops drive add <desktop> [OPTIONS]
 
@@ -1152,6 +1191,9 @@ OPTIONS:
 
 ## `rpk desktops drive set`
 ```
+DESCRIPTION:
+Update a desktop drive
+
 USAGE:
     rpk desktops drive set <desktop> <index> [OPTIONS]
 
@@ -1167,6 +1209,9 @@ OPTIONS:
 
 ## `rpk desktops drive del`
 ```
+DESCRIPTION:
+Remove a drive from a desktop
+
 USAGE:
     rpk desktops drive del <desktop> <index> [OPTIONS]
 
@@ -1180,6 +1225,9 @@ OPTIONS:
 
 ## `rpk desktops gpu`
 ```
+DESCRIPTION:
+Manage GPUs attached to desktops
+
 USAGE:
     rpk desktops gpu [OPTIONS] <COMMAND>
 
@@ -1187,13 +1235,16 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <desktop>             
-    set <desktop> <index>     
-    del <desktop> <index>     
+    add <desktop>            Add a GPU to a desktop     
+    set <desktop> <index>    Update a desktop GPU       
+    del <desktop> <index>    Remove a GPU from a desktop
 ```
 
 ## `rpk desktops gpu add`
 ```
+DESCRIPTION:
+Add a GPU to a desktop
+
 USAGE:
     rpk desktops gpu add <desktop> [OPTIONS]
 
@@ -1208,6 +1259,9 @@ OPTIONS:
 
 ## `rpk desktops gpu set`
 ```
+DESCRIPTION:
+Update a desktop GPU
+
 USAGE:
     rpk desktops gpu set <desktop> <index> [OPTIONS]
 
@@ -1223,6 +1277,9 @@ OPTIONS:
 
 ## `rpk desktops gpu del`
 ```
+DESCRIPTION:
+Remove a GPU from a desktop
+
 USAGE:
     rpk desktops gpu del <desktop> <index> [OPTIONS]
 
@@ -1236,6 +1293,9 @@ OPTIONS:
 
 ## `rpk desktops nic`
 ```
+DESCRIPTION:
+Manage network interface cards (NICs) for desktops
+
 USAGE:
     rpk desktops nic [OPTIONS] <COMMAND>
 
@@ -1243,13 +1303,16 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    add <desktop>             
-    set <desktop> <index>     
-    del <desktop> <index>     
+    add <desktop>            Add a NIC to a desktop     
+    set <desktop> <index>    Update a desktop NIC       
+    del <desktop> <index>    Remove a NIC from a desktop
 ```
 
 ## `rpk desktops nic add`
 ```
+DESCRIPTION:
+Add a NIC to a desktop
+
 USAGE:
     rpk desktops nic add <desktop> [OPTIONS]
 
@@ -1265,6 +1328,9 @@ OPTIONS:
 
 ## `rpk desktops nic set`
 ```
+DESCRIPTION:
+Update a desktop NIC
+
 USAGE:
     rpk desktops nic set <desktop> <index> [OPTIONS]
 
@@ -1281,6 +1347,9 @@ OPTIONS:
 
 ## `rpk desktops nic del`
 ```
+DESCRIPTION:
+Remove a NIC from a desktop
+
 USAGE:
     rpk desktops nic del <desktop> <index> [OPTIONS]
 
@@ -1295,7 +1364,7 @@ OPTIONS:
 ## `rpk services`
 ```
 DESCRIPTION:
-Manage services
+Manage services and their configurations
 
 USAGE:
     rpk services [OPTIONS] <COMMAND>
@@ -1304,20 +1373,20 @@ OPTIONS:
     -h, --help    Prints help information
 
 COMMANDS:
-    summary            Show service summary report              
-    add <name>         Add a new service                        
-    list               List all services                        
-    get <name>         Get a service by name                    
-    describe <name>    Show detailed information about a service
-    set <name>         Update service properties                
-    del <name>         Delete a service                         
-    subnets            List service subnets or filter by CIDR   
+    summary            Show a summary report for all services                             
+    add <name>         Add a new service                                                  
+    list               List all services                                                  
+    get <name>         Retrieve a service by name                                         
+    describe <name>    Show detailed information about a service                          
+    set <name>         Update properties of a service                                     
+    del <name>         Delete a service                                                   
+    subnets            List subnets associated with a service, optionally filtered by CIDR
 ```
 
 ## `rpk services summary`
 ```
 DESCRIPTION:
-Show service summary report
+Show a summary report for all services
 
 USAGE:
     rpk services summary [OPTIONS]
@@ -1356,7 +1425,7 @@ OPTIONS:
 ## `rpk services get`
 ```
 DESCRIPTION:
-Get a service by name
+Retrieve a service by name
 
 USAGE:
     rpk services get <name> [OPTIONS]
@@ -1386,7 +1455,7 @@ OPTIONS:
 ## `rpk services set`
 ```
 DESCRIPTION:
-Update service properties
+Update properties of a service
 
 USAGE:
     rpk services set <name> [OPTIONS]
@@ -1421,7 +1490,7 @@ OPTIONS:
 ## `rpk services subnets`
 ```
 DESCRIPTION:
-List service subnets or filter by CIDR
+List subnets associated with a service, optionally filtered by CIDR
 
 USAGE:
     rpk services subnets [OPTIONS]

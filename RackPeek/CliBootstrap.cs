@@ -67,283 +67,329 @@ public static class CliBootstrap
         services.AddCommands();
 
         // Spectre bootstrap
-        app.Configure(config =>
+app.Configure(config =>
+{
+    config.SetApplicationName("rpk");
+    config.ValidateExamples();
+
+    // Global summary
+    config.AddCommand<GetTotalSummaryCommand>("summary")
+        .WithDescription("Show a summarized report of all resources in the system.");
+
+    // ----------------------------
+    // Server commands (CRUD-style)
+    // ----------------------------
+    config.AddBranch("servers", server =>
+    {
+        server.SetDescription("Manage servers and their components.");
+
+        server.AddCommand<ServerReportCommand>("summary")
+            .WithDescription("Show a summarized hardware report for all servers.");
+
+        server.AddCommand<ServerAddCommand>("add")
+            .WithDescription("Add a new server to the inventory.");
+
+        server.AddCommand<ServerGetByNameCommand>("get")
+            .WithDescription("List all servers or retrieve a specific server by name.");
+
+        server.AddCommand<ServerDescribeCommand>("describe")
+            .WithDescription("Display detailed information about a specific server.");
+
+        server.AddCommand<ServerSetCommand>("set")
+            .WithDescription("Update properties of an existing server.");
+
+        server.AddCommand<ServerDeleteCommand>("del")
+            .WithDescription("Delete a server from the inventory.");
+
+        server.AddCommand<ServerTreeCommand>("tree")
+            .WithDescription("Display the dependency tree of a server.");
+
+        // Server CPUs
+        server.AddBranch("cpu", cpu =>
         {
-            config.SetApplicationName("rpk");
-            config.ValidateExamples();
+            cpu.SetDescription("Manage CPUs attached to a server.");
 
+            cpu.AddCommand<ServerCpuAddCommand>("add")
+                .WithDescription("Add a CPU to a specific server.");
 
-            config.AddCommand<GetTotalSummaryCommand>("summary")
-                .WithDescription("Show a summarized report for all resources");
-            // ----------------------------
-            // Server commands (CRUD-style)
-            // ----------------------------
-            config.AddBranch("servers", server =>
-            {
-                server.SetDescription("Manage servers");
+            cpu.AddCommand<ServerCpuSetCommand>("set")
+                .WithDescription("Update configuration of a server CPU.");
 
-                server.AddCommand<ServerReportCommand>("summary")
-                    .WithDescription("Show a summarized hardware report for all servers");
-
-                server.AddCommand<ServerAddCommand>("add")
-                    .WithDescription("Add a new server");
-
-                server.AddCommand<ServerGetByNameCommand>("get")
-                    .WithDescription("List servers or get a server by name");
-
-                server.AddCommand<ServerDescribeCommand>("describe")
-                    .WithDescription("Show detailed information about a server");
-
-                server.AddCommand<ServerSetCommand>("set")
-                    .WithDescription("Update server properties");
-
-                server.AddCommand<ServerDeleteCommand>("del")
-                    .WithDescription("Delete a server");
-
-                server.AddCommand<ServerTreeCommand>("tree")
-                    .WithDescription("Displays a dependency tree for the server.");
-
-                server.AddBranch("cpu", cpu =>
-                {
-                    cpu.SetDescription("Manage server CPUs");
-
-                    cpu.AddCommand<ServerCpuAddCommand>("add")
-                        .WithDescription("Add a CPU to a server");
-
-                    cpu.AddCommand<ServerCpuSetCommand>("set")
-                        .WithDescription("Update a CPU on a server");
-
-                    cpu.AddCommand<ServerCpuRemoveCommand>("del")
-                        .WithDescription("Remove a CPU from a server");
-                });
-
-                server.AddBranch("nic", nic =>
-                {
-                    nic.SetDescription("Manage server NICs");
-
-                    nic.AddCommand<ServerNicAddCommand>("add")
-                        .WithDescription("Add a NIC to a server");
-
-                    nic.AddCommand<ServerNicUpdateCommand>("set")
-                        .WithDescription("Update a NIC on a server");
-
-                    nic.AddCommand<ServerNicRemoveCommand>("del")
-                        .WithDescription("Remove a NIC from a server");
-                    server.AddBranch("drive", drive =>
-                    {
-                        drive.SetDescription("Manage server drives");
-
-                        drive.AddCommand<ServerDriveAddCommand>("add")
-                            .WithDescription("Add a drive to a server");
-
-                        drive.AddCommand<ServerDriveUpdateCommand>("set")
-                            .WithDescription("Update a drive on a server");
-
-                        drive.AddCommand<ServerDriveRemoveCommand>("del")
-                            .WithDescription("Remove a drive from a server");
-                    });
-                    server.AddBranch("gpu", gpu =>
-                    {
-                        gpu.SetDescription("Manage server GPUs");
-
-                        gpu.AddCommand<ServerGpuAddCommand>("add")
-                            .WithDescription("Add a GPU to a server");
-
-                        gpu.AddCommand<ServerGpuUpdateCommand>("set")
-                            .WithDescription("Update a GPU on a server");
-
-                        gpu.AddCommand<ServerGpuRemoveCommand>("del")
-                            .WithDescription("Remove a GPU from a server");
-                    });
-                });
-            });
-
-            config.AddBranch("switches", switches =>
-            {
-                switches.SetDescription("Manage switches");
-
-                switches.AddCommand<SwitchReportCommand>("summary")
-                    .WithDescription("Show switch hardware report");
-
-                switches.AddCommand<SwitchAddCommand>("add")
-                    .WithDescription("Add a new switch");
-
-                switches.AddCommand<SwitchGetCommand>("list")
-                    .WithDescription("List switches");
-
-                switches.AddCommand<SwitchGetByNameCommand>("get")
-                    .WithDescription("Get a switches by name");
-
-                switches.AddCommand<SwitchDescribeCommand>("describe")
-                    .WithDescription("Show detailed information about a switch");
-
-                switches.AddCommand<SwitchSetCommand>("set")
-                    .WithDescription("Update switch properties");
-
-                switches.AddCommand<SwitchDeleteCommand>("del")
-                    .WithDescription("Delete a switch");
-            });
-
-            config.AddBranch("systems", system =>
-            {
-                system.SetDescription("Manage systems");
-
-                system.AddCommand<SystemReportCommand>("summary")
-                    .WithDescription("Show system report");
-
-                system.AddCommand<SystemAddCommand>("add")
-                    .WithDescription("Add a new system");
-
-                system.AddCommand<SystemGetCommand>("list")
-                    .WithDescription("List systems");
-
-                system.AddCommand<SystemGetByNameCommand>("get")
-                    .WithDescription("Get a system by name");
-
-                system.AddCommand<SystemDescribeCommand>("describe")
-                    .WithDescription("Show detailed information about a system");
-
-                system.AddCommand<SystemSetCommand>("set")
-                    .WithDescription("Update system properties");
-
-                system.AddCommand<SystemDeleteCommand>("del")
-                    .WithDescription("Delete a system");
-
-                system.AddCommand<SystemTreeCommand>("tree")
-                    .WithDescription("Displays a dependency tree for the system.");
-            });
-
-            config.AddBranch("accesspoints", ap =>
-            {
-                ap.SetDescription("Manage access points");
-
-                ap.AddCommand<AccessPointReportCommand>("summary")
-                    .WithDescription("Show access point hardware report");
-
-                ap.AddCommand<AccessPointAddCommand>("add")
-                    .WithDescription("Add a new access point");
-
-                ap.AddCommand<AccessPointGetCommand>("list")
-                    .WithDescription("List access points");
-
-                ap.AddCommand<AccessPointGetByNameCommand>("get")
-                    .WithDescription("Get an access point by name");
-
-                ap.AddCommand<AccessPointDescribeCommand>("describe")
-                    .WithDescription("Show detailed information about an access point");
-
-                ap.AddCommand<AccessPointSetCommand>("set")
-                    .WithDescription("Update access point properties");
-
-                ap.AddCommand<AccessPointDeleteCommand>("del")
-                    .WithDescription("Delete an access point");
-            });
-
-            config.AddBranch("ups", ups =>
-            {
-                ups.SetDescription("Manage UPS units");
-
-                ups.AddCommand<UpsReportCommand>("summary")
-                    .WithDescription("Show UPS hardware report");
-
-                ups.AddCommand<UpsAddCommand>("add")
-                    .WithDescription("Add a new UPS");
-
-                ups.AddCommand<UpsGetCommand>("list")
-                    .WithDescription("List UPS units");
-
-                ups.AddCommand<UpsGetByNameCommand>("get")
-                    .WithDescription("Get a UPS by name");
-
-                ups.AddCommand<UpsDescribeCommand>("describe")
-                    .WithDescription("Show detailed information about a UPS");
-
-                ups.AddCommand<UpsSetCommand>("set")
-                    .WithDescription("Update UPS properties");
-
-                ups.AddCommand<UpsDeleteCommand>("del")
-                    .WithDescription("Delete a UPS");
-            });
-
-            config.AddBranch("desktops", desktops =>
-            {
-                desktops.SetDescription("Manage Desktops.");
-
-                // CRUD
-                desktops.AddCommand<DesktopAddCommand>("add");
-                desktops.AddCommand<DesktopGetCommand>("list");
-                desktops.AddCommand<DesktopGetByNameCommand>("get");
-                desktops.AddCommand<DesktopDescribeCommand>("describe");
-                desktops.AddCommand<DesktopSetCommand>("set");
-                desktops.AddCommand<DesktopDeleteCommand>("del");
-                desktops.AddCommand<DesktopReportCommand>("summary")
-                    .WithDescription("Show desktop hardware report");
-                desktops.AddCommand<DesktopTreeCommand>("tree");
-
-
-                // CPU
-                desktops.AddBranch("cpu", cpu =>
-                {
-                    cpu.AddCommand<DesktopCpuAddCommand>("add");
-                    cpu.AddCommand<DesktopCpuSetCommand>("set");
-                    cpu.AddCommand<DesktopCpuRemoveCommand>("del");
-                });
-
-                // Drives
-                desktops.AddBranch("drive", drive =>
-                {
-                    drive.AddCommand<DesktopDriveAddCommand>("add");
-                    drive.AddCommand<DesktopDriveSetCommand>("set");
-                    drive.AddCommand<DesktopDriveRemoveCommand>("del");
-                });
-
-                // GPUs
-                desktops.AddBranch("gpu", gpu =>
-                {
-                    gpu.AddCommand<DesktopGpuAddCommand>("add");
-                    gpu.AddCommand<DesktopGpuSetCommand>("set");
-                    gpu.AddCommand<DesktopGpuRemoveCommand>("del");
-                });
-
-                // NICs
-                desktops.AddBranch("nic", nic =>
-                {
-                    nic.AddCommand<DesktopNicAddCommand>("add");
-                    nic.AddCommand<DesktopNicSetCommand>("set");
-                    nic.AddCommand<DesktopNicRemoveCommand>("del");
-                });
-            });
-
-            config.AddBranch("services", service =>
-            {
-                service.SetDescription(
-                    "Manage services."
-                );
-
-                service.AddCommand<ServiceReportCommand>("summary")
-                    .WithDescription("Show service summary report");
-
-                service.AddCommand<ServiceAddCommand>("add")
-                    .WithDescription("Add a new service");
-
-                service.AddCommand<ServiceGetCommand>("list")
-                    .WithDescription("List all services");
-
-                service.AddCommand<ServiceGetByNameCommand>("get")
-                    .WithDescription("Get a service by name");
-
-                service.AddCommand<ServiceDescribeCommand>("describe")
-                    .WithDescription("Show detailed information about a service");
-
-                service.AddCommand<ServiceSetCommand>("set")
-                    .WithDescription("Update service properties");
-
-                service.AddCommand<ServiceDeleteCommand>("del")
-                    .WithDescription("Delete a service");
-
-                service.AddCommand<ServiceSubnetsCommand>("subnets")
-                    .WithDescription("List service subnets or filter by CIDR");
-            });
+            cpu.AddCommand<ServerCpuRemoveCommand>("del")
+                .WithDescription("Remove a CPU from a server.");
         });
+
+        // Server Drives
+        server.AddBranch("drive", drive =>
+        {
+            drive.SetDescription("Manage drives attached to a server.");
+
+            drive.AddCommand<ServerDriveAddCommand>("add")
+                .WithDescription("Add a storage drive to a server.");
+
+            drive.AddCommand<ServerDriveUpdateCommand>("set")
+                .WithDescription("Update properties of a server drive.");
+
+            drive.AddCommand<ServerDriveRemoveCommand>("del")
+                .WithDescription("Remove a drive from a server.");
+        });
+
+        // Server GPUs
+        server.AddBranch("gpu", gpu =>
+        {
+            gpu.SetDescription("Manage GPUs attached to a server.");
+
+            gpu.AddCommand<ServerGpuAddCommand>("add")
+                .WithDescription("Add a GPU to a server.");
+
+            gpu.AddCommand<ServerGpuUpdateCommand>("set")
+                .WithDescription("Update properties of a server GPU.");
+
+            gpu.AddCommand<ServerGpuRemoveCommand>("del")
+                .WithDescription("Remove a GPU from a server.");
+        });
+
+        // Server NICs
+        server.AddBranch("nic", nic =>
+        {
+            nic.SetDescription("Manage network interface cards (NICs) for a server.");
+
+            nic.AddCommand<ServerNicAddCommand>("add")
+                .WithDescription("Add a NIC to a server.");
+
+            nic.AddCommand<ServerNicUpdateCommand>("set")
+                .WithDescription("Update properties of a server NIC.");
+
+            nic.AddCommand<ServerNicRemoveCommand>("del")
+                .WithDescription("Remove a NIC from a server.");
+        });
+    });
+
+    // ----------------------------
+    // Switch commands
+    // ----------------------------
+    config.AddBranch("switches", switches =>
+    {
+        switches.SetDescription("Manage network switches.");
+
+        switches.AddCommand<SwitchReportCommand>("summary")
+            .WithDescription("Show a hardware report for all switches.");
+
+        switches.AddCommand<SwitchAddCommand>("add")
+            .WithDescription("Add a new network switch to the inventory.");
+
+        switches.AddCommand<SwitchGetCommand>("list")
+            .WithDescription("List all switches in the system.");
+
+        switches.AddCommand<SwitchGetByNameCommand>("get")
+            .WithDescription("Retrieve details of a specific switch by name.");
+
+        switches.AddCommand<SwitchDescribeCommand>("describe")
+            .WithDescription("Show detailed information about a switch.");
+
+        switches.AddCommand<SwitchSetCommand>("set")
+            .WithDescription("Update properties of a switch.");
+
+        switches.AddCommand<SwitchDeleteCommand>("del")
+            .WithDescription("Delete a switch from the inventory.");
+    });
+
+    // ----------------------------
+    // System commands
+    // ----------------------------
+    config.AddBranch("systems", system =>
+    {
+        system.SetDescription("Manage systems and their dependencies.");
+
+        system.AddCommand<SystemReportCommand>("summary")
+            .WithDescription("Show a summary report for all systems.");
+
+        system.AddCommand<SystemAddCommand>("add")
+            .WithDescription("Add a new system to the inventory.");
+
+        system.AddCommand<SystemGetCommand>("list")
+            .WithDescription("List all systems.");
+
+        system.AddCommand<SystemGetByNameCommand>("get")
+            .WithDescription("Retrieve a system by name.");
+
+        system.AddCommand<SystemDescribeCommand>("describe")
+            .WithDescription("Display detailed information about a system.");
+
+        system.AddCommand<SystemSetCommand>("set")
+            .WithDescription("Update properties of a system.");
+
+        system.AddCommand<SystemDeleteCommand>("del")
+            .WithDescription("Delete a system from the inventory.");
+
+        system.AddCommand<SystemTreeCommand>("tree")
+            .WithDescription("Display the dependency tree for a system.");
+    });
+
+    // ----------------------------
+    // Access Points
+    // ----------------------------
+    config.AddBranch("accesspoints", ap =>
+    {
+        ap.SetDescription("Manage access points.");
+
+        ap.AddCommand<AccessPointReportCommand>("summary")
+            .WithDescription("Show a hardware report for all access points.");
+
+        ap.AddCommand<AccessPointAddCommand>("add")
+            .WithDescription("Add a new access point.");
+
+        ap.AddCommand<AccessPointGetCommand>("list")
+            .WithDescription("List all access points.");
+
+        ap.AddCommand<AccessPointGetByNameCommand>("get")
+            .WithDescription("Retrieve an access point by name.");
+
+        ap.AddCommand<AccessPointDescribeCommand>("describe")
+            .WithDescription("Show detailed information about an access point.");
+
+        ap.AddCommand<AccessPointSetCommand>("set")
+            .WithDescription("Update properties of an access point.");
+
+        ap.AddCommand<AccessPointDeleteCommand>("del")
+            .WithDescription("Delete an access point.");
+    });
+
+    // ----------------------------
+    // UPS units
+    // ----------------------------
+    config.AddBranch("ups", ups =>
+    {
+        ups.SetDescription("Manage UPS units.");
+
+        ups.AddCommand<UpsReportCommand>("summary")
+            .WithDescription("Show a hardware report for all UPS units.");
+
+        ups.AddCommand<UpsAddCommand>("add")
+            .WithDescription("Add a new UPS unit.");
+
+        ups.AddCommand<UpsGetCommand>("list")
+            .WithDescription("List all UPS units.");
+
+        ups.AddCommand<UpsGetByNameCommand>("get")
+            .WithDescription("Retrieve a UPS unit by name.");
+
+        ups.AddCommand<UpsDescribeCommand>("describe")
+            .WithDescription("Show detailed information about a UPS unit.");
+
+        ups.AddCommand<UpsSetCommand>("set")
+            .WithDescription("Update properties of a UPS unit.");
+
+        ups.AddCommand<UpsDeleteCommand>("del")
+            .WithDescription("Delete a UPS unit.");
+    });
+
+    // ----------------------------
+    // Desktops
+    // ----------------------------
+    config.AddBranch("desktops", desktops =>
+    {
+        desktops.SetDescription("Manage desktop computers and their components.");
+
+        // CRUD
+        desktops.AddCommand<DesktopAddCommand>("add")
+            .WithDescription("Add a new desktop.");
+        desktops.AddCommand<DesktopGetCommand>("list")
+            .WithDescription("List all desktops.");
+        desktops.AddCommand<DesktopGetByNameCommand>("get")
+            .WithDescription("Retrieve a desktop by name.");
+        desktops.AddCommand<DesktopDescribeCommand>("describe")
+            .WithDescription("Show detailed information about a desktop.");
+        desktops.AddCommand<DesktopSetCommand>("set")
+            .WithDescription("Update properties of a desktop.");
+        desktops.AddCommand<DesktopDeleteCommand>("del")
+            .WithDescription("Delete a desktop from the inventory.");
+        desktops.AddCommand<DesktopReportCommand>("summary")
+            .WithDescription("Show a summarized hardware report for all desktops.");
+        desktops.AddCommand<DesktopTreeCommand>("tree")
+            .WithDescription("Display the dependency tree for a desktop.");
+
+        // CPU
+        desktops.AddBranch("cpu", cpu =>
+        {
+            cpu.SetDescription("Manage CPUs attached to desktops.");
+            cpu.AddCommand<DesktopCpuAddCommand>("add")
+                .WithDescription("Add a CPU to a desktop.");
+            cpu.AddCommand<DesktopCpuSetCommand>("set")
+                .WithDescription("Update a desktop CPU.");
+            cpu.AddCommand<DesktopCpuRemoveCommand>("del")
+                .WithDescription("Remove a CPU from a desktop.");
+        });
+
+        // Drives
+        desktops.AddBranch("drive", drive =>
+        {
+            drive.SetDescription("Manage storage drives attached to desktops.");
+            drive.AddCommand<DesktopDriveAddCommand>("add")
+                .WithDescription("Add a drive to a desktop.");
+            drive.AddCommand<DesktopDriveSetCommand>("set")
+                .WithDescription("Update a desktop drive.");
+            drive.AddCommand<DesktopDriveRemoveCommand>("del")
+                .WithDescription("Remove a drive from a desktop.");
+        });
+
+        // GPUs
+        desktops.AddBranch("gpu", gpu =>
+        {
+            gpu.SetDescription("Manage GPUs attached to desktops.");
+            gpu.AddCommand<DesktopGpuAddCommand>("add")
+                .WithDescription("Add a GPU to a desktop.");
+            gpu.AddCommand<DesktopGpuSetCommand>("set")
+                .WithDescription("Update a desktop GPU.");
+            gpu.AddCommand<DesktopGpuRemoveCommand>("del")
+                .WithDescription("Remove a GPU from a desktop.");
+        });
+
+        // NICs
+        desktops.AddBranch("nic", nic =>
+        {
+            nic.SetDescription("Manage network interface cards (NICs) for desktops.");
+            nic.AddCommand<DesktopNicAddCommand>("add")
+                .WithDescription("Add a NIC to a desktop.");
+            nic.AddCommand<DesktopNicSetCommand>("set")
+                .WithDescription("Update a desktop NIC.");
+            nic.AddCommand<DesktopNicRemoveCommand>("del")
+                .WithDescription("Remove a NIC from a desktop.");
+        });
+    });
+
+    // ----------------------------
+    // Services
+    // ----------------------------
+    config.AddBranch("services", service =>
+    {
+        service.SetDescription("Manage services and their configurations.");
+
+        service.AddCommand<ServiceReportCommand>("summary")
+            .WithDescription("Show a summary report for all services.");
+
+        service.AddCommand<ServiceAddCommand>("add")
+            .WithDescription("Add a new service.");
+
+        service.AddCommand<ServiceGetCommand>("list")
+            .WithDescription("List all services.");
+
+        service.AddCommand<ServiceGetByNameCommand>("get")
+            .WithDescription("Retrieve a service by name.");
+
+        service.AddCommand<ServiceDescribeCommand>("describe")
+            .WithDescription("Show detailed information about a service.");
+
+        service.AddCommand<ServiceSetCommand>("set")
+            .WithDescription("Update properties of a service.");
+
+        service.AddCommand<ServiceDeleteCommand>("del")
+            .WithDescription("Delete a service.");
+
+        service.AddCommand<ServiceSubnetsCommand>("subnets")
+            .WithDescription("List subnets associated with a service, optionally filtered by CIDR.");
+    });
+});
+
     }
 }

@@ -1,0 +1,33 @@
+using Microsoft.Extensions.DependencyInjection;
+using RackPeek.Domain.Resources.Hardware.Routers;
+using Spectre.Console;
+using Spectre.Console.Cli;
+
+namespace RackPeek.Commands.Routers;
+
+public class RouterGetByNameCommand(
+    IServiceProvider serviceProvider
+) : AsyncCommand<RouterNameSettings>
+{
+    public override async Task<int> ExecuteAsync(
+        CommandContext context,
+        RouterNameSettings settings,
+        CancellationToken cancellationToken)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var useCase = scope.ServiceProvider.GetRequiredService<DescribeRouterUseCase>();
+
+        var sw = await useCase.ExecuteAsync(settings.Name);
+
+        if (sw == null)
+        {
+            AnsiConsole.MarkupLine($"[red]Router '{settings.Name}' not found.[/]");
+            return 1;
+        }
+
+        AnsiConsole.MarkupLine(
+            $"[green]{sw.Name}[/]  Model: {sw.Model ?? "Unknown"}, Managed: {(sw.Managed == true ? "Yes" : "No")}, PoE: {(sw.Poe == true ? "Yes" : "No")}");
+
+        return 0;
+    }
+}

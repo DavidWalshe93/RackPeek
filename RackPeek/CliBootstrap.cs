@@ -7,6 +7,11 @@ using RackPeek.Commands.Desktops.Cpus;
 using RackPeek.Commands.Desktops.Drive;
 using RackPeek.Commands.Desktops.Gpus;
 using RackPeek.Commands.Desktops.Nics;
+using RackPeek.Commands.Firewalls;
+using RackPeek.Commands.Laptops;
+using RackPeek.Commands.Laptops.Cpus;
+using RackPeek.Commands.Laptops.Drive;
+using RackPeek.Commands.Laptops.Gpus;
 using RackPeek.Commands.Servers;
 using RackPeek.Commands.Servers.Cpus;
 using RackPeek.Commands.Servers.Drives;
@@ -195,6 +200,64 @@ app.Configure(config =>
     });
 
     // ----------------------------
+    // Routers commands
+    // ----------------------------
+    config.AddBranch("routers", routers =>
+    {
+        routers.SetDescription("Manage network routers.");
+
+        routers.AddCommand<FirewallReportCommand>("summary")
+            .WithDescription("Show a hardware report for all routers.");
+
+        routers.AddCommand<FirewallAddCommand>("add")
+            .WithDescription("Add a new network router to the inventory.");
+
+        routers.AddCommand<FirewallGetCommand>("list")
+            .WithDescription("List all routers in the system.");
+
+        routers.AddCommand<FirewallGetByNameCommand>("get")
+            .WithDescription("Retrieve details of a specific router by name.");
+
+        routers.AddCommand<FirewallDescribeCommand>("describe")
+            .WithDescription("Show detailed information about a router.");
+
+        routers.AddCommand<FirewallSetCommand>("set")
+            .WithDescription("Update properties of a router.");
+
+        routers.AddCommand<FirewallDeleteCommand>("del")
+            .WithDescription("Delete a router from the inventory.");
+    });
+    
+    // ----------------------------
+    // Firewalls commands
+    // ----------------------------
+    config.AddBranch("firewalls", firewalls =>
+    {
+        firewalls.SetDescription("Manage firewalls.");
+
+        firewalls.AddCommand<FirewallReportCommand>("summary")
+            .WithDescription("Show a hardware report for all firewalls.");
+
+        firewalls.AddCommand<FirewallAddCommand>("add")
+            .WithDescription("Add a new firewall to the inventory.");
+
+        firewalls.AddCommand<FirewallGetCommand>("list")
+            .WithDescription("List all firewalls in the system.");
+
+        firewalls.AddCommand<FirewallGetByNameCommand>("get")
+            .WithDescription("Retrieve details of a specific firewall by name.");
+
+        firewalls.AddCommand<FirewallDescribeCommand>("describe")
+            .WithDescription("Show detailed information about a firewall.");
+
+        firewalls.AddCommand<FirewallSetCommand>("set")
+            .WithDescription("Update properties of a firewall.");
+
+        firewalls.AddCommand<FirewallDeleteCommand>("del")
+            .WithDescription("Delete a firewall from the inventory.");
+    });
+    
+    // ----------------------------
     // System commands
     // ----------------------------
     config.AddBranch("systems", system =>
@@ -357,6 +420,67 @@ app.Configure(config =>
                 .WithDescription("Remove a NIC from a desktop.");
         });
     });
+    
+        // ----------------------------
+    // Laptops
+    // ----------------------------
+    config.AddBranch("Laptops", Laptops =>
+    {
+        Laptops.SetDescription("Manage Laptop computers and their components.");
+
+        // CRUD
+        Laptops.AddCommand<LaptopAddCommand>("add")
+            .WithDescription("Add a new Laptop.");
+        Laptops.AddCommand<LaptopGetCommand>("list")
+            .WithDescription("List all Laptops.");
+        Laptops.AddCommand<LaptopGetByNameCommand>("get")
+            .WithDescription("Retrieve a Laptop by name.");
+        Laptops.AddCommand<LaptopDescribeCommand>("describe")
+            .WithDescription("Show detailed information about a Laptop.");
+        Laptops.AddCommand<LaptopDeleteCommand>("del")
+            .WithDescription("Delete a Laptop from the inventory.");
+        Laptops.AddCommand<LaptopReportCommand>("summary")
+            .WithDescription("Show a summarized hardware report for all Laptops.");
+        Laptops.AddCommand<LaptopTreeCommand>("tree")
+            .WithDescription("Display the dependency tree for a Laptop.");
+
+        // CPU
+        Laptops.AddBranch("cpu", cpu =>
+        {
+            cpu.SetDescription("Manage CPUs attached to Laptops.");
+            cpu.AddCommand<LaptopCpuAddCommand>("add")
+                .WithDescription("Add a CPU to a Laptop.");
+            cpu.AddCommand<LaptopCpuSetCommand>("set")
+                .WithDescription("Update a Laptop CPU.");
+            cpu.AddCommand<LaptopCpuRemoveCommand>("del")
+                .WithDescription("Remove a CPU from a Laptop.");
+        });
+
+        // Drives
+        Laptops.AddBranch("drive", drive =>
+        {
+            drive.SetDescription("Manage storage drives attached to Laptops.");
+            drive.AddCommand<LaptopDriveAddCommand>("add")
+                .WithDescription("Add a drive to a Laptop.");
+            drive.AddCommand<LaptopDriveSetCommand>("set")
+                .WithDescription("Update a Laptop drive.");
+            drive.AddCommand<LaptopDriveRemoveCommand>("del")
+                .WithDescription("Remove a drive from a Laptop.");
+        });
+
+        // GPUs
+        Laptops.AddBranch("gpu", gpu =>
+        {
+            gpu.SetDescription("Manage GPUs attached to Laptops.");
+            gpu.AddCommand<LaptopGpuAddCommand>("add")
+                .WithDescription("Add a GPU to a Laptop.");
+            gpu.AddCommand<LaptopGpuSetCommand>("set")
+                .WithDescription("Update a Laptop GPU.");
+            gpu.AddCommand<LaptopGpuRemoveCommand>("del")
+                .WithDescription("Remove a GPU from a Laptop.");
+        });
+    });
+
 
     // ----------------------------
     // Services

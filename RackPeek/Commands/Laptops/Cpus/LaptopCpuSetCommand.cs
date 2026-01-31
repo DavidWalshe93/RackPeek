@@ -1,0 +1,32 @@
+using Microsoft.Extensions.DependencyInjection;
+using RackPeek.Domain.Resources.Hardware.Laptops.Cpus;
+using RackPeek.Domain.Resources.Hardware.Models;
+using Spectre.Console;
+using Spectre.Console.Cli;
+
+namespace RackPeek.Commands.Laptops.Cpus;
+
+public class LaptopCpuSetCommand(IServiceProvider provider)
+    : AsyncCommand<LaptopCpuSetSettings>
+{
+    public override async Task<int> ExecuteAsync(
+        CommandContext context,
+        LaptopCpuSetSettings settings,
+        CancellationToken cancellationToken)
+    {
+        using var scope = provider.CreateScope();
+        var useCase = scope.ServiceProvider.GetRequiredService<UpdateLaptopCpuUseCase>();
+
+        var cpu = new Cpu
+        {
+            Model = settings.Model,
+            Cores = settings.Cores,
+            Threads = settings.Threads
+        };
+
+        await useCase.ExecuteAsync(settings.LaptopName, settings.Index, cpu);
+
+        AnsiConsole.MarkupLine($"[green]CPU #{settings.Index} updated on Laptop '{settings.LaptopName}'.[/]");
+        return 0;
+    }
+}

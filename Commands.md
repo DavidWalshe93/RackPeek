@@ -12,10 +12,13 @@ COMMANDS:
     summary         Show a summarized report of all resources in the system
     servers         Manage servers and their components                    
     switches        Manage network switches                                
+    routers         Manage network routers                                 
+    firewalls       Manage firewalls                                       
     systems         Manage systems and their dependencies                  
     accesspoints    Manage access points                                   
     ups             Manage UPS units                                       
     desktops        Manage desktop computers and their components          
+    Laptops         Manage Laptop computers and their components           
     services        Manage services and their configurations               
 ```
 
@@ -551,6 +554,252 @@ Delete a switch from the inventory
 
 USAGE:
     rpk switches del <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk routers`
+```
+DESCRIPTION:
+Manage network routers
+
+USAGE:
+    rpk routers [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    summary            Show a hardware report for all routers       
+    add <name>         Add a new network router to the inventory    
+    list               List all routers in the system               
+    get <name>         Retrieve details of a specific router by name
+    describe <name>    Show detailed information about a router     
+    set <name>         Update properties of a router                
+    del <name>         Delete a router from the inventory           
+```
+
+## `rpk routers summary`
+```
+DESCRIPTION:
+Show a hardware report for all routers
+
+USAGE:
+    rpk routers summary [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk routers add`
+```
+DESCRIPTION:
+Add a new network router to the inventory
+
+USAGE:
+    rpk routers add <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk routers list`
+```
+DESCRIPTION:
+List all routers in the system
+
+USAGE:
+    rpk routers list [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk routers get`
+```
+DESCRIPTION:
+Retrieve details of a specific router by name
+
+USAGE:
+    rpk routers get <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk routers describe`
+```
+DESCRIPTION:
+Show detailed information about a router
+
+USAGE:
+    rpk routers describe <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk routers set`
+```
+DESCRIPTION:
+Update properties of a router
+
+USAGE:
+    rpk routers set <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help       Prints help information
+        --Model                             
+        --managed                           
+        --poe                               
+```
+
+## `rpk routers del`
+```
+DESCRIPTION:
+Delete a router from the inventory
+
+USAGE:
+    rpk routers del <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk firewalls`
+```
+DESCRIPTION:
+Manage firewalls
+
+USAGE:
+    rpk firewalls [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    summary            Show a hardware report for all firewalls       
+    add <name>         Add a new firewall to the inventory            
+    list               List all firewalls in the system               
+    get <name>         Retrieve details of a specific firewall by name
+    describe <name>    Show detailed information about a firewall     
+    set <name>         Update properties of a firewall                
+    del <name>         Delete a firewall from the inventory           
+```
+
+## `rpk firewalls summary`
+```
+DESCRIPTION:
+Show a hardware report for all firewalls
+
+USAGE:
+    rpk firewalls summary [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk firewalls add`
+```
+DESCRIPTION:
+Add a new firewall to the inventory
+
+USAGE:
+    rpk firewalls add <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk firewalls list`
+```
+DESCRIPTION:
+List all firewalls in the system
+
+USAGE:
+    rpk firewalls list [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk firewalls get`
+```
+DESCRIPTION:
+Retrieve details of a specific firewall by name
+
+USAGE:
+    rpk firewalls get <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk firewalls describe`
+```
+DESCRIPTION:
+Show detailed information about a firewall
+
+USAGE:
+    rpk firewalls describe <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk firewalls set`
+```
+DESCRIPTION:
+Update properties of a firewall
+
+USAGE:
+    rpk firewalls set <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help       Prints help information
+        --Model                             
+        --managed                           
+        --poe                               
+```
+
+## `rpk firewalls del`
+```
+DESCRIPTION:
+Delete a firewall from the inventory
+
+USAGE:
+    rpk firewalls del <name> [OPTIONS]
 
 ARGUMENTS:
     <name>     
@@ -1356,6 +1605,335 @@ USAGE:
 ARGUMENTS:
     <desktop>    The desktop name              
     <index>      The index of the nic to remove
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops`
+```
+DESCRIPTION:
+Manage Laptop computers and their components
+
+USAGE:
+    rpk Laptops [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <name>         Add a new Laptop                                 
+    list               List all Laptops                                 
+    get <name>         Retrieve a Laptop by name                        
+    describe <name>    Show detailed information about a Laptop         
+    del <name>         Delete a Laptop from the inventory               
+    summary            Show a summarized hardware report for all Laptops
+    tree <name>        Display the dependency tree for a Laptop         
+    cpu                Manage CPUs attached to Laptops                  
+    drive              Manage storage drives attached to Laptops        
+    gpu                Manage GPUs attached to Laptops                  
+```
+
+## `rpk Laptops add`
+```
+DESCRIPTION:
+Add a new Laptop
+
+USAGE:
+    rpk Laptops add <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops list`
+```
+DESCRIPTION:
+List all Laptops
+
+USAGE:
+    rpk Laptops list [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops get`
+```
+DESCRIPTION:
+Retrieve a Laptop by name
+
+USAGE:
+    rpk Laptops get <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops describe`
+```
+DESCRIPTION:
+Show detailed information about a Laptop
+
+USAGE:
+    rpk Laptops describe <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops del`
+```
+DESCRIPTION:
+Delete a Laptop from the inventory
+
+USAGE:
+    rpk Laptops del <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops summary`
+```
+DESCRIPTION:
+Show a summarized hardware report for all Laptops
+
+USAGE:
+    rpk Laptops summary [OPTIONS]
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops tree`
+```
+DESCRIPTION:
+Display the dependency tree for a Laptop
+
+USAGE:
+    rpk Laptops tree <name> [OPTIONS]
+
+ARGUMENTS:
+    <name>     
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops cpu`
+```
+DESCRIPTION:
+Manage CPUs attached to Laptops
+
+USAGE:
+    rpk Laptops cpu [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <Laptop>            Add a CPU to a Laptop     
+    set <Laptop> <index>    Update a Laptop CPU       
+    del <Laptop> <index>    Remove a CPU from a Laptop
+```
+
+## `rpk Laptops cpu add`
+```
+DESCRIPTION:
+Add a CPU to a Laptop
+
+USAGE:
+    rpk Laptops cpu add <Laptop> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The Laptop name
+
+OPTIONS:
+    -h, --help       Prints help information  
+        --model      The model name           
+        --cores      The number of cpu cores  
+        --threads    The number of cpu threads
+```
+
+## `rpk Laptops cpu set`
+```
+DESCRIPTION:
+Update a Laptop CPU
+
+USAGE:
+    rpk Laptops cpu set <Laptop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The Laptop name            
+    <index>     The index of the Laptop cpu
+
+OPTIONS:
+    -h, --help       Prints help information  
+        --model      The cpu model            
+        --cores      The number of cpu cores  
+        --threads    The number of cpu threads
+```
+
+## `rpk Laptops cpu del`
+```
+DESCRIPTION:
+Remove a CPU from a Laptop
+
+USAGE:
+    rpk Laptops cpu del <Laptop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The name of the Laptop               
+    <index>     The index of the Laptop cpu to remove
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops drive`
+```
+DESCRIPTION:
+Manage storage drives attached to Laptops
+
+USAGE:
+    rpk Laptops drive [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <Laptop>            Add a drive to a Laptop     
+    set <Laptop> <index>    Update a Laptop drive       
+    del <Laptop> <index>    Remove a drive from a Laptop
+```
+
+## `rpk Laptops drive add`
+```
+DESCRIPTION:
+Add a drive to a Laptop
+
+USAGE:
+    rpk Laptops drive add <Laptop> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The name of the Laptop
+
+OPTIONS:
+    -h, --help    Prints help information     
+        --type    The drive type e.g hdd / ssd
+        --size    The drive capacity in Gb    
+```
+
+## `rpk Laptops drive set`
+```
+DESCRIPTION:
+Update a Laptop drive
+
+USAGE:
+    rpk Laptops drive set <Laptop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The Laptop name          
+    <index>     The drive index to update
+
+OPTIONS:
+    -h, --help    Prints help information     
+        --type    The drive type e.g hdd / ssd
+        --size    The drive capacity in Gb    
+```
+
+## `rpk Laptops drive del`
+```
+DESCRIPTION:
+Remove a drive from a Laptop
+
+USAGE:
+    rpk Laptops drive del <Laptop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The name of the Laptop          
+    <index>     The index of the drive to remove
+
+OPTIONS:
+    -h, --help    Prints help information
+```
+
+## `rpk Laptops gpu`
+```
+DESCRIPTION:
+Manage GPUs attached to Laptops
+
+USAGE:
+    rpk Laptops gpu [OPTIONS] <COMMAND>
+
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    add <Laptop>            Add a GPU to a Laptop     
+    set <Laptop> <index>    Update a Laptop GPU       
+    del <Laptop> <index>    Remove a GPU from a Laptop
+```
+
+## `rpk Laptops gpu add`
+```
+DESCRIPTION:
+Add a GPU to a Laptop
+
+USAGE:
+    rpk Laptops gpu add <Laptop> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The name of the Laptop
+
+OPTIONS:
+    -h, --help     Prints help information     
+        --model    The Gpu model               
+        --vram     The amount of gpu vram in Gb
+```
+
+## `rpk Laptops gpu set`
+```
+DESCRIPTION:
+Update a Laptop GPU
+
+USAGE:
+    rpk Laptops gpu set <Laptop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The Laptop name               
+    <index>     The index of the gpu to update
+
+OPTIONS:
+    -h, --help     Prints help information     
+        --model    The gpu model name          
+        --vram     The amount of gpu vram in Gb
+```
+
+## `rpk Laptops gpu del`
+```
+DESCRIPTION:
+Remove a GPU from a Laptop
+
+USAGE:
+    rpk Laptops gpu del <Laptop> <index> [OPTIONS]
+
+ARGUMENTS:
+    <Laptop>    The Laptop name               
+    <index>     The index of the Gpu to remove
 
 OPTIONS:
     -h, --help    Prints help information

@@ -89,6 +89,22 @@ The project is optimized for home labs and self-hosted environments, not enterpr
     - [describe](Commands.md#rpk-switches-describe) - Show detailed information about a switch
     - [set](Commands.md#rpk-switches-set) - Update properties of a switch
     - [del](Commands.md#rpk-switches-del) - Delete a switch from the inventory
+  - [routers](Commands.md#rpk-routers) - Manage network routers
+    - [summary](Commands.md#rpk-routers-summary) - Show a hardware report for all routers
+    - [add](Commands.md#rpk-routers-add) - Add a new network router to the inventory
+    - [list](Commands.md#rpk-routers-list) - List all routers in the system
+    - [get](Commands.md#rpk-routers-get) - Retrieve details of a specific router by name
+    - [describe](Commands.md#rpk-routers-describe) - Show detailed information about a router
+    - [set](Commands.md#rpk-routers-set) - Update properties of a router
+    - [del](Commands.md#rpk-routers-del) - Delete a router from the inventory
+  - [firewalls](Commands.md#rpk-firewalls) - Manage firewalls
+    - [summary](Commands.md#rpk-firewalls-summary) - Show a hardware report for all firewalls
+    - [add](Commands.md#rpk-firewalls-add) - Add a new firewall to the inventory
+    - [list](Commands.md#rpk-firewalls-list) - List all firewalls in the system
+    - [get](Commands.md#rpk-firewalls-get) - Retrieve details of a specific firewall by name
+    - [describe](Commands.md#rpk-firewalls-describe) - Show detailed information about a firewall
+    - [set](Commands.md#rpk-firewalls-set) - Update properties of a firewall
+    - [del](Commands.md#rpk-firewalls-del) - Delete a firewall from the inventory
   - [systems](Commands.md#rpk-systems) - Manage systems and their dependencies
     - [summary](Commands.md#rpk-systems-summary) - Show a summary report for all systems
     - [add](Commands.md#rpk-systems-add) - Add a new system to the inventory
@@ -139,6 +155,26 @@ The project is optimized for home labs and self-hosted environments, not enterpr
       - [add](Commands.md#rpk-desktops-nic-add) - Add a NIC to a desktop
       - [set](Commands.md#rpk-desktops-nic-set) - Update a desktop NIC
       - [del](Commands.md#rpk-desktops-nic-del) - Remove a NIC from a desktop
+  - [Laptops](Commands.md#rpk-laptops) - Manage Laptop computers and their components
+    - [add](Commands.md#rpk-laptops-add) - Add a new Laptop
+    - [list](Commands.md#rpk-laptops-list) - List all Laptops
+    - [get](Commands.md#rpk-laptops-get) - Retrieve a Laptop by name
+    - [describe](Commands.md#rpk-laptops-describe) - Show detailed information about a Laptop
+    - [del](Commands.md#rpk-laptops-del) - Delete a Laptop from the inventory
+    - [summary](Commands.md#rpk-laptops-summary) - Show a summarized hardware report for all Laptops
+    - [tree](Commands.md#rpk-laptops-tree) - Display the dependency tree for a Laptop
+    - [cpu](Commands.md#rpk-laptops-cpu) - Manage CPUs attached to Laptops
+      - [add](Commands.md#rpk-laptops-cpu-add) - Add a CPU to a Laptop
+      - [set](Commands.md#rpk-laptops-cpu-set) - Update a Laptop CPU
+      - [del](Commands.md#rpk-laptops-cpu-del) - Remove a CPU from a Laptop
+    - [drive](Commands.md#rpk-laptops-drive) - Manage storage drives attached to Laptops
+      - [add](Commands.md#rpk-laptops-drive-add) - Add a drive to a Laptop
+      - [set](Commands.md#rpk-laptops-drive-set) - Update a Laptop drive
+      - [del](Commands.md#rpk-laptops-drive-del) - Remove a drive from a Laptop
+    - [gpu](Commands.md#rpk-laptops-gpu) - Manage GPUs attached to Laptops
+      - [add](Commands.md#rpk-laptops-gpu-add) - Add a GPU to a Laptop
+      - [set](Commands.md#rpk-laptops-gpu-set) - Update a Laptop GPU
+      - [del](Commands.md#rpk-laptops-gpu-del) - Remove a GPU from a Laptop
   - [services](Commands.md#rpk-services) - Manage services and their configurations
     - [summary](Commands.md#rpk-services-summary) - Show a summary report for all services
     - [add](Commands.md#rpk-services-add) - Add a new service

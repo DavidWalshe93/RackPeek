@@ -113,7 +113,7 @@
 </div>
 
 @code {
-    [Parameter][EditorRequired] public TService Service { get; set; } = default!;
+    [Parameter] [EditorRequired] public TService Service { get; set; } = default!;
 
     [Parameter] public EventCallback<ServiceEditModel> OnSave { get; set; }
 

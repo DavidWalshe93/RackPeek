@@ -19,13 +19,11 @@
 </div>
 
 @code {
-    [Parameter][EditorRequired]
-    public ResourceType ResourceType { get; set; }
+    [Parameter] [EditorRequired] public ResourceType ResourceType { get; set; }
 
-    [Parameter][EditorRequired]
-    public string ResourceName { get; set; } = default!;
+    [Parameter] [EditorRequired] public string ResourceName { get; set; } = default!;
 
-    private List<Breadcrumb> Breadcrumbs { get; set; } = new();
+    private List<Breadcrumb> Breadcrumbs { get; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -49,7 +47,7 @@
 
     private async Task BuildHardwarePath(string hardwareName)
     {
-        Breadcrumbs.Add(new(hardwareName, $"resources/hardware/{hardwareName}"));
+        Breadcrumbs.Add(new Breadcrumb(hardwareName, $"resources/hardware/{hardwareName}"));
     }
 
     private async Task BuildSystemPath(string systemName)
@@ -58,13 +56,13 @@
 
         if (system?.RunsOn is not null)
         {
-            Breadcrumbs.Add(new(
+            Breadcrumbs.Add(new Breadcrumb(
                 system.RunsOn,
                 $"resources/hardware/{system.RunsOn}"
             ));
         }
 
-        Breadcrumbs.Add(new(
+        Breadcrumbs.Add(new Breadcrumb(
             systemName,
             $"resources/systems/{systemName}"
         ));
@@ -80,23 +78,24 @@
 
             if (system?.RunsOn is not null)
             {
-                Breadcrumbs.Add(new(
+                Breadcrumbs.Add(new Breadcrumb(
                     system.RunsOn,
                     $"resources/hardware/{system.RunsOn}"
                 ));
             }
 
-            Breadcrumbs.Add(new(
+            Breadcrumbs.Add(new Breadcrumb(
                 service.RunsOn,
                 $"resources/systems/{service.RunsOn}"
             ));
         }
 
-        Breadcrumbs.Add(new(
+        Breadcrumbs.Add(new Breadcrumb(
             serviceName,
             $"resources/services/{serviceName}"
         ));
     }
 
     private record Breadcrumb(string Label, string Href);
+
 }

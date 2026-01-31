@@ -1,5 +1,4 @@
 ﻿@using RackPeek.Domain.Resources.Hardware.Models
-
 <div class="border border-zinc-800 rounded p-4 bg-zinc-900">
     <div class="flex justify-between items-center mb-3">
         <div class="text-zinc-100">
@@ -54,6 +53,5 @@
 </div>
 
 @code {
-    [Parameter][EditorRequired]
-    public Switch Switch { get; set; } = default!;
+    [Parameter] [EditorRequired] public Switch Switch { get; set; } = default!;
 }

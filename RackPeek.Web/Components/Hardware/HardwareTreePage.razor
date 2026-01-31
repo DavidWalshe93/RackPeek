@@ -17,12 +17,12 @@
         </NavLink>
         <NavLink href="/desktops/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
             Desktops
-        </NavLink>     
+        </NavLink>
         <NavLink href="/accesspoints/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
             AccessPoints
         </NavLink>
     </nav>
-    
+
     @if (_tree is null)
     {
         <div class="text-zinc-500">loading tree…</div>
@@ -51,7 +51,7 @@
                         <li>
                             <!-- Hardware -->
                             <NavLink href="@($"/resources/hardware/{hardware.HardwareName}")" class="block">
-                               
+
                                 @if (hardware.Systems.Any())
                                 {
                                     <div class="text-zinc-100">
@@ -64,7 +64,7 @@
                                         @hardware.HardwareName
                                     </div>
                                 }
-               
+
                             </NavLink>
 
                             @if (hardware.Systems.Any())
@@ -87,7 +87,7 @@
                                                         └─ @system.SystemName
                                                     </div>
                                                 }
-                                 
+
                                             </NavLink>
 
                                             @if (system.Services.Any())

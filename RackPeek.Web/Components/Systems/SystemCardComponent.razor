@@ -1,5 +1,4 @@
-﻿@using RackPeek.Web.Components.Components
-@typeparam TSystem where TSystem : RackPeek.Domain.Resources.SystemResources.SystemResource
+﻿@typeparam TSystem where TSystem : RackPeek.Domain.Resources.SystemResources.SystemResource
 
 <div class="border border-zinc-800 rounded p-4 bg-zinc-900">
     <div class="flex justify-between items-center mb-3">
@@ -124,7 +123,7 @@
 </div>
 
 @code {
-    [Parameter][EditorRequired] public TSystem System { get; set; } = default!;
+    [Parameter] [EditorRequired] public TSystem System { get; set; } = default!;
 
     [Parameter] public EventCallback<SystemEditModel> OnSave { get; set; }
 

@@ -7,7 +7,7 @@
 
 <div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6 space-y-6">
 
-    <AddServerComponent OnCreated="NavigateToNewResource" />
+    <AddServerComponent OnCreated="NavigateToNewResource"/>
 
     @if (_servers is null)
     {
@@ -23,7 +23,7 @@
             @foreach (var server in _servers.OrderBy(s => s.Name))
             {
                 <NavLink href="@($"/resources/hardware/{server.Name}")" class="block">
-                    <ServerCardComponent Server="server" />
+                    <ServerCardComponent Server="server"/>
                 </NavLink>
             }
         </div>
@@ -43,4 +43,5 @@
         Nav.NavigateTo($"/resources/hardware/{serverName}");
         return Task.CompletedTask;
     }
+
 }

@@ -16,6 +16,7 @@ You should be able to document your environment as you build it, explore relatio
 RackPeek is not a CMDB replacement. It’s a clean framework for understanding and maintaining your lab.
 
 [![RackPeek demo](./vhs/rpk-demo.gif)](./rpk-demo.gif)
+[![RackPeek demo](./vhs/webui_screenshots/output.gif)](./rpk-webui-demo.gif)
 
 ## Core Values
 

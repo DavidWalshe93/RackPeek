@@ -5,31 +5,26 @@ using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Systems.Drives;
 
-public class SystemDriveRemoveCommand(IServiceProvider serviceProvider)
-    : AsyncCommand<SystemDriveRemoveCommand.Settings>
+public class SystemDriveRemoveSettings : SystemNameSettings
 {
-    public class Settings : CommandSettings
-    {
-        [CommandArgument(0, "<systemName>")]
-        public string SystemName { get; set; } = default!;
+    [CommandOption("--index <INDEX>")] 
+    public int Index { get; set; }
+}
 
-        [CommandArgument(1, "<driveName>")]
-        public string DriveName { get; set; } = default!;
-    }
-
+public class SystemDriveRemoveCommand(IServiceProvider serviceProvider)
+    : AsyncCommand<SystemDriveRemoveSettings>
+{
     public override async Task<int> ExecuteAsync(
         CommandContext context,
-        Settings settings,
+        SystemDriveRemoveSettings settings,
         CancellationToken cancellationToken)
     {
         using var scope = serviceProvider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<RemoveSystemDriveUseCase>();
 
-        await useCase.ExecuteAsync(settings.SystemName, settings.DriveName);
+        await useCase.ExecuteAsync(settings.Name, settings.Index);
 
-        AnsiConsole.MarkupLine(
-            $"[green]Drive '{settings.DriveName}' removed from system '{settings.SystemName}'.[/]");
-
+        AnsiConsole.MarkupLine($"[green]Drive {settings.Index} removed from '{settings.Name}'.[/]");
         return 0;
     }
 }

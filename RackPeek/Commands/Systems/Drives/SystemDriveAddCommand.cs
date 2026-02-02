@@ -5,34 +5,29 @@ using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Systems.Drives;
 
-public class SystemDriveAddCommand(IServiceProvider serviceProvider)
-    : AsyncCommand<SystemDriveAddCommand.Settings>
+public class SystemDriveAddSettings : SystemNameSettings
 {
-    public class Settings : CommandSettings
-    {
-        [CommandArgument(0, "<systemName>")]
-        public string SystemName { get; set; } = default!;
+    [CommandOption("--type <TYPE>")] 
+    public string Type { get; set; } = default!;
 
-        [CommandArgument(1, "<driveName>")]
-        public string DriveName { get; set; } = default!;
+    [CommandOption("--size <SIZE>")] 
+    public int Size { get; set; }
+}
 
-        [CommandArgument(2, "<sizeGb>")]
-        public int SizeGb { get; set; }
-    }
-
+public class SystemDriveAddCommand(IServiceProvider serviceProvider)
+    : AsyncCommand<SystemDriveAddSettings>
+{
     public override async Task<int> ExecuteAsync(
         CommandContext context,
-        Settings settings,
+        SystemDriveAddSettings settings,
         CancellationToken cancellationToken)
     {
         using var scope = serviceProvider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<AddSystemDriveUseCase>();
 
-        await useCase.ExecuteAsync(settings.SystemName, settings.DriveName, settings.SizeGb);
+        await useCase.ExecuteAsync(settings.Name, settings.Type, settings.Size);
 
-        AnsiConsole.MarkupLine(
-            $"[green]Drive '{settings.DriveName}' added to system '{settings.SystemName}'.[/]");
-
+        AnsiConsole.MarkupLine($"[green]Drive added to '{settings.Name}'.[/]");
         return 0;
     }
 }

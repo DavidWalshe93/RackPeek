@@ -5,34 +5,32 @@ using Spectre.Console.Cli;
 
 namespace RackPeek.Commands.Systems.Drives;
 
-public class SystemDriveUpdateCommand(IServiceProvider serviceProvider)
-    : AsyncCommand<SystemDriveUpdateCommand.Settings>
+public class SystemDriveUpdateSettings : SystemNameSettings
 {
-    public class Settings : CommandSettings
-    {
-        [CommandArgument(0, "<systemName>")]
-        public string SystemName { get; set; } = default!;
+    [CommandOption("--index <INDEX>")] 
+    public int Index { get; set; }
 
-        [CommandArgument(1, "<driveName>")]
-        public string DriveName { get; set; } = default!;
+    [CommandOption("--type <TYPE>")] 
+    public string Type { get; set; } = default!;
 
-        [CommandArgument(2, "<sizeGb>")]
-        public int SizeGb { get; set; }
-    }
+    [CommandOption("--size <SIZE>")] 
+    public int Size { get; set; }
+}
 
+public class SystemDriveUpdateCommand(IServiceProvider serviceProvider)
+    : AsyncCommand<SystemDriveUpdateSettings>
+{
     public override async Task<int> ExecuteAsync(
         CommandContext context,
-        Settings settings,
+        SystemDriveUpdateSettings settings,
         CancellationToken cancellationToken)
     {
         using var scope = serviceProvider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<UpdateSystemDriveUseCase>();
 
-        await useCase.ExecuteAsync(settings.SystemName, settings.DriveName, settings.SizeGb);
+        await useCase.ExecuteAsync(settings.Name, settings.Index, settings.Type, settings.Size);
 
-        AnsiConsole.MarkupLine(
-            $"[green]Drive '{settings.DriveName}' updated on system '{settings.SystemName}'.[/]");
-
+        AnsiConsole.MarkupLine($"[green]Drive {settings.Index} updated on '{settings.Name}'.[/]");
         return 0;
     }
 }

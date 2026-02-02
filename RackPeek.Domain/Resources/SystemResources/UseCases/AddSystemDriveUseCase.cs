@@ -7,11 +7,13 @@ namespace RackPeek.Domain.Resources.SystemResources.UseCases;
 
 public class AddSystemDriveUseCase(ISystemRepository repository) : IUseCase
 {
-    public async Task ExecuteAsync(string systemName, string DriveType, int size)
+    public async Task ExecuteAsync(string systemName, string driveType, int size)
     {
         ThrowIfInvalid.ResourceName(systemName);
-        ThrowIfInvalid.ResourceName(DriveType);
-        ThrowIfInvalid.DriveSize(size);
+        
+        var driveTypeNormalized = Normalize.DriveType(driveType);
+        ThrowIfInvalid.DriveType(driveTypeNormalized);
+        ThrowIfInvalid.DriveSize(size); 
 
         var system = await repository.GetByNameAsync(systemName)
                      ?? throw new NotFoundException($"System '{systemName}' not found.");
@@ -20,7 +22,7 @@ public class AddSystemDriveUseCase(ISystemRepository repository) : IUseCase
 
         system.Drives.Add(new Drive
         {
-            Type = DriveType,
+            Type = driveTypeNormalized,
             Size = size
         });
 

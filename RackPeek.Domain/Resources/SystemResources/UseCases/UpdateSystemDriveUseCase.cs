@@ -7,21 +7,22 @@ namespace RackPeek.Domain.Resources.SystemResources.UseCases;
 
 public class UpdateSystemDriveUseCase(ISystemRepository repository) : IUseCase
 {
-    public async Task ExecuteAsync(string systemName, int index, string DriveType, int size)
+    public async Task ExecuteAsync(string systemName, int index, string driveType, int size)
     {
         ThrowIfInvalid.ResourceName(systemName);
-        ThrowIfInvalid.ResourceName(DriveType);
+        var driveTypeNormalized = Normalize.DriveType(driveType);
+        ThrowIfInvalid.DriveType(driveTypeNormalized);
         ThrowIfInvalid.DriveSize(size);
 
-        var system = await repository.GetByNameAsync(systemName)
-                     ?? throw new NotFoundException($"System '{systemName}' not found.");
+        var system = await repository.GetByNameAsync(systemName) ??
+                     throw new NotFoundException($"System '{systemName}' not found.");
 
         if (system.Drives == null || index < 0 || index >= system.Drives.Count)
             throw new NotFoundException($"Drive index {index} not found on system '{systemName}'.");
 
         var drive = system.Drives[index];
 
-        drive.Type = DriveType;
+        drive.Type = driveTypeNormalized;
         drive.Size = size;
 
         await repository.UpdateAsync(system);

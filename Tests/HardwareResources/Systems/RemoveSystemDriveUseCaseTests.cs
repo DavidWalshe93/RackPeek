@@ -26,7 +26,7 @@ public class RemoveSystemDriveUseCaseTests
         var sut = new RemoveSystemDriveUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync("sys1", "ssd");
+        await sut.ExecuteAsync("sys1", 0);
 
         // Assert
         Assert.Empty(system.Drives);
@@ -43,7 +43,7 @@ public class RemoveSystemDriveUseCaseTests
         var sut = new RemoveSystemDriveUseCase(repo);
 
         await Assert.ThrowsAsync<NotFoundException>(() =>
-            sut.ExecuteAsync("sys1", "ssd")
+            sut.ExecuteAsync("sys1", 0)
         );
     }
 
@@ -58,18 +58,18 @@ public class RemoveSystemDriveUseCaseTests
         var sut = new RemoveSystemDriveUseCase(repo);
 
         await Assert.ThrowsAsync<NotFoundException>(() =>
-            sut.ExecuteAsync("sys1", "ssd")
+            sut.ExecuteAsync("sys1", 0)
         );
     }
 
     [Fact]
-    public async Task ExecuteAsync_Throws_when_type_invalid()
+    public async Task ExecuteAsync_Throws_when_index_invalid()
     {
         var repo = Substitute.For<ISystemRepository>();
         var sut = new RemoveSystemDriveUseCase(repo);
 
         await Assert.ThrowsAsync<ValidationException>(() =>
-            sut.ExecuteAsync("sys1", "")
+            sut.ExecuteAsync("sys1", -1)
         );
     }
 }

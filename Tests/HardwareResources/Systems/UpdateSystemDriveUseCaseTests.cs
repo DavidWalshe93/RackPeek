@@ -25,9 +25,10 @@ public class UpdateSystemDriveUseCaseTests
         var sut = new UpdateSystemDriveUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync("sys1", "ssd", 512);
+        await sut.ExecuteAsync("sys1", 0, "nvme", 512);
 
         // Assert
+        Assert.Equal("nvme", system.Drives[0].Type);
         Assert.Equal(512, system.Drives[0].Size);
 
         await repo.Received(1).UpdateAsync(system);
@@ -42,7 +43,7 @@ public class UpdateSystemDriveUseCaseTests
         var sut = new UpdateSystemDriveUseCase(repo);
 
         await Assert.ThrowsAsync<NotFoundException>(() =>
-            sut.ExecuteAsync("sys1", "ssd", 512)
+            sut.ExecuteAsync("sys1", 0, "ssd", 512)
         );
     }
 
@@ -57,7 +58,7 @@ public class UpdateSystemDriveUseCaseTests
         var sut = new UpdateSystemDriveUseCase(repo);
 
         await Assert.ThrowsAsync<NotFoundException>(() =>
-            sut.ExecuteAsync("sys1", "ssd", 512)
+            sut.ExecuteAsync("sys1", 0, "ssd", 512)
         );
     }
 
@@ -68,7 +69,7 @@ public class UpdateSystemDriveUseCaseTests
         var sut = new UpdateSystemDriveUseCase(repo);
 
         await Assert.ThrowsAsync<ValidationException>(() =>
-            sut.ExecuteAsync("sys1", "", 512)
+            sut.ExecuteAsync("sys1", 0, "", 512)
         );
     }
 
@@ -79,7 +80,7 @@ public class UpdateSystemDriveUseCaseTests
         var sut = new UpdateSystemDriveUseCase(repo);
 
         await Assert.ThrowsAsync<ValidationException>(() =>
-            sut.ExecuteAsync("sys1", "ssd", -1)
+            sut.ExecuteAsync("sys1", 0, "ssd", -1)
         );
     }
 }

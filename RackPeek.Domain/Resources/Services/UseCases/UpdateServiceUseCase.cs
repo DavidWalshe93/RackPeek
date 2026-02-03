@@ -14,6 +14,9 @@ public class UpdateServiceUseCase(IServiceRepository repository, ISystemReposito
         string? runsOn = null
     )
     {
+        // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.ServiceName(name);
         ThrowIfInvalid.ResourceName(name);
         var service = await repository.GetByNameAsync(name);

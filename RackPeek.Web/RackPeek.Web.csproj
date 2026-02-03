@@ -36,13 +36,6 @@
 
     <ItemGroup>
         <AdditionalFiles Include="Components\Components\HardwareDependencyTreeComponent.razor"/>
-        <AdditionalFiles Include="Components\Components\ServerCardComponent.razor"/>
-        <AdditionalFiles Include="Components\Components\ServersListComponent.razor"/>
-        <AdditionalFiles Include="Components\Components\ServiceCardComponent.razor"/>
-        <AdditionalFiles Include="Components\Components\ServicesListComponent.razor"/>
-        <AdditionalFiles Include="Components\Components\SystemCardComponent.razor"/>
-        <AdditionalFiles Include="Components\Components\SystemDependencyTreeComponent.razor"/>
-        <AdditionalFiles Include="Components\Components\SystemsListComponent.razor"/>
     </ItemGroup>
 
 </Project>

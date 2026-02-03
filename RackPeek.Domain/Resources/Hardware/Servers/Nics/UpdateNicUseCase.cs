@@ -13,6 +13,9 @@ public class UpdateNicUseCase(IHardwareRepository repository) : IUseCase
         int speed,
         int ports)
     {
+        // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.HardwareName(name);
         ThrowIfInvalid.ResourceName(name);
         ThrowIfInvalid.NicSpeed(speed);

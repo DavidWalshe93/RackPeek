@@ -1,4 +1,18 @@
-﻿@typeparam TServer where TServer : RackPeek.Domain.Resources.Hardware.Models.Server
+﻿@using RackPeek.Domain.Resources.Hardware.Models
+@using RackPeek.Domain.Resources.Hardware.Servers
+@using RackPeek.Domain.Resources.Hardware.Servers.Cpus
+@using RackPeek.Domain.Resources.Hardware.Servers.Drives
+@using RackPeek.Web.Components.Modals
+@inject AddCpuUseCase AddCpuUseCase
+@inject RemoveCpuUseCase RemoveCpuUseCase
+@inject UpdateCpuUseCase UpdateCpuUseCase
+
+@inject AddDrivesUseCase AddDriveUseCase
+@inject RemoveDriveUseCase RemoveDriveUseCase
+@inject UpdateDriveUseCase UpdateDriveUseCase
+
+@inject GetServerUseCase GetServerUseCase
+@inject UpdateServerUseCase UpdateServerUseCase
 
 <div class="border border-zinc-800 rounded p-4 bg-zinc-900">
     <div class="flex justify-between items-center mb-3">
@@ -13,43 +27,103 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-
-        @if (Server.Cpus?.Any() == true)
-        {
-            <div>
-                <div class="text-zinc-400 mb-1">CPU</div>
-                @foreach (var cpu in Server.Cpus)
-                {
-                    <div class="text-zinc-300">
-                        @cpu.Model — @cpu.Cores cores / @cpu.Threads threads
-                    </div>
-                }
-            </div>
-        }
-
-        @if (Server.Ram is not null)
-        {
-            <div>
-                <div class="text-zinc-400 mb-1">RAM</div>
-                <div class="text-zinc-300">
-                    @Server.Ram.Size GB @Server.Ram.Mts MT/s
+        
+        <div>
+            <div class="flex items-center justify-between mb-1 group">
+                <div class="text-zinc-400">CPU
+                    <button
+                        class="hover:text-emerald-400 group-hover:opacity-100 transition"
+                        title="Add CPU"
+                        @onclick="OpenAddCpu">
+                        +
+                    </button>
                 </div>
             </div>
-        }
 
-        @if (Server.Drives?.Any() == true)
-        {
-            <div>
-                <div class="text-zinc-400 mb-1">Drives</div>
-                @foreach (var drive in Server.Drives)
+            @if (Server.Cpus?.Any() == true)
+            {
+                <!-- CPU rows -->
+                @foreach (var cpu in Server.Cpus)
                 {
-                    <div class="text-zinc-300">
-                        @drive.Type — @drive.Size GB
+                    <div
+                        class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+
+                        <div class="flex gap-2 group-hover:opacity-100 transition">
+                            <button
+                                class="hover:text-emerald-400"
+                                title="Edit CPU"
+                                @onclick="() => OpenEditCpu(cpu)">
+                                @cpu.Model — @cpu.Cores cores / @cpu.Threads threads
+                            </button>
+                        </div>
                     </div>
                 }
-            </div>
-        }
+            }
+        </div>
 
+
+        <div>
+            <div class="text-zinc-400 mb-1">RAM
+                @if (Server.Ram is null)
+                {
+                    <button
+                        class="hover:text-emerald-400 group-hover:opacity-100 transition"
+                        title="Add RAM"
+                        @onclick="EditRam">
+                        +
+                    </button>
+                }
+            </div>
+            @if (Server.Ram is not null)
+            {
+                
+                <div
+                    class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+                    <div class="flex gap-2 group-hover:opacity-100 transition">
+                        <button
+                            class="hover:text-emerald-400"
+                            title="Edit RAM"
+                            @onclick="EditRam">
+                            @($"{Server.Ram.Size} GB {@Server.Ram.Mts} MT/s")
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+        <div>
+            <div class="flex items-center justify-between mb-1 group">
+                <div class="text-zinc-400">Drives
+                    <button
+                        class="hover:text-emerald-400 group-hover:opacity-100 transition"
+                        title="Add Drive"
+                        @onclick="OpenAddDrive">
+                        +
+                    </button>
+                </div>
+            </div>
+
+            @if (Server.Drives?.Any() == true)
+            {
+                @foreach (var drive in Server.Drives)
+                {
+                    <div
+                        class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+
+                        <div class="flex gap-2 group-hover:opacity-100 transition">
+                            <button
+                                class="hover:text-emerald-400"
+                                title="Edit Drive"
+                                @onclick="() => OpenEditDrives(drive)">
+                                @drive.Type — @drive.Size GB
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+            
         @if (Server.Nics?.Any() == true)
         {
             <div>
@@ -79,6 +153,135 @@
     </div>
 </div>
 
+<CpuModal
+    IsOpen="@_cpuModalOpen"
+    IsOpenChanged="v => _cpuModalOpen = v"
+    Value="@_editingCpu"
+    OnSubmit="HandleCpuSubmit" 
+    OnDelete="HandleCpuDelete"/>
+
+<RamModal
+    IsOpen="@_isRamModalOpen"
+    IsOpenChanged="v => _isRamModalOpen = v"
+    Value="@Server.Ram"
+    OnSubmit="HandleRamSubmit"/>
+
+<DriveModal
+    IsOpen="@_driveModalOpen"
+    IsOpenChanged="v => _driveModalOpen = v"
+    Value="@_editingDrive"
+    OnSubmit="HandleDriveSubmit" 
+    OnDelete="HandleDriveDelete"/>
+
 @code {
-    [Parameter] [EditorRequired] public TServer Server { get; set; } = default!;
+    [Parameter] [EditorRequired]
+    public Server Server { get; set; } = default!;
+
+    #region RAM
+    private bool _isRamModalOpen;
+    private void EditRam()
+    {
+        _isRamModalOpen = true;
+    }
+
+    private async Task HandleRamSubmit(Ram value)
+    {
+        _isRamModalOpen = false;
+        await UpdateServerUseCase.ExecuteAsync(Server.Name, value.Size, value.Mts, Server.Ipmi);
+        Server = await GetServerUseCase.ExecuteAsync(Server.Name);
+    }
+    
+    #endregion
+    
+    #region CPU
+    bool _cpuModalOpen;
+    int _editingCpuIndex;
+    Cpu? _editingCpu;
+    
+    void OpenAddCpu()
+    {
+        _editingCpuIndex = -1;
+        _editingCpu = null;
+        _cpuModalOpen = true;
+    }
+    
+    void OpenEditCpu(Cpu cpu)
+    {
+        _editingCpu = cpu;
+        Server.Cpus ??= new();
+        _editingCpuIndex = Server.Cpus.IndexOf(cpu);;
+        _cpuModalOpen = true;
+    }
+    
+    async Task HandleCpuSubmit(Cpu cpu)
+    {
+        Server.Cpus ??= new();
+
+        if (_editingCpuIndex < 0)
+        {
+            await AddCpuUseCase.ExecuteAsync(Server.Name, cpu.Model, cpu.Cores, cpu.Threads);
+        }
+        else
+        {
+            await UpdateCpuUseCase.ExecuteAsync(Server.Name, _editingCpuIndex, cpu.Model, cpu.Cores, cpu.Threads);
+        }
+        
+        Server = await GetServerUseCase.ExecuteAsync(Server.Name);
+    }
+
+    async Task HandleCpuDelete(Cpu cpu)
+    {
+        await RemoveCpuUseCase.ExecuteAsync(Server.Name, _editingCpuIndex);
+        Server = await GetServerUseCase.ExecuteAsync(Server.Name);
+    }
+    
+        
+    #endregion
+    
+    #region Drives
+    bool _driveModalOpen;
+    int _editingDriveIndex;
+    Drive? _editingDrive;
+    
+    void OpenAddDrive()
+    {
+        _editingDriveIndex = -1;
+        _editingDrive = null;
+        _driveModalOpen = true;
+    }
+    
+    void OpenEditDrives(Drive drive)
+    {
+        _editingDrive = drive;
+        Server.Drives ??= new();
+        _editingDriveIndex = Server.Drives.IndexOf(drive);;
+        _driveModalOpen = true;
+    }
+    
+    async Task HandleDriveSubmit(Drive drive)
+    {
+        Server.Drives ??= new();
+
+        if (_editingDriveIndex < 0)
+        {
+            await AddDriveUseCase.ExecuteAsync(Server.Name, drive.Type, drive.Size);
+        }
+        else
+        {
+            await UpdateDriveUseCase.ExecuteAsync(Server.Name, _editingDriveIndex,  drive.Type, drive.Size);
+        }
+        
+        Server = await GetServerUseCase.ExecuteAsync(Server.Name);
+        StateHasChanged();
+    }
+
+    async Task HandleDriveDelete(Drive drive)
+    {
+        await RemoveDriveUseCase.ExecuteAsync(Server.Name, _editingDriveIndex);
+        Server = await GetServerUseCase.ExecuteAsync(Server.Name);
+        StateHasChanged();
+    }
+    
+        
+    #endregion
 }

@@ -1,4 +1,5 @@
 using NSubstitute;
+using RackPeek.Domain.Helpers;
 using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Hardware.Models;
 using RackPeek.Domain.Resources.Hardware.Servers.Drives;
@@ -88,13 +89,15 @@ public class UpdateDriveUseCaseTests
         var sut = new UpdateDriveUseCase(repo);
 
         // Act
-        await sut.ExecuteAsync(
-            "node01",
-            0,
-            "SATA",
-            500
+        var ex = await Assert.ThrowsAsync<NotFoundException>(async () =>
+            await sut.ExecuteAsync(
+                "node01",
+                0,
+                "SATA",
+                500
+            )
         );
-
+        
         // Assert
         await repo.DidNotReceive().UpdateAsync(Arg.Any<Server>());
     }

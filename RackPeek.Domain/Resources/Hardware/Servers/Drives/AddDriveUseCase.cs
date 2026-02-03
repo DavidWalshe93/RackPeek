@@ -7,15 +7,19 @@ public class AddDrivesUseCase(IHardwareRepository repository) : IUseCase
 {
     public async Task ExecuteAsync(
         string name,
-        string type,
-        int size)
+        string? type,
+        int? size)
     {
+        // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.HardwareName(name);
         ThrowIfInvalid.ResourceName(name);
 
         var hardware = await repository.GetByNameAsync(name);
 
-        if (hardware is not Server server) return;
+        if (hardware is not Server server)
+            throw new NotFoundException($"Server '{name}' not found.");
 
         server.Drives ??= [];
 

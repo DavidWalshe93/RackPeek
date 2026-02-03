@@ -7,6 +7,9 @@ public class AddDesktopDriveUseCase(IHardwareRepository repository) : IUseCase
 {
     public async Task ExecuteAsync(string name, Drive drive)
     {
+        // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.HardwareName(name);
         ThrowIfInvalid.ResourceName(name);
 

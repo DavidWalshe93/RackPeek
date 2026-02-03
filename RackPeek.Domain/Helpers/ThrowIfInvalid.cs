@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using RackPeek.Domain.Resources.Hardware.Models;
 
 namespace RackPeek.Domain.Helpers;
 
@@ -113,26 +114,14 @@ public static class ThrowIfInvalid
     #endregion
 
     #region Drives
-
-    public static readonly string[] ValidDriveTypes =
-    {
-        // Flash storage
-        "nvme", "ssd",
-        // Traditional spinning disks
-        "hdd",
-        // Enterprise interfaces
-        "sas", "sata",
-        // External / removable
-        "usb", "sdcard", "micro-sd"
-    };
-
+    
     public static void DriveType(string driveType)
     {
         if (string.IsNullOrWhiteSpace(driveType)) throw new ValidationException("Drive type is required.");
 
         var normalized = driveType.Trim().ToLowerInvariant();
 
-        if (ValidDriveTypes.Contains(normalized)) return;
+        if (Drive.ValidDriveTypes.Contains(normalized)) return;
 
         var suggestions = GetDriveTypeSuggestions(normalized).ToList();
 
@@ -145,7 +134,7 @@ public static class ThrowIfInvalid
 
     private static IEnumerable<string> GetDriveTypeSuggestions(string input)
     {
-        return ValidDriveTypes.Select(type => new { Type = type, Score = SimilarityScore(input, type) })
+        return Drive.ValidDriveTypes.Select(type => new { Type = type, Score = SimilarityScore(input, type) })
             .Where(x => x.Score >= 0.5)
             .OrderByDescending(x => x.Score)
             .Take(3)

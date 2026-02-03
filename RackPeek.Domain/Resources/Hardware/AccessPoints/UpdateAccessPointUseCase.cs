@@ -11,6 +11,8 @@ public class UpdateAccessPointUseCase(IHardwareRepository repository) : IUseCase
         double? speed = null
     )
     {
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.HardwareName(name);
         ThrowIfInvalid.ResourceName(name);
         var ap = await repository.GetByNameAsync(name) as AccessPoint;

@@ -11,6 +11,9 @@ public class UpdateUpsUseCase(IHardwareRepository repository) : IUseCase
         int? va = null
     )
     {
+        // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.HardwareName(name);
         ThrowIfInvalid.ResourceName(name);
 

@@ -14,6 +14,9 @@ public class UpdateSystemUseCase(ISystemRepository repository, IHardwareReposito
         string? runsOn = null
     )
     {
+        // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.SystemName(name);
         ThrowIfInvalid.ResourceName(name);
         var system = await repository.GetByNameAsync(name);

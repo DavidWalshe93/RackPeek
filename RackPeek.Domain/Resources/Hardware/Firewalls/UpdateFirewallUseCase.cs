@@ -12,6 +12,8 @@ public class UpdateFirewallUseCase(IHardwareRepository repository) : IUseCase
         bool? poe = null
     )
     {
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.HardwareName(name);
         ThrowIfInvalid.ResourceName(name);
 

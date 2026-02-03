@@ -7,10 +7,13 @@ public class AddCpuUseCase(IHardwareRepository repository) : IUseCase
 {
     public async Task ExecuteAsync(
         string name,
-        string model,
-        int cores,
-        int threads)
+        string? model,
+        int? cores,
+        int? threads)
     {
+        // ToDo pass in properties as inputs, construct the entity in the usecase
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.HardwareName(name);
         ThrowIfInvalid.ResourceName(name);
 

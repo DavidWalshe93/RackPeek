@@ -10,6 +10,8 @@ public class UpdateDesktopUseCase(IHardwareRepository repository) : IUseCase
         string? model = null
     )
     {
+        // ToDo validate / normalize all inputs
+        
         name = Normalize.HardwareName(name);
         ThrowIfInvalid.ResourceName(name);
 

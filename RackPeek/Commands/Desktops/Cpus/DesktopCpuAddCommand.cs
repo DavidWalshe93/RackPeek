@@ -17,14 +17,7 @@ public class DesktopCpuAddCommand(IServiceProvider provider)
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<AddDesktopCpuUseCase>();
 
-        var cpu = new Cpu
-        {
-            Model = settings.Model,
-            Cores = settings.Cores,
-            Threads = settings.Threads
-        };
-
-        await useCase.ExecuteAsync(settings.DesktopName, cpu);
+        await useCase.ExecuteAsync(settings.DesktopName, settings.Model, settings.Cores, settings.Threads);
 
         AnsiConsole.MarkupLine($"[green]CPU added to desktop '{settings.DesktopName}'.[/]");
         return 0;

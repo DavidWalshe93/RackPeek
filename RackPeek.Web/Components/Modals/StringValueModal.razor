@@ -1,0 +1,136 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+@if (IsOpen)
+{
+    <div class="fixed inset-0 z-50 flex items-center justify-center">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/70" @onclick="Cancel"></div>
+
+        <!-- Modal -->
+        <div class="relative bg-zinc-900 border border-zinc-800 rounded w-full max-w-md p-4">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-3">
+                <div class="text-zinc-100 text-sm font-medium">
+                    @Title
+                </div>
+
+                <button
+                    class="text-zinc-400 hover:text-zinc-200"
+                    @onclick="Cancel">
+                    ✕
+                </button>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Description))
+            {
+                <div class="text-xs text-zinc-400 mb-4">
+                    @Description
+                </div>
+            }
+
+            <!-- Form -->
+            <EditForm Model="_model" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+
+                @if (!string.IsNullOrEmpty(_error))
+                {
+                    <div class="text-xs text-red-400 mb-3">
+                        @_error
+                    </div>
+                }
+
+                <div class="text-sm">
+                    <label class="block text-zinc-400 mb-1">
+                        @Label
+                    </label>
+
+                    <InputText
+                        class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
+                        @bind-Value="_model.Value" />
+                </div>
+
+                <!-- Actions -->
+                <div class="flex justify-end gap-2 mt-5">
+                    <button
+                        type="button"
+                        class="px-3 py-1 rounded border border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                        @onclick="Cancel">
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="px-3 py-1 rounded bg-emerald-600 text-black hover:bg-emerald-500">
+                        Accept
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+
+    [Parameter] public string Title { get; set; } = "Edit value";
+    [Parameter] public string? Description { get; set; }
+    [Parameter] public string Label { get; set; } = "Value";
+
+    [Parameter] public string? Value { get; set; }
+
+    /// <summary>
+    /// Called when Accept is clicked.
+    /// May throw an exception (e.g. validation error).
+    /// </summary>
+    [Parameter] public EventCallback<string> OnSubmit { get; set; }
+
+    private FormModel _model = new();
+    private string? _error;
+
+    protected override void OnParametersSet()
+    {
+        if (IsOpen)
+        {
+            _error = null;
+            _model = new FormModel
+            {
+                Value = Value
+            };
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        _error = null;
+
+        try
+        {
+            await OnSubmit.InvokeAsync(_model.Value!);
+            await Close();
+        }
+        catch (Exception ex)
+        {
+            // Show exception message instead of closing
+            _error = ex.Message;
+        }
+    }
+
+    private async Task Cancel()
+    {
+        await Close();
+    }
+
+    private async Task Close()
+    {
+        _model = new();
+        _error = null;
+        await IsOpenChanged.InvokeAsync(false);
+    }
+
+    private class FormModel
+    {
+        [Required]
+        public string? Value { get; set; }
+    }
+}

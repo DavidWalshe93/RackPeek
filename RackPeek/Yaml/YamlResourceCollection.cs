@@ -13,27 +13,74 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
 {
     private static readonly TimeSpan ReloadDebounce = TimeSpan.FromMilliseconds(300);
 
+    private readonly object _sync = new();
+
     private readonly List<ResourceEntry> _entries = [];
     private readonly List<string> _knownFiles = [];
     private readonly ConcurrentDictionary<string, DateTime> _reloadQueue = [];
     private readonly bool _watch = watch;
     private readonly Dictionary<string, FileSystemWatcher> _watchers = [];
 
-    public IReadOnlyList<string> SourceFiles => _knownFiles.ToList();
+    public IReadOnlyList<string> SourceFiles
+    {
+        get
+        {
+            lock (_sync)
+                return _knownFiles.ToList();
+        }
+    }
 
-    public IReadOnlyList<Hardware> HardwareResources =>
-        _entries.Select(e => e.Resource).OfType<Hardware>().ToList();
+    public IReadOnlyList<Hardware> HardwareResources
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _entries
+                    .Select(e => e.Resource)
+                    .OfType<Hardware>()
+                    .ToList();
+            }
+        }
+    }
 
-    public IReadOnlyList<SystemResource> SystemResources =>
-        _entries.Select(e => e.Resource).OfType<SystemResource>().ToList();
+    public IReadOnlyList<SystemResource> SystemResources
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _entries
+                    .Select(e => e.Resource)
+                    .OfType<SystemResource>()
+                    .ToList();
+            }
+        }
+    }
 
-    public IReadOnlyList<Service> ServiceResources =>
-        _entries.Select(e => e.Resource).OfType<Service>().ToList();
+    public IReadOnlyList<Service> ServiceResources
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _entries
+                    .Select(e => e.Resource)
+                    .OfType<Service>()
+                    .ToList();
+            }
+        }
+    }
 
     public void Dispose()
     {
-        foreach (var watcher in _watchers.Values)
-            watcher.Dispose();
+        lock (_sync)
+        {
+            foreach (var watcher in _watchers.Values)
+                watcher.Dispose();
+
+            _watchers.Clear();
+        }
     }
 
     // ----------------------------
@@ -45,7 +92,6 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
         foreach (var file in filePaths)
         {
             TrackFile(file);
-
             LoadFile(file);
         }
     }
@@ -53,20 +99,35 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
     public void Load(string yaml, string file)
     {
         TrackFile(file);
-        foreach (var resource in Deserialize(yaml))
-            _entries.Add(new ResourceEntry(resource, file));
+
+        var newEntries = Deserialize(yaml)
+            .Where(r => r != null)
+            .Select(r => new ResourceEntry(r!, file))
+            .ToList();
+
+        lock (_sync)
+        {
+            RemoveEntriesFromFile(file);
+            _entries.AddRange(newEntries);
+        }
     }
 
     private void LoadFile(string file)
     {
-        RemoveEntriesFromFile(file);
-
         var yaml = File.Exists(file)
             ? SafeReadAllText(file)
             : string.Empty;
 
-        foreach (var resource in Deserialize(yaml))
-            _entries.Add(new ResourceEntry(resource, file));
+        var newEntries = Deserialize(yaml)
+            .Where(r => r != null)
+            .Select(r => new ResourceEntry(r!, file))
+            .ToList();
+
+        lock (_sync)
+        {
+            RemoveEntriesFromFile(file);
+            _entries.AddRange(newEntries);
+        }
     }
 
     // ----------------------------
@@ -75,48 +136,59 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
 
     private void TrackFile(string file)
     {
-        if (!_knownFiles.Contains(file))
-            _knownFiles.Add(file);
-
-        var directory = Path.GetDirectoryName(file)!;
-
-        if (_watchers.ContainsKey(directory) || !_watch)
-            return;
-
-        var watcher = new FileSystemWatcher(directory)
+        lock (_sync)
         {
-            EnableRaisingEvents = true,
-            NotifyFilter = NotifyFilters.LastWrite
-                           | NotifyFilters.FileName
-                           | NotifyFilters.Size
-        };
+            if (!_knownFiles.Contains(file))
+                _knownFiles.Add(file);
 
-        watcher.Changed += OnFileChanged;
-        watcher.Created += OnFileChanged;
-        watcher.Deleted += OnFileChanged;
-        watcher.Renamed += OnFileRenamed;
+            var directory = Path.GetDirectoryName(file);
+            if (directory == null || !_watch || _watchers.ContainsKey(directory))
+                return;
 
-        _watchers[directory] = watcher;
+            var watcher = new FileSystemWatcher(directory)
+            {
+                EnableRaisingEvents = true,
+                NotifyFilter = NotifyFilters.LastWrite
+                               | NotifyFilters.FileName
+                               | NotifyFilters.Size
+            };
+
+            watcher.Changed += OnFileChanged;
+            watcher.Created += OnFileChanged;
+            watcher.Deleted += OnFileChanged;
+            watcher.Renamed += OnFileRenamed;
+
+            _watchers[directory] = watcher;
+        }
     }
 
     private void OnFileChanged(object sender, FileSystemEventArgs e)
     {
-        if (!_knownFiles.Contains(e.FullPath))
-            return;
+        lock (_sync)
+        {
+            if (!_knownFiles.Contains(e.FullPath))
+                return;
+        }
 
         QueueReload(e.FullPath);
     }
 
     private void OnFileRenamed(object sender, RenamedEventArgs e)
     {
-        if (_knownFiles.Contains(e.OldFullPath))
+        lock (_sync)
         {
-            RemoveEntriesFromFile(e.OldFullPath);
-            _knownFiles.Remove(e.OldFullPath);
+            if (_knownFiles.Contains(e.OldFullPath))
+            {
+                RemoveEntriesFromFile(e.OldFullPath);
+                _knownFiles.Remove(e.OldFullPath);
+            }
         }
 
-        if (_knownFiles.Contains(e.FullPath))
-            QueueReload(e.FullPath);
+        lock (_sync)
+        {
+            if (_knownFiles.Contains(e.FullPath))
+                QueueReload(e.FullPath);
+        }
     }
 
     private void QueueReload(string file)
@@ -141,37 +213,51 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
     public void Add(Resource resource, string sourceFile)
     {
         TrackFile(sourceFile);
-        _entries.Add(new ResourceEntry(resource, sourceFile));
+
+        lock (_sync)
+        {
+            _entries.Add(new ResourceEntry(resource, sourceFile));
+        }
     }
 
     public void Update(Resource resource)
     {
-        var existing = _entries.FirstOrDefault(e =>
-            e.Resource.Name.Equals(resource.Name, StringComparison.OrdinalIgnoreCase));
+        lock (_sync)
+        {
+            var existing = _entries.FirstOrDefault(e =>
+                e.Resource.Name.Equals(resource.Name, StringComparison.OrdinalIgnoreCase));
 
-        if (existing == null)
-            throw new InvalidOperationException($"Resource '{resource.Name}' not found.");
+            if (existing == null)
+                throw new InvalidOperationException($"Resource '{resource.Name}' not found.");
 
-        _entries.Remove(existing);
-        _entries.Add(new ResourceEntry(resource, existing.SourceFile));
+            _entries.Remove(existing);
+            _entries.Add(new ResourceEntry(resource, existing.SourceFile));
+        }
     }
 
     public void Delete(string name)
     {
-        var existing = _entries.FirstOrDefault(e =>
-            e.Resource.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        lock (_sync)
+        {
+            var existing = _entries.FirstOrDefault(e =>
+                e.Resource.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-        if (existing == null)
-            throw new InvalidOperationException($"Resource '{name}' not found.");
+            if (existing == null)
+                throw new InvalidOperationException($"Resource '{name}' not found.");
 
-        _entries.Remove(existing);
+            _entries.Remove(existing);
+        }
     }
 
     public Resource? GetByName(string name)
     {
-        return _entries
-            .Select(e => e.Resource)
-            .FirstOrDefault(r => r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        lock (_sync)
+        {
+            return _entries
+                .Select(e => e.Resource)
+                .FirstOrDefault(r =>
+                    r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        }
     }
 
     private void RemoveEntriesFromFile(string file)
@@ -185,9 +271,18 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
 
     public void SaveAll()
     {
-        foreach (var file in _knownFiles)
+        List<string> files;
+        List<ResourceEntry> snapshot;
+
+        lock (_sync)
         {
-            var resources = _entries
+            files = _knownFiles.ToList();
+            snapshot = _entries.ToList();
+        }
+
+        foreach (var file in files)
+        {
+            var resources = snapshot
                 .Where(e => e.SourceFile == file)
                 .Select(e => e.Resource);
 
@@ -237,7 +332,7 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
 
         var props = new DeserializerBuilder()
             .Build()
-            .Deserialize<Dictionary<string, object?>>(yaml);
+            .Deserialize<Dictionary<string, object?>>(yaml) ?? new();
 
         foreach (var (key, value) in props)
             if (key != "kind")
@@ -267,13 +362,16 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
 
         foreach (var item in items)
         {
-            var kind = item["kind"].ToString();
+            if (!item.TryGetValue("kind", out var kindObj) || kindObj == null)
+                continue;
+
+            var kind = kindObj.ToString();
             var typedYaml = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build()
                 .Serialize(item);
 
-            resources.Add(kind switch
+            Resource resource = kind switch
             {
                 "Server" => deserializer.Deserialize<Server>(typedYaml),
                 "Switch" => deserializer.Deserialize<Switch>(typedYaml),
@@ -285,8 +383,11 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
                 "Ups" => deserializer.Deserialize<Ups>(typedYaml),
                 "System" => deserializer.Deserialize<SystemResource>(typedYaml),
                 "Service" => deserializer.Deserialize<Service>(typedYaml),
-                _ => throw new InvalidOperationException($"Unknown kind: {kind}")
-            });
+                _ => null
+            };
+
+            if (resource != null)
+                resources.Add(resource);
         }
 
         return resources;
@@ -295,6 +396,7 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
     private static string SafeReadAllText(string file)
     {
         for (var i = 0; i < 5; i++)
+        {
             try
             {
                 return File.ReadAllText(file);
@@ -303,6 +405,7 @@ public sealed class YamlResourceCollection(bool watch) : IDisposable
             {
                 Thread.Sleep(50);
             }
+        }
 
         return string.Empty;
     }

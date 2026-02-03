@@ -8,6 +8,7 @@ namespace RackPeek.Commands.Servers;
 public class ServerSetSettings : ServerNameSettings
 {
     [CommandOption("--ram <GB>")] public int RamGb { get; set; }
+    [CommandOption("--ram_mts <MTs>")] public int RamMts { get; set; }
 
     [CommandOption("--ipmi")] public bool Ipmi { get; set; }
 }
@@ -27,6 +28,7 @@ public class ServerSetCommand(
         await useCase.ExecuteAsync(
             settings.Name,
             settings.RamGb,
+            settings.RamMts,
             settings.Ipmi);
 
         AnsiConsole.MarkupLine($"[green]Server '{settings.Name}' updated.[/]");

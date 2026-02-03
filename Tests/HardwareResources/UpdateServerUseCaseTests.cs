@@ -30,6 +30,7 @@ public class UpdateServerUseCaseTests
         await sut.ExecuteAsync(
             "node01",
             64,
+            3200,
             true
         );
 
@@ -37,6 +38,7 @@ public class UpdateServerUseCaseTests
         await repo.Received(1).UpdateAsync(Arg.Is<Server>(s =>
             s.Name == "node01" &&
             s.Ram.Size == 64 &&
+            s.Ram.Mts == 3200 &&
             s.Ipmi == true
         ));
     }

@@ -45,6 +45,7 @@ public class ServiceYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper output
 
         Assert.Equal("Service 'immich' updated.\n", output);
 
+        outputHelper.WriteLine(yaml);
         Assert.Equal("""
                      resources:
                      - kind: System

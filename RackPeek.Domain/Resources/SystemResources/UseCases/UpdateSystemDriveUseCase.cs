@@ -9,6 +9,9 @@ public class UpdateSystemDriveUseCase(ISystemRepository repository) : IUseCase
 {
     public async Task ExecuteAsync(string systemName, int index, string driveType, int size)
     {
+        // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
+        // ToDo validate / normalize all inputs
+        
         ThrowIfInvalid.ResourceName(systemName);
         var driveTypeNormalized = Normalize.DriveType(driveType);
         ThrowIfInvalid.DriveType(driveTypeNormalized);

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using RackPeek.Domain;
+using RackPeek.Domain.Resources;
 using RackPeek.Domain.Resources.Hardware;
 using RackPeek.Domain.Resources.Services;
 using RackPeek.Domain.Resources.SystemResources;
@@ -21,7 +22,7 @@ public class Program
 
         var yamlDir = "./config";
 
-        var collection = new YamlResourceCollection(true);
+        var collection = new YamlResourceCollection(false);
         var basePath = Directory.GetCurrentDirectory();
 
         // Resolve yamlDir as relative to basePath
@@ -45,6 +46,7 @@ public class Program
         builder.Services.AddScoped<IHardwareRepository>(_ => new YamlHardwareRepository(collection));
         builder.Services.AddScoped<ISystemRepository>(_ => new YamlSystemRepository(collection));
         builder.Services.AddScoped<IServiceRepository>(_ => new YamlServiceRepository(collection));
+        builder.Services.AddScoped<IResourceRepository>(_ => new YamlResourceRepository(collection));
 
 
         builder.Services.AddUseCases();

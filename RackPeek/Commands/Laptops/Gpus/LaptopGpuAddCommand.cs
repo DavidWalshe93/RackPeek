@@ -17,13 +17,7 @@ public class LaptopGpuAddCommand(IServiceProvider provider)
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<AddLaptopGpuUseCase>();
 
-        var gpu = new Gpu
-        {
-            Model = settings.Model,
-            Vram = settings.Vram
-        };
-
-        await useCase.ExecuteAsync(settings.LaptopName, gpu);
+        await useCase.ExecuteAsync(settings.LaptopName, settings.Model, settings.Vram);
 
         AnsiConsole.MarkupLine($"[green]GPU added to Laptop '{settings.LaptopName}'.[/]");
         return 0;

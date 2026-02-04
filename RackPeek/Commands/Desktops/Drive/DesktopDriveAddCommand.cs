@@ -16,13 +16,7 @@ public class DesktopDriveAddCommand(IServiceProvider provider)
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<AddDesktopDriveUseCase>();
 
-        var drive = new Domain.Resources.Hardware.Models.Drive
-        {
-            Type = settings.Type,
-            Size = settings.Size
-        };
-
-        await useCase.ExecuteAsync(settings.DesktopName, drive);
+        await useCase.ExecuteAsync(settings.DesktopName, settings.Type, settings.Size);
 
         AnsiConsole.MarkupLine($"[green]Drive added to desktop '{settings.DesktopName}'.[/]");
         return 0;

@@ -5,7 +5,12 @@ namespace RackPeek.Domain.Resources.Hardware.Desktops.Cpus;
 
 public class UpdateDesktopCpuUseCase(IHardwareRepository repository) : IUseCase
 {
-    public async Task ExecuteAsync(string name, int index, Cpu updated)
+    public async Task ExecuteAsync(
+        string name,
+        int index,
+        string? model,
+        int? cores,
+        int? threads)
     {
         // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
         // ToDo validate / normalize all inputs
@@ -19,7 +24,10 @@ public class UpdateDesktopCpuUseCase(IHardwareRepository repository) : IUseCase
         if (desktop.Cpus == null || index < 0 || index >= desktop.Cpus.Count)
             throw new NotFoundException($"CPU index {index} not found on desktop '{name}'.");
 
-        desktop.Cpus[index] = updated;
+        var cpu = desktop.Cpus[index];
+        cpu.Model = model;
+        cpu.Cores = cores;
+        cpu.Threads = threads;
 
         await repository.UpdateAsync(desktop);
     }

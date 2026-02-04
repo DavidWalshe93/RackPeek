@@ -10,7 +10,7 @@
     <div class="flex justify-between items-center mb-3">
         <NavLink href="@($"/resources/services/{Service.Name}")" class="block">
 
-        <div class="text-zinc-100">
+        <div class="text-zinc-100 hover:text-emerald-300">
             @Service.Name
         </div>
         </NavLink>
@@ -147,6 +147,16 @@
     Title="Select a parent"
     Value="@SelectedParentName"
     OnAccept="HandleParentSelected" />
+
+<ConfirmModal
+    IsOpen="_confirmDeleteOpen"
+    IsOpenChanged="v => _confirmDeleteOpen = v"
+    Title="Delete server"
+    ConfirmText="Delete"
+    ConfirmClass="bg-red-600 hover:bg-red-500"
+    OnConfirm="DeleteServer">
+    Are you sure you want to delete <strong>@Service.Name</strong>?
+</ConfirmModal>
 
 @code {
     [Parameter] [EditorRequired] public Service Service { get; set; } = default!;

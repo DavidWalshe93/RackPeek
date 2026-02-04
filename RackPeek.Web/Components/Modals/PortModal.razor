@@ -34,10 +34,18 @@
                             Type
                         </label>
 
-                        <InputText
+                        <InputSelect
                             class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
-                            @bind-Value="_model.Type" />
+                            @bind-Value="_model.Type">
+                            <option value="">Select type</option>
+
+                            @foreach (var type in Nic.ValidNicTypes)
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </InputSelect>
                     </div>
+
 
                     <!-- Speed -->
                     <div>
@@ -164,8 +172,8 @@
         [Required]
         public string? Type { get; set; }
 
-        [Range(1, 400)]
-        public int? Speed { get; set; }
+        [Range(0, 400)]
+        public double? Speed { get; set; }
 
         [Range(1, 256)]
         public int? Count { get; set; }

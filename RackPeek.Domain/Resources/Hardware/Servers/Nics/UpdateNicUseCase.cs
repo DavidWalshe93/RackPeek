@@ -10,7 +10,7 @@ public class UpdateNicUseCase(IHardwareRepository repository) : IUseCase
         string name,
         int index,
         string? type,
-        int? speed,
+        double? speed,
         int? ports)
     {
         // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable

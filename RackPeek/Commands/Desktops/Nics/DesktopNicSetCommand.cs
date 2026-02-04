@@ -16,15 +16,8 @@ public class DesktopNicSetCommand(IServiceProvider provider)
     {
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<UpdateDesktopNicUseCase>();
-
-        var nic = new Nic
-        {
-            Type = settings.Type,
-            Speed = settings.Speed,
-            Ports = settings.Ports
-        };
-
-        await useCase.ExecuteAsync(settings.DesktopName, settings.Index, nic);
+        
+        await useCase.ExecuteAsync(settings.DesktopName, settings.Index, settings.Type, settings.Speed, settings.Ports);
 
         AnsiConsole.MarkupLine($"[green]NIC #{settings.Index} updated on desktop '{settings.DesktopName}'.[/]");
         return 0;

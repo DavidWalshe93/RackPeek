@@ -5,7 +5,7 @@ namespace RackPeek.Domain.Resources.Hardware.Laptops.Drives;
 
 public class UpdateLaptopDriveUseCase(IHardwareRepository repository) : IUseCase
 {
-    public async Task ExecuteAsync(string name, int index, Drive updated)
+    public async Task ExecuteAsync(string name, int index, string? type, int? size)
     {
         // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
         // ToDo validate / normalize all inputs
@@ -19,8 +19,10 @@ public class UpdateLaptopDriveUseCase(IHardwareRepository repository) : IUseCase
         if (laptop.Drives == null || index < 0 || index >= laptop.Drives.Count)
             throw new NotFoundException($"Drive index {index} not found on Laptop '{name}'.");
 
-        laptop.Drives[index] = updated;
-
+        var drive = laptop.Drives[index];
+        drive.Type = type;
+        drive.Size = size;
+        
         await repository.UpdateAsync(laptop);
     }
 }

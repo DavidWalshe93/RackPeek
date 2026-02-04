@@ -15,11 +15,20 @@
         <NavLink href="/switches/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
             Switches
         </NavLink>
-        <NavLink href="/desktops/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
-            Desktops
+        <NavLink href="/firewalls/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
+            Firewalls
+        </NavLink>
+        <NavLink href="/routers/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
+            Routers
         </NavLink>
         <NavLink href="/accesspoints/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
             AccessPoints
+        </NavLink>
+        <NavLink href="/desktops/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
+            Desktops
+        </NavLink>
+        <NavLink href="/laptops/list" class="hover:text-emerald-400" activeClass="text-emerald-400 font-semibold">
+            Laptops
         </NavLink>
     </nav>
 
@@ -54,13 +63,13 @@
 
                                 @if (hardware.Systems.Any())
                                 {
-                                    <div class="text-zinc-100">
+                                    <div class="text-zinc-100 hover:text-emerald-300">
                                         @hardware.HardwareName (@hardware.Systems.Count / @hardware.Systems.Sum(s => s.Services.Count))
                                     </div>
                                 }
                                 else
                                 {
-                                    <div class="text-zinc-100">
+                                    <div class="text-zinc-100 hover:text-emerald-300">
                                         @hardware.HardwareName
                                     </div>
                                 }
@@ -77,13 +86,13 @@
                                             <NavLink href="@($"/resources/systems/{system.SystemName}")" class="block">
                                                 @if (system.Services.Any())
                                                 {
-                                                    <div class="text-zinc-300">
+                                                    <div class="text-zinc-300 hover:text-emerald-300">
                                                         └─ @system.SystemName (@system.Services.Count)
                                                     </div>
                                                 }
                                                 else
                                                 {
-                                                    <div class="text-zinc-300">
+                                                    <div class="text-zinc-300 hover:text-emerald-300">
                                                         └─ @system.SystemName
                                                     </div>
                                                 }
@@ -96,9 +105,9 @@
                                                     @foreach (var service in system.Services.OrderBy(s => s))
                                                     {
                                                         <NavLink href="@($"/resources/services/{service}")"
-                                                                 class="block">
+                                                                 class="block hover:text-emerald-300">
 
-                                                            <li class="text-zinc-500">
+                                                            <li class="text-zinc-500 hover:text-emerald-300">
                                                                 > @service
                                                             </li>
                                                         </NavLink>

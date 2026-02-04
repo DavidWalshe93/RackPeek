@@ -17,14 +17,7 @@ public class LaptopCpuSetCommand(IServiceProvider provider)
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<UpdateLaptopCpuUseCase>();
 
-        var cpu = new Cpu
-        {
-            Model = settings.Model,
-            Cores = settings.Cores,
-            Threads = settings.Threads
-        };
-
-        await useCase.ExecuteAsync(settings.LaptopName, settings.Index, cpu);
+        await useCase.ExecuteAsync(settings.LaptopName, settings.Index, settings.Model, settings.Cores, settings.Threads);
 
         AnsiConsole.MarkupLine($"[green]CPU #{settings.Index} updated on Laptop '{settings.LaptopName}'.[/]");
         return 0;

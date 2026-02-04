@@ -12,7 +12,7 @@ public record SwitchHardwareRow(
     bool Managed,
     bool Poe,
     int TotalPorts,
-    int MaxPortSpeedGb,
+    double MaxPortSpeedGb,
     string PortSummary
 );
 

@@ -5,7 +5,7 @@ namespace RackPeek.Domain.Resources.Hardware.Desktops.Drives;
 
 public class UpdateDesktopDriveUseCase(IHardwareRepository repository) : IUseCase
 {
-    public async Task ExecuteAsync(string name, int index, Drive updated)
+    public async Task ExecuteAsync(string name, int index, string? type, int? size)
     {
         // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
         // ToDo validate / normalize all inputs
@@ -19,8 +19,10 @@ public class UpdateDesktopDriveUseCase(IHardwareRepository repository) : IUseCas
         if (desktop.Drives == null || index < 0 || index >= desktop.Drives.Count)
             throw new NotFoundException($"Drive index {index} not found on desktop '{name}'.");
 
-        desktop.Drives[index] = updated;
-
+        var drive = desktop.Drives[index];
+        drive.Type = type;
+        drive.Size = size;
+        
         await repository.UpdateAsync(desktop);
     }
 }

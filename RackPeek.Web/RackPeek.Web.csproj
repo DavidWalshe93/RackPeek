@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -36,6 +37,18 @@
 
     <ItemGroup>
         <AdditionalFiles Include="Components\Components\HardwareDependencyTreeComponent.razor"/>
+        <AdditionalFiles Include="Components\Laptops\LaptopCardComponent.razor" />
+        <AdditionalFiles Include="Components\Laptops\LaptopsListComponent.razor" />
+        <AdditionalFiles Include="Components\Laptops\LaptopsListPage.razor" />
+        <AdditionalFiles Include="Components\Ups\UpCardComponent.razor" />
+        <AdditionalFiles Include="Components\Ups\UpsListComponent.razor" />
+        <AdditionalFiles Include="Components\Ups\UpsListPage.razor" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

@@ -16,14 +16,8 @@ public class DesktopGpuAddCommand(IServiceProvider provider)
     {
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<AddDesktopGpuUseCase>();
-
-        var gpu = new Gpu
-        {
-            Model = settings.Model,
-            Vram = settings.Vram
-        };
-
-        await useCase.ExecuteAsync(settings.DesktopName, gpu);
+        
+        await useCase.ExecuteAsync(settings.DesktopName, settings.Model, settings.Vram);
 
         AnsiConsole.MarkupLine($"[green]GPU added to desktop '{settings.DesktopName}'.[/]");
         return 0;

@@ -67,7 +67,7 @@ public static class ThrowIfInvalid
         return (double)commonChars / Math.Max(a.Length, b.Length);
     }
 
-    public static void NicSpeed(int speed)
+    public static void NicSpeed(double speed)
     {
         if (speed < 0) throw new ValidationException("NIC speed must be a non negative number of gigabits per second.");
     }

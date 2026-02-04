@@ -30,6 +30,6 @@ public class Nic
     };
 
     public string? Type { get; set; }
-    public int? Speed { get; set; }
+    public double? Speed { get; set; }
     public int? Ports { get; set; }
 }

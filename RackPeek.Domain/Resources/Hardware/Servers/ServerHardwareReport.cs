@@ -16,7 +16,7 @@ public record ServerHardwareRow(
     int SsdStorageGb,
     int HddStorageGb,
     int TotalNicPorts,
-    int MaxNicSpeedGb,
+    double MaxNicSpeedGb,
     int GpuCount,
     int TotalGpuVramGb,
     string GpuSummary,

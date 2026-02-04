@@ -5,7 +5,10 @@ namespace RackPeek.Domain.Resources.Hardware.Desktops.Drives;
 
 public class AddDesktopDriveUseCase(IHardwareRepository repository) : IUseCase
 {
-    public async Task ExecuteAsync(string name, Drive drive)
+    public async Task ExecuteAsync(
+        string name,
+        string? type,
+        int? size)
     {
         // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
         // ToDo validate / normalize all inputs
@@ -17,7 +20,11 @@ public class AddDesktopDriveUseCase(IHardwareRepository repository) : IUseCase
                       ?? throw new NotFoundException($"Desktop '{name}' not found.");
 
         desktop.Drives ??= new List<Drive>();
-        desktop.Drives.Add(drive);
+        desktop.Drives.Add(new Drive
+        {
+            Type = type,
+            Size = size
+        });
 
         await repository.UpdateAsync(desktop);
     }

@@ -7,4 +7,24 @@ public abstract class Resource
     public required string Name { get; set; }
 
     public Dictionary<string, string>? Tags { get; set; }
+
+    public static string KindToPlural(string kind)
+    {
+        return KindToPluralDictionary.GetValueOrDefault(kind.ToLower().Trim(), kind);
+    }
+
+    private static readonly Dictionary<string, string> KindToPluralDictionary = new Dictionary<string, string>()
+    {
+        { "hardware", "hardware" },
+        { "server", "servers" },
+        { "switch", "switches" },
+        { "firewall", "firewalls" },
+        { "router", "routers" },
+        { "accesspoint", "accesspoints" },
+        { "desktop", "desktops" },
+        { "laptop", "laptops" },
+        { "ups", "ups" },
+        { "system", "systems" },
+        { "service", "services" },
+    };
 }

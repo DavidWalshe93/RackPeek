@@ -9,7 +9,7 @@ public record SwitchDescription(
     bool? Managed,
     bool? Poe,
     int TotalPorts,
-    int TotalSpeedGb,
+    double TotalSpeedGb,
     string PortSummary
 );
 

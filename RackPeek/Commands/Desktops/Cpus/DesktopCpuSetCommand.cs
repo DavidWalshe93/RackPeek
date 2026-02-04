@@ -17,14 +17,7 @@ public class DesktopCpuSetCommand(IServiceProvider provider)
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<UpdateDesktopCpuUseCase>();
 
-        var cpu = new Cpu
-        {
-            Model = settings.Model,
-            Cores = settings.Cores,
-            Threads = settings.Threads
-        };
-
-        await useCase.ExecuteAsync(settings.DesktopName, settings.Index, cpu);
+        await useCase.ExecuteAsync(settings.DesktopName, settings.Index, settings.Model, settings.Cores, settings.Threads);
 
         AnsiConsole.MarkupLine($"[green]CPU #{settings.Index} updated on desktop '{settings.DesktopName}'.[/]");
         return 0;

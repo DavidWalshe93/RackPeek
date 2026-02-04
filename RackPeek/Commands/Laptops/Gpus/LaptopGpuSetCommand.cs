@@ -23,7 +23,7 @@ public class LaptopGpuSetCommand(IServiceProvider provider)
             Vram = settings.Vram
         };
 
-        await useCase.ExecuteAsync(settings.LaptopName, settings.Index, gpu);
+        await useCase.ExecuteAsync(settings.LaptopName, settings.Index, settings.Model, settings.Vram);
 
         AnsiConsole.MarkupLine($"[green]GPU #{settings.Index} updated on Laptop '{settings.LaptopName}'.[/]");
         return 0;

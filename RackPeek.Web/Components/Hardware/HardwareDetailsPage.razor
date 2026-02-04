@@ -7,6 +7,11 @@
 @using RackPeek.Web.Components.Switches
 @using RackPeek.Web.Components.Servers
 @using RackPeek.Web.Components.Systems
+@using RackPeek.Web.Components.Laptops
+@using RackPeek.Web.Components.Firewalls
+@using Router = RackPeek.Domain.Resources.Hardware.Models.Router
+@using RackPeek.Web.Components.Routers
+@using RackPeek.Web.Components.Ups
 @inject IHardwareRepository HardwareRepository
 @inject GetHardwareSystemTreeUseCase GetHardwareSystemTreeUseCase
 
@@ -46,6 +51,18 @@
         else if (_hardware is Switch _switch)
         {
             <SwitchCardComponent Switch="_switch"/>
+        }        else if (_hardware is Laptop laptop)
+        {
+            <LaptopCardComponent Laptop="laptop"/>
+        }     else if (_hardware is Firewall firewall)
+        {
+            <FirewallCardComponent Firewall="firewall"/>
+        }  else if (_hardware is Router router)
+        {
+            <RouterCardComponent Router="router"/>
+        } else if (_hardware is Ups ups)
+        {
+            <UpsCardComponent Ups="ups"/>
         }
         else
         {

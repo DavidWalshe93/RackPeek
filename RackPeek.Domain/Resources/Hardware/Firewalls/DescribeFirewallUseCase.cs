@@ -9,7 +9,7 @@ public record FirewallDescription(
     bool? Managed,
     bool? Poe,
     int TotalPorts,
-    int TotalSpeedGb,
+    double TotalSpeedGb,
     string PortSummary
 );
 

@@ -5,7 +5,11 @@ namespace RackPeek.Domain.Resources.Hardware.Desktops.Gpus;
 
 public class UpdateDesktopGpuUseCase(IHardwareRepository repository) : IUseCase
 {
-    public async Task ExecuteAsync(string name, int index, Gpu updated)
+    public async Task ExecuteAsync(
+        string name,
+        int index,
+        string? model,
+        int? vram)
     {
         // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable
         // ToDo validate / normalize all inputs
@@ -19,8 +23,9 @@ public class UpdateDesktopGpuUseCase(IHardwareRepository repository) : IUseCase
         if (desktop.Gpus == null || index < 0 || index >= desktop.Gpus.Count)
             throw new NotFoundException($"GPU index {index} not found on desktop '{name}'.");
 
-        desktop.Gpus[index] = updated;
-
+        var gpu = desktop.Gpus[index];
+        gpu.Model = model;
+        gpu.Vram = vram;
         await repository.UpdateAsync(desktop);
     }
 }

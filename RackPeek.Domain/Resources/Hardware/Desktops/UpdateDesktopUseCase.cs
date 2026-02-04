@@ -7,7 +7,9 @@ public class UpdateDesktopUseCase(IHardwareRepository repository) : IUseCase
 {
     public async Task ExecuteAsync(
         string name,
-        string? model = null
+        string? model = null,
+        int? ramGb = null,
+        int? ramMts = null
     )
     {
         // ToDo validate / normalize all inputs
@@ -21,6 +23,20 @@ public class UpdateDesktopUseCase(IHardwareRepository repository) : IUseCase
 
         if (!string.IsNullOrWhiteSpace(model))
             desktop.Model = model;
+        
+        // ---- RAM ----
+        if (ramGb.HasValue)
+        {
+            ThrowIfInvalid.RamGb(ramGb);
+            desktop.Ram ??= new Ram();
+            desktop.Ram.Size = ramGb.Value;
+        }
+        
+        if (ramMts.HasValue)
+        {
+            desktop.Ram ??= new Ram();
+            desktop.Ram.Mts = ramMts.Value;
+        }
 
         await repository.UpdateAsync(desktop);
     }

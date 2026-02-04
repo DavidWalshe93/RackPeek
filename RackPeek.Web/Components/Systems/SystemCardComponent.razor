@@ -14,7 +14,7 @@
     <div class="flex justify-between items-center mb-3">
         <NavLink href="@($"/resources/systems/{System.Name}")" class="block">
 
-        <div class="text-zinc-100">
+        <div class="text-zinc-100 hover:text-emerald-300">
             @System.Name
         </div>
         </NavLink>
@@ -197,6 +197,7 @@
     <br />
     This will detach all dependent systems.
 </ConfirmModal>
+
 @code {
     [Parameter] [EditorRequired] public SystemResource System { get; set; } = default!;
 

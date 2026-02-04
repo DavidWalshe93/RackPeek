@@ -8,7 +8,7 @@ public class AddNicUseCase(IHardwareRepository repository) : IUseCase
     public async Task ExecuteAsync(
         string name,
         string? type,
-        int? speed,
+        double? speed,
         int? ports)
     {
         // ToDo pass in properties as inputs, construct the entity in the usecase, ensure optional inputs are nullable

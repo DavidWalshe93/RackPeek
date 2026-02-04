@@ -17,13 +17,7 @@ public class DesktopGpuSetCommand(IServiceProvider provider)
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<UpdateDesktopGpuUseCase>();
 
-        var gpu = new Gpu
-        {
-            Model = settings.Model,
-            Vram = settings.Vram
-        };
-
-        await useCase.ExecuteAsync(settings.DesktopName, settings.Index, gpu);
+        await useCase.ExecuteAsync(settings.DesktopName, settings.Index, settings.Model, settings.Vram);
 
         AnsiConsole.MarkupLine($"[green]GPU #{settings.Index} updated on desktop '{settings.DesktopName}'.[/]");
         return 0;

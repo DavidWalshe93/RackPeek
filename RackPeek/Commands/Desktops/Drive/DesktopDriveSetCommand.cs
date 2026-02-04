@@ -15,14 +15,8 @@ public class DesktopDriveSetCommand(IServiceProvider provider)
     {
         using var scope = provider.CreateScope();
         var useCase = scope.ServiceProvider.GetRequiredService<UpdateDesktopDriveUseCase>();
-
-        var drive = new Domain.Resources.Hardware.Models.Drive
-        {
-            Type = settings.Type,
-            Size = settings.Size
-        };
-
-        await useCase.ExecuteAsync(settings.DesktopName, settings.Index, drive);
+        
+        await useCase.ExecuteAsync(settings.DesktopName, settings.Index, settings.Type, settings.Size);
 
         AnsiConsole.MarkupLine($"[green]Drive #{settings.Index} updated on desktop '{settings.DesktopName}'.[/]");
         return 0;

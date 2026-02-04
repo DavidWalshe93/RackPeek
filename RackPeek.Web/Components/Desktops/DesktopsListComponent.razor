@@ -1,10 +1,14 @@
 ﻿@using RackPeek.Domain.Resources.Hardware.Desktops
 @using RackPeek.Domain.Resources.Hardware.Models
 @inject GetDesktopsUseCase GetDesktops
+@inject NavigationManager Nav
 
 <PageTitle>Desktops</PageTitle>
 
-<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
+<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6 space-y-6">
+    
+    <AddDesktopComponent OnCreated="NavigateToNewResource"/>
+
     @if (_desktops is null)
     {
         <div class="text-zinc-500">loading desktops…</div>
@@ -18,9 +22,7 @@
         <div class="space-y-4">
             @foreach (var desktop in _desktops.OrderBy(s => s.Name))
             {
-                <NavLink href="@($"/resources/hardware/{desktop.Name}")" class="block">
-                    <DesktopCardComponent Desktop="desktop"/>
-                </NavLink>
+                    <DesktopCardComponent Desktop="desktop" OnDeleted="Callback"/>
             }
         </div>
     }
@@ -30,6 +32,16 @@
     private IReadOnlyList<Desktop>? _desktops;
 
     protected override async Task OnInitializedAsync()
+    {
+        _desktops = await GetDesktops.ExecuteAsync();
+    }
+    
+    private Task NavigateToNewResource(string serverName)
+    {
+        Nav.NavigateTo($"/resources/hardware/{serverName}");
+        return Task.CompletedTask;
+    }
+    private async Task Callback(string obj)
     {
         _desktops = await GetDesktops.ExecuteAsync();
     }

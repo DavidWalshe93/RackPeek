@@ -1,10 +1,14 @@
 ﻿@using RackPeek.Domain.Resources.Hardware.AccessPoints
 @using RackPeek.Domain.Resources.Hardware.Models
 @inject GetAccessPointsUseCase GetAccessPoints
+@inject NavigationManager Nav
 
 <PageTitle>Access Points</PageTitle>
 
-<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
+<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6 space-y-6">
+    <AddAccessPointComponent OnCreated="NavigateToNewResource"/>
+
+    
     @if (_AccessPoints is null)
     {
         <div class="text-zinc-500">loading AccessPoints…</div>
@@ -18,9 +22,7 @@
         <div class="space-y-4">
             @foreach (var accessPoint in _AccessPoints.OrderBy(s => s.Name))
             {
-                <NavLink href="@($"/resources/hardware/{accessPoint.Name}")" class="block">
-                    <AccessPointCardComponent AccessPoint="accessPoint"/>
-                </NavLink>
+                    <AccessPointCardComponent AccessPoint="accessPoint" OnDeleted="Callback"/>
             }
         </div>
     }
@@ -34,4 +36,15 @@
         _AccessPoints = await GetAccessPoints.ExecuteAsync();
     }
 
+    private Task NavigateToNewResource(string serverName)
+    {
+        Nav.NavigateTo($"/resources/hardware/{serverName}");
+        return Task.CompletedTask;
+    }
+    
+    private async Task Callback(string obj)
+    {
+        _AccessPoints = await GetAccessPoints.ExecuteAsync();
+    }
+    
 }

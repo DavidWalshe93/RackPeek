@@ -13,6 +13,7 @@ using RackPeek.Commands.Laptops;
 using RackPeek.Commands.Laptops.Cpus;
 using RackPeek.Commands.Laptops.Drive;
 using RackPeek.Commands.Laptops.Gpus;
+using RackPeek.Commands.Routers;
 using RackPeek.Commands.Servers;
 using RackPeek.Commands.Servers.Cpus;
 using RackPeek.Commands.Servers.Drives;
@@ -207,25 +208,25 @@ public static class CliBootstrap
             {
                 routers.SetDescription("Manage network routers.");
 
-                routers.AddCommand<FirewallReportCommand>("summary")
+                routers.AddCommand<RouterReportCommand>("summary")
                     .WithDescription("Show a hardware report for all routers.");
 
-                routers.AddCommand<FirewallAddCommand>("add")
+                routers.AddCommand<RouterAddCommand>("add")
                     .WithDescription("Add a new network router to the inventory.");
 
-                routers.AddCommand<FirewallGetCommand>("list")
+                routers.AddCommand<RouterGetCommand>("list")
                     .WithDescription("List all routers in the system.");
 
-                routers.AddCommand<FirewallGetByNameCommand>("get")
+                routers.AddCommand<RouterGetByNameCommand>("get")
                     .WithDescription("Retrieve details of a specific router by name.");
 
-                routers.AddCommand<FirewallDescribeCommand>("describe")
+                routers.AddCommand<RouterDescribeCommand>("describe")
                     .WithDescription("Show detailed information about a router.");
 
-                routers.AddCommand<FirewallSetCommand>("set")
+                routers.AddCommand<RouterSetCommand>("set")
                     .WithDescription("Update properties of a router.");
 
-                routers.AddCommand<FirewallDeleteCommand>("del")
+                routers.AddCommand<RouterDeleteCommand>("del")
                     .WithDescription("Delete a router from the inventory.");
             });
 

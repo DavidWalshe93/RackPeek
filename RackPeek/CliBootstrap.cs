@@ -54,7 +54,7 @@ public static class CliBootstrap
 
         if (!Directory.Exists(yamlPath)) throw new DirectoryNotFoundException($"YAML directory not found: {yamlPath}");
 
-        var collection = new YamlResourceCollection(Path.Combine(yamlDir, yamlFile), new PhysicalTextFileStore());
+        var collection = new YamlResourceCollection(Path.Combine(yamlDir, yamlFile), new PhysicalTextFileStore(), new ResourceCollection());
         await collection.LoadAsync();
         services.AddSingleton<IResourceCollection>(collection);
 

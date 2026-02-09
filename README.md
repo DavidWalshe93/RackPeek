@@ -10,6 +10,8 @@ If you run a home lab, you belong here.
 
 [![Join our Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/egXRPdesee)
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20RackPeek%20Online-2ea44f?logo=githubpages&logoColor=white)](https://timmoth.github.io/RackPeek/)
+
 
 ## Philosophy
 RackPeek treats infrastructure documentation as living reference data rather than static paperwork.

@@ -1,0 +1,229 @@
+﻿@using RackPeek.Domain
+@inject IConsoleEmulator Console
+@inject IJSRuntime JS
+
+<div class="bg-black text-green-400 font-mono rounded-xl shadow-inner shadow-green-900/40 
+            p-4 h-[500px] cursor-text flex flex-col text-xs"
+     @onclick="HandleContainerClick">
+
+    <!-- Scrollable output -->
+    <div class="flex-1 overflow-y-auto overflow-x-auto text-xs pr-2"
+         @ref="_outputDiv">
+
+        @for (var index = 0; index < _lines.Count; index++)
+        {
+            var line = _lines[index];
+            <div @key="index" class="whitespace-pre">
+                @line
+            </div>
+        }
+    </div>
+
+    <!-- Input line -->
+    <div class="flex border-t border-green-900/40 pt-2 mt-2 overflow-x-auto whitespace-pre">
+        <span class="text-green-500 mr-2 flex-shrink-0">@Prompt</span>
+
+        <span>@_currentInput[.._cursorIndex]</span>
+
+        @if (_showCursor)
+        {
+            <span class="w-2 bg-green-400 animate-pulse">&nbsp;</span>
+        }
+
+        <span>@_currentInput[_cursorIndex..]</span>
+    </div>
+
+    <!-- Hidden input to capture keys -->
+    <input @ref="_inputRef"
+           class="absolute opacity-0"
+           @onkeydown="HandleKeyDown"
+           @oninput="OnInputChanged"
+           disabled="@_busy" />
+</div>
+
+@code {
+    private List<string> _lines = new();
+    private List<string> _history = new();
+
+    private int _historyIndex = -1;
+
+    private string _currentInput = "";
+    private int _cursorIndex = 0;
+
+    private bool _busy;
+    private bool _showCursor = true;
+
+    private ElementReference _inputRef;
+    private ElementReference _outputDiv;
+
+    [Parameter]
+    public string Prompt { get; set; } = "rpk>";
+
+    protected override void OnInitialized()
+    {
+        WriteLine("RackPeek Console Emulator");
+        WriteLine("Type '--help' to begin.");
+        _ = CursorBlinkLoop();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await _inputRef.FocusAsync();
+    }
+
+    // required but unused — we handle keys manually
+    private void OnInputChanged(ChangeEventArgs _) { }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (_busy)
+            return;
+
+        switch (e.Key)
+        {
+            case "Enter":
+                await ExecuteCommand();
+                return;
+
+            case "ArrowLeft":
+                if (_cursorIndex > 0)
+                    _cursorIndex--;
+                break;
+
+            case "ArrowRight":
+                if (_cursorIndex < _currentInput.Length)
+                    _cursorIndex++;
+                break;
+
+            case "ArrowUp":
+                NavigateHistory(-1);
+                _cursorIndex = _currentInput.Length;
+                break;
+
+            case "ArrowDown":
+                NavigateHistory(1);
+                _cursorIndex = _currentInput.Length;
+                break;
+
+            case "Backspace":
+                if (_cursorIndex > 0)
+                {
+                    _currentInput =
+                        _currentInput.Remove(_cursorIndex - 1, 1);
+                    _cursorIndex--;
+                }
+                break;
+
+            case "Delete":
+                if (_cursorIndex < _currentInput.Length)
+                {
+                    _currentInput =
+                        _currentInput.Remove(_cursorIndex, 1);
+                }
+                break;
+
+            default:
+                // printable character
+                if (e.Key.Length == 1 && !e.CtrlKey && !e.MetaKey)
+                {
+                    _currentInput =
+                        _currentInput.Insert(_cursorIndex, e.Key);
+                    _cursorIndex++;
+                }
+                break;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task ExecuteCommand()
+    {
+        var cmd = _currentInput.Trim();
+        if (string.IsNullOrWhiteSpace(cmd))
+            return;
+
+        if (cmd.Equals("clear", StringComparison.OrdinalIgnoreCase))
+        {
+            _currentInput = "";
+            _cursorIndex = 0;
+            _lines.Clear();
+            StateHasChanged();
+            return;
+        }
+
+        if (cmd.Equals("help", StringComparison.OrdinalIgnoreCase))
+            cmd = "--help";
+
+        WriteLine($"{Prompt} {cmd}");
+
+        _history.Add(cmd);
+        _historyIndex = _history.Count;
+
+        _currentInput = "";
+        _cursorIndex = 0;
+
+        _busy = true;
+        StateHasChanged();
+
+        try
+        {
+            var result = await Console.Execute(cmd);
+
+            if (!string.IsNullOrWhiteSpace(result))
+            {
+                foreach (var line in result.Split('\n'))
+                    WriteLine(AnsiStripper.Strip(line));
+            }
+        }
+        catch
+        {
+            WriteLine("Oops, Something went wrong");
+        }
+        finally
+        {
+            _busy = false;
+        }
+
+        await ScrollToBottom();
+        await _inputRef.FocusAsync();
+        StateHasChanged();
+    }
+
+    private void NavigateHistory(int direction)
+    {
+        if (_history.Count == 0)
+            return;
+
+        _historyIndex += direction;
+        _historyIndex = Math.Clamp(_historyIndex, 0, _history.Count);
+
+        _currentInput = _historyIndex < _history.Count
+            ? _history[_historyIndex]
+            : "";
+
+        _cursorIndex = _currentInput.Length;
+    }
+
+    private void WriteLine(string text)
+        => _lines.Add(text);
+
+    private async Task HandleContainerClick()
+        => await _inputRef.FocusAsync();
+
+    private async Task ScrollToBottom()
+    {
+        await Task.Delay(10);
+        await JS.InvokeVoidAsync("consoleEmulatorScroll", _outputDiv);
+    }
+
+    private async Task CursorBlinkLoop()
+    {
+        while (true)
+        {
+            _showCursor = !_showCursor;
+            await InvokeAsync(StateHasChanged);
+            await Task.Delay(500);
+        }
+    }
+}

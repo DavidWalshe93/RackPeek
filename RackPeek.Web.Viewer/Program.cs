@@ -25,15 +25,21 @@ public class Program
         
         builder.Services.AddScoped<ITextFileStore, WasmTextFileStore>();
 
+        var resources = new ResourceCollection();
+        builder.Services.AddSingleton(resources);
         builder.Services.AddScoped<IResourceCollection>(sp =>
             new YamlResourceCollection(
                 "config.yaml",
-                sp.GetRequiredService<ITextFileStore>()));
+                sp.GetRequiredService<ITextFileStore>(),
+                sp.GetRequiredService<ResourceCollection>()));
         
         services.AddScoped<IHardwareRepository, YamlHardwareRepository>();
         services.AddScoped<ISystemRepository, YamlSystemRepository>();
         services.AddScoped<IServiceRepository, YamlServiceRepository>();
         services.AddScoped<IResourceRepository, YamlResourceRepository>();
+        
+        var consoleEmulator = new ConsoleEmulator(services);
+        builder.Services.AddScoped<IConsoleEmulator>(_ => consoleEmulator);
         
         builder.Services.AddUseCases();
         

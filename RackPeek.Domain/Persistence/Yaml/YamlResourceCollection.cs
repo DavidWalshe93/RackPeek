@@ -10,37 +10,36 @@ using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
-public sealed class YamlResourceCollection : IResourceCollection
+public class ResourceCollection
 {
-    private readonly string _filePath;
-    private readonly ITextFileStore _fileStore;
-    private readonly SemaphoreSlim _fileLock = new(1, 1);
-    private readonly List<Resource> _resources = new();
+    public List<Resource> Resources { get; } = new();
+    public readonly SemaphoreSlim FileLock = new(1, 1);
 
-    public YamlResourceCollection(string filePath, ITextFileStore fileStore)
-    {
-        _filePath = filePath;
-        _fileStore = fileStore;
-    }
-
+}
+public sealed class YamlResourceCollection(
+    string filePath,
+    ITextFileStore fileStore,
+    ResourceCollection resourceCollection)
+    : IResourceCollection
+{
     public async Task LoadAsync()
     {
         var loaded = await LoadFromFileAsync();
-        _resources.Clear();
-        _resources.AddRange(loaded);
+        resourceCollection.Resources.Clear();
+        resourceCollection.Resources.AddRange(loaded);
     }
 
     public IReadOnlyList<Hardware> HardwareResources =>
-        _resources.OfType<Hardware>().ToList();
+        resourceCollection.Resources.OfType<Hardware>().ToList();
 
     public IReadOnlyList<SystemResource> SystemResources =>
-        _resources.OfType<SystemResource>().ToList();
+        resourceCollection.Resources.OfType<SystemResource>().ToList();
 
     public IReadOnlyList<Service> ServiceResources =>
-        _resources.OfType<Service>().ToList();
+        resourceCollection.Resources.OfType<Service>().ToList();
 
     public Resource? GetByName(string name) =>
-        _resources.FirstOrDefault(r =>
+        resourceCollection.Resources.FirstOrDefault(r =>
             r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
     public Task AddAsync(Resource resource) =>
@@ -69,10 +68,10 @@ public sealed class YamlResourceCollection : IResourceCollection
 
     private async Task UpdateWithLockAsync(Action<List<Resource>> action)
     {
-        await _fileLock.WaitAsync();
+        await resourceCollection.FileLock.WaitAsync();
         try
         {
-            action(_resources);
+            action(resourceCollection.Resources);
 
             var serializer = new SerializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
@@ -80,22 +79,22 @@ public sealed class YamlResourceCollection : IResourceCollection
 
             var payload = new OrderedDictionary
             {
-                ["resources"] = _resources.Select(SerializeResource).ToList()
+                ["resources"] = resourceCollection.Resources.Select(SerializeResource).ToList()
             };
 
-            await _fileStore.WriteAllTextAsync(
-                _filePath,
+            await fileStore.WriteAllTextAsync(
+                filePath,
                 serializer.Serialize(payload));
         }
         finally
         {
-            _fileLock.Release();
+            resourceCollection.FileLock.Release();
         }
     }
 
     private async Task<List<Resource>> LoadFromFileAsync()
     {
-        var yaml = await _fileStore.ReadAllTextAsync(_filePath);
+        var yaml = await fileStore.ReadAllTextAsync(filePath);
         if (string.IsNullOrWhiteSpace(yaml))
             return new();
 

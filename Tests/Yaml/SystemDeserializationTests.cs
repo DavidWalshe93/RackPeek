@@ -16,12 +16,13 @@ public class SystemDeserializationTests
 
         Directory.CreateDirectory(tempDir);
 
-        var filePath = Path.Combine(tempDir, "config.yaml");
-        File.WriteAllText(filePath, yaml);
+        var filePath = Path.Combine(tempDir, "config.yaml"); 
+        await File.WriteAllTextAsync(filePath, yaml);
 
-        var yamlResourceCollection = new YamlResourceCollection(filePath, new PhysicalTextFileStore());
+        var yamlResourceCollection = new YamlResourceCollection(filePath, new PhysicalTextFileStore(), new ResourceCollection());
         await yamlResourceCollection.LoadAsync();
 
+        
         return new YamlSystemRepository(yamlResourceCollection);
     }
 

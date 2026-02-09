@@ -18,9 +18,9 @@ public class HardwareDeserializationTests
         Directory.CreateDirectory(tempDir);
 
         var filePath = Path.Combine(tempDir, "config.yaml");
-        File.WriteAllText(filePath, yaml);
+        await File.WriteAllTextAsync(filePath, yaml);
 
-        var yamlResourceCollection = new YamlResourceCollection(filePath, new PhysicalTextFileStore());
+        var yamlResourceCollection = new YamlResourceCollection(filePath, new PhysicalTextFileStore(), new ResourceCollection());
         await yamlResourceCollection.LoadAsync();
         return new YamlHardwareRepository(yamlResourceCollection);
     }

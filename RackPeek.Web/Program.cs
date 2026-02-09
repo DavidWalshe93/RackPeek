@@ -36,7 +36,7 @@ public class Program
                 $"YAML directory not found: {yamlPath}"
             );
 
-        var collection = new YamlResourceCollection(Path.Combine(yamlDir, "config.yaml"), new PhysicalTextFileStore());
+        var collection = new YamlResourceCollection(Path.Combine(yamlDir, "config.yaml"), new PhysicalTextFileStore(), new ResourceCollection());
         await collection.LoadAsync();
 
         // Infrastructure

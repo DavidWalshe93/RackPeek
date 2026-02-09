@@ -25,10 +25,13 @@ public class Program
         
         builder.Services.AddScoped<ITextFileStore, WasmTextFileStore>();
 
+        var resources = new ResourceCollection();
+        builder.Services.AddSingleton(resources);
         builder.Services.AddScoped<IResourceCollection>(sp =>
             new YamlResourceCollection(
                 "config.yaml",
-                sp.GetRequiredService<ITextFileStore>()));
+                sp.GetRequiredService<ITextFileStore>(),
+                sp.GetRequiredService<ResourceCollection>()));
         
         services.AddScoped<IHardwareRepository, YamlHardwareRepository>();
         services.AddScoped<ISystemRepository, YamlSystemRepository>();

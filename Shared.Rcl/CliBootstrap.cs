@@ -76,6 +76,7 @@ public static class CliBootstrap
         {
             config.SetApplicationName("rpk");
             config.ValidateExamples();
+            config.SetApplicationVersion("0.0.3");
 
             config.SetExceptionHandler(HandleException);
 

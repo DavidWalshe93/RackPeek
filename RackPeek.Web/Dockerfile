@@ -9,6 +9,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["RackPeek.Web/RackPeek.Web.csproj", "RackPeek.Web/"]
 COPY ["RackPeek.Domain/RackPeek.Domain.csproj", "RackPeek.Domain/"]
+COPY ["Shared.Rcl/Shared.Rcl.csproj", "Shared.Rcl/"]
 COPY ["RackPeek/RackPeek.csproj", "RackPeek/"]
 RUN dotnet restore "RackPeek.Web/RackPeek.Web.csproj"
 COPY . .

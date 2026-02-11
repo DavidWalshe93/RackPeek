@@ -8,10 +8,12 @@ RackPeek is open source and community-driven.
 Code, docs, ideas, bug reports, and real-world usage feedback are all massively appreciated.
 If you run a home lab, you belong here.
 
-[![Join our Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/egXRPdesee)
+[![Join our Discord](https://img.shields.io/badge/Discord-Join%20Us-7289DA?logo=discord&logoColor=white)](https://discord.gg/egXRPdesee) [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20RackPeek%20Online-2ea44f?logo=githubpages&logoColor=white)](https://timmoth.github.io/RackPeek/) [![Docker Hub](https://img.shields.io/badge/Docker%20Hub-rackpeek-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/repository/docker/aptacode/rackpeek/general)
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20RackPeek%20Online-2ea44f?logo=githubpages&logoColor=white)](https://timmoth.github.io/RackPeek/)
+We’re gathering feedback from homelabbers to validate direction and prioritize features.  
+Answer whichever questions stand out to you, your input directly shapes the project.
 
+[![User Questionnaire](https://img.shields.io/badge/Questionnaire-Share%20Feedback-orange?logo=googleforms&logoColor=white)](https://forms.gle/KKA4bqfGAeRYvGxT6)
 
 ## Philosophy
 RackPeek treats infrastructure documentation as living reference data rather than static paperwork.

@@ -24,29 +24,41 @@ public class Program
         );
 
         var yamlDir = "./config";
+        var yamlFileName = "config.yaml";
+
         var basePath = Directory.GetCurrentDirectory();
 
-        // Resolve yamlDir as relative to basePath
         var yamlPath = Path.IsPathRooted(yamlDir)
             ? yamlDir
             : Path.Combine(basePath, yamlDir);
 
-        if (!Directory.Exists(yamlPath))
-            throw new DirectoryNotFoundException(
-                $"YAML directory not found: {yamlPath}"
-            );
+        Directory.CreateDirectory(yamlPath);
+
+        var yamlFilePath = Path.Combine(yamlPath, yamlFileName);
+
+        if (!File.Exists(yamlFilePath))
+        {
+            // Create empty file safely
+            await using var fs = new FileStream(
+                yamlFilePath,
+                FileMode.CreateNew,
+                FileAccess.Write,
+                FileShare.None);
+            // optionally write default YAML content
+            await using var writer = new StreamWriter(fs);
+            await writer.WriteLineAsync("# default config");
+        }
 
         builder.Services.AddScoped<ITextFileStore, PhysicalTextFileStore>();
 
         var resources = new ResourceCollection();
         builder.Services.AddSingleton(resources);
-        
+
         builder.Services.AddScoped<IResourceCollection>(sp =>
             new YamlResourceCollection(
-                "./config/config.yaml",
+                yamlFilePath,
                 sp.GetRequiredService<ITextFileStore>(),
                 sp.GetRequiredService<ResourceCollection>()));
-        
         
         // Infrastructure
         builder.Services.AddScoped<IHardwareRepository, YamlHardwareRepository>();

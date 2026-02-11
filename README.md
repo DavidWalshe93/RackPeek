@@ -70,6 +70,40 @@ volumes:
 ```bash
 docker compose up -d
 ```
+
+## Installing on Linux 
+
+```bash
+# 1. Download the RackPeek binary
+
+wget https://github.com/Timmoth/RackPeek/releases/download/RackPeek-0.0.3/rackpeek_0_0_3_linux-x64 -O rackpeek
+
+# Or with curl:
+
+curl -L https://github.com/Timmoth/RackPeek/releases/download/RackPeek-0.0.3/rackpeek_0_0_3_linux-x64 -o rackpeek
+
+# 2. Make the binary executable
+
+chmod +x rackpeek
+
+# 3. Move RackPeek into your PATH
+
+sudo mv rackpeek /usr/local/bin/rpk
+
+# 4. Create the global config directory
+# RackPeek expects a `config` folder **next to the binary**, so create it in `/usr/local/bin`:
+
+sudo mkdir -p /usr/local/bin/config
+
+# 5. Create the empty `config.yaml`
+
+sudo touch /usr/local/bin/config/config.yaml
+
+# 6. Test the installation
+
+rpk --help
+```
+
 ## Core Values
 
 **Simplicity**  

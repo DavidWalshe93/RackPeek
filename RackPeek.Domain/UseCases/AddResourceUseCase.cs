@@ -11,7 +11,7 @@ public interface IAddResourceUseCase<T> : IResourceUseCase<T>
 }
 
 
-public class AddResourceUseCase<T>(IResourceRepo<T> repo, IResourceRepository resourceRepository) : IAddResourceUseCase<T> where T : Resource, new()
+public class AddResourceUseCase<T>(IResourceRepo<T> repo, IResourceRepository resourceRepository) : IAddResourceUseCase<T> where T : Resource
 {
     public async Task ExecuteAsync(string name)
     {
@@ -22,10 +22,9 @@ public class AddResourceUseCase<T>(IResourceRepo<T> repo, IResourceRepository re
         if (!string.IsNullOrEmpty(existingResourceKind))
             throw new ConflictException($"{existingResourceKind} resource '{name}' already exists.");
         
-        var resource = new T
-        {
-            Name = name
-        };
+        var resource = Activator.CreateInstance<T>();
+        resource.Name = name;
+
         await repo.AddAsync(resource);
     }
 }

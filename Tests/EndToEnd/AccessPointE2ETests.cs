@@ -27,8 +27,6 @@ public class AccessPointYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper ou
     [Fact]
     public async Task accesspoints_cli_workflow_test()
     {
-        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
-
         // Add AP
         var (output, yaml) = await ExecuteAsync("accesspoints", "add", "ap01");
         Assert.Equal("Access Point 'ap01' added.\n", output);

@@ -50,19 +50,34 @@ public static class CliBootstrap
         _lastArgs = args;
         _app = app;
     }
-    public static async Task RegisterInternals(IServiceCollection services, IConfiguration configuration,
-        string yamlDir, string yamlFile)
+    public static async Task RegisterInternals(
+        IServiceCollection services,
+        IConfiguration configuration,
+        string yamlDir,
+        string yamlFile)
     {
         services.AddSingleton(configuration);
+        var appBasePath = AppContext.BaseDirectory;
 
-        var basePath = configuration["HardwarePath"] ?? AppContext.BaseDirectory;
+        var resolvedYamlDir = Path.IsPathRooted(yamlDir)
+            ? yamlDir
+            : Path.Combine(appBasePath, yamlDir);
+        
 
-        // Resolve yamlDir as relative to basePath
-        var yamlPath = Path.IsPathRooted(yamlDir) ? yamlDir : Path.Combine(basePath, yamlDir);
+        Directory.CreateDirectory(resolvedYamlDir);
 
-        if (!Directory.Exists(yamlPath)) throw new DirectoryNotFoundException($"YAML directory not found: {yamlPath}");
+        var fullYamlPath = Path.Combine(resolvedYamlDir, yamlFile);
 
-        var collection = new YamlResourceCollection(Path.Combine(yamlPath, yamlFile), new PhysicalTextFileStore(), new ResourceCollection());
+        if (!File.Exists(fullYamlPath))
+        {
+            await File.WriteAllTextAsync(fullYamlPath, "");
+        }
+        
+        var collection = new YamlResourceCollection(
+            fullYamlPath,
+            new PhysicalTextFileStore(),
+            new ResourceCollection());
+
         await collection.LoadAsync();
         services.AddSingleton<IResourceCollection>(collection);
 
@@ -409,24 +424,24 @@ public static class CliBootstrap
             // ----------------------------
             // Laptops
             // ----------------------------
-            config.AddBranch("Laptops", Laptops =>
+            config.AddBranch("laptops", laptops =>
             {
-                Laptops.SetDescription("Manage Laptop computers and their components.");
+                laptops.SetDescription("Manage Laptop computers and their components.");
 
                 // CRUD
-                Laptops.AddCommand<LaptopAddCommand>("add").WithDescription("Add a new Laptop.");
-                Laptops.AddCommand<LaptopGetCommand>("list").WithDescription("List all Laptops.");
-                Laptops.AddCommand<LaptopGetByNameCommand>("get").WithDescription("Retrieve a Laptop by name.");
-                Laptops.AddCommand<LaptopDescribeCommand>("describe")
+                laptops.AddCommand<LaptopAddCommand>("add").WithDescription("Add a new Laptop.");
+                laptops.AddCommand<LaptopGetCommand>("list").WithDescription("List all Laptops.");
+                laptops.AddCommand<LaptopGetByNameCommand>("get").WithDescription("Retrieve a Laptop by name.");
+                laptops.AddCommand<LaptopDescribeCommand>("describe")
                     .WithDescription("Show detailed information about a Laptop.");
-                Laptops.AddCommand<LaptopDeleteCommand>("del").WithDescription("Delete a Laptop from the inventory.");
-                Laptops.AddCommand<LaptopReportCommand>("summary")
+                laptops.AddCommand<LaptopDeleteCommand>("del").WithDescription("Delete a Laptop from the inventory.");
+                laptops.AddCommand<LaptopReportCommand>("summary")
                     .WithDescription("Show a summarized hardware report for all Laptops.");
-                Laptops.AddCommand<LaptopTreeCommand>("tree")
+                laptops.AddCommand<LaptopTreeCommand>("tree")
                     .WithDescription("Display the dependency tree for a Laptop.");
 
                 // CPU
-                Laptops.AddBranch("cpu", cpu =>
+                laptops.AddBranch("cpu", cpu =>
                 {
                     cpu.SetDescription("Manage CPUs attached to Laptops.");
                     cpu.AddCommand<LaptopCpuAddCommand>("add").WithDescription("Add a CPU to a Laptop.");
@@ -435,16 +450,16 @@ public static class CliBootstrap
                 });
 
                 // Drives
-                Laptops.AddBranch("drive", drive =>
+                laptops.AddBranch("drives", drives =>
                 {
-                    drive.SetDescription("Manage storage drives attached to Laptops.");
-                    drive.AddCommand<LaptopDriveAddCommand>("add").WithDescription("Add a drive to a Laptop.");
-                    drive.AddCommand<LaptopDriveSetCommand>("set").WithDescription("Update a Laptop drive.");
-                    drive.AddCommand<LaptopDriveRemoveCommand>("del").WithDescription("Remove a drive from a Laptop.");
+                    drives.SetDescription("Manage storage drives attached to Laptops.");
+                    drives.AddCommand<LaptopDriveAddCommand>("add").WithDescription("Add a drive to a Laptop.");
+                    drives.AddCommand<LaptopDriveSetCommand>("set").WithDescription("Update a Laptop drive.");
+                    drives.AddCommand<LaptopDriveRemoveCommand>("del").WithDescription("Remove a drive from a Laptop.");
                 });
 
                 // GPUs
-                Laptops.AddBranch("gpu", gpu =>
+                laptops.AddBranch("gpu", gpu =>
                 {
                     gpu.SetDescription("Manage GPUs attached to Laptops.");
                     gpu.AddCommand<LaptopGpuAddCommand>("add").WithDescription("Add a GPU to a Laptop.");

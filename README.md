@@ -1,8 +1,7 @@
 # RackPeek
-
 RackPeek is a lightweight, opinionated CLI tool / webui for documenting and managing home lab and small-scale IT infrastructure.
 
-It helps you track hardware, services, networks, and their relationships in a clear, scriptable, and reusable way without enterprise bloat or proprietary lock-in.
+It helps you track hardware, services, networks, and their relationships in a clear, scriptable, and reusable way without enterprise bloat or proprietary lock-in or drowning in unnecessary metadata or process.
 
 RackPeek is open source and community-driven.
 Code, docs, ideas, bug reports, and real-world usage feedback are all massively appreciated.
@@ -14,23 +13,12 @@ Brandon Lee recently posted an article on how / why to use RackPeek, if you're i
 
 [![Brandon Lee — I’m Documenting My Entire Home Lab as Code with RackPeek](https://img.shields.io/badge/Brandon%20Lee-I%E2%80%99m%20Documenting%20My%20Entire%20Home%20Lab%20as%20Code%20with%20RackPeek-blue?style=for-the-badge)](https://www.virtualizationhowto.com/2026/02/im-documenting-my-entire-home-lab-as-code-with-rackpeek/)
 
-We’re gathering feedback from homelabbers to validate direction and prioritize features.  
-Answer whichever questions stand out to you, your input directly shapes the project.
-
-[![User Questionnaire](https://img.shields.io/badge/Questionnaire-Share%20Feedback-orange?logo=googleforms&logoColor=white)](https://forms.gle/KKA4bqfGAeRYvGxT6)
-
-## Philosophy
-RackPeek treats infrastructure documentation as living reference data rather than static paperwork.
-
-You should be able to document your environment as you build it, explore relationships between systems, and quickly understand how everything fits together, without drowning in unnecessary metadata or process.
 
 [![RackPeek demo](./vhs/rpk-demo.gif)](./rpk-demo.gif)
 [![RackPeek demo](./vhs/webui_screenshots/output.gif)](./rpk-webui-demo.gif)
 
-[![RackPeek demo](./vhs/webui_screenshots/output.gif)](./rpk-webui-demo.gif)
 ## Running RackPeek with Docker
 ```text
-
 # Named volume
 docker volume create rackpeek-config
 docker run -d \
@@ -137,6 +125,11 @@ The project is optimized for home labs and self-hosted environments, not enterpr
 [~] Beta Release
 [ ] v1.0.0 Release
 ```
+
+We’re gathering feedback from homelabbers to validate direction and prioritize features.  
+Answer whichever questions stand out to you, your input directly shapes the project.
+
+[![User Questionnaire](https://img.shields.io/badge/Questionnaire-Share%20Feedback-orange?logo=googleforms&logoColor=white)](https://forms.gle/KKA4bqfGAeRYvGxT6)
 
 ## Command Tree
 

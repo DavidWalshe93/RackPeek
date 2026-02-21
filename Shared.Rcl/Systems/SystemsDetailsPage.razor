@@ -58,8 +58,9 @@
     private bool _loading = true;
     SystemDependencyTree? _tree;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
+        _loading = true;
         _system = await Repo.GetByNameAsync<SystemResource>(SystemName);
         _tree = null;
         if (!string.IsNullOrEmpty(_system?.Name))

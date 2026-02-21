@@ -27,12 +27,9 @@ public class FirewallsListPom(IPage page)
     {
         return page.GetByTestId($"firewall-item-{Sanitize(name)}");
     }
-
+    
     public ILocator OpenLink(string name)
-    {
-        return FirewallItem(name)
-            .GetByTestId("open-firewall-link");
-    }
+        => FirewallItem(name).GetByTestId($"firewall-item-{Sanitize(name)}-link");
 
     public ILocator EditButton(string name)
     {

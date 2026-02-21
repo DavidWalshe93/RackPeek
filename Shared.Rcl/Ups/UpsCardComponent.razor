@@ -14,7 +14,7 @@
         <div class="text-zinc-100 hover:text-emerald-300">
             <NavLink href="@($"resources/hardware/{Ups.Name}")"
                      class="block"
-                     data-testid="open-ups-link">
+                     data-testid=@($"ups-item-{Ups.Name.Replace(" ", "-")}-link")>
                 @Ups.Name
             </NavLink>
         </div>

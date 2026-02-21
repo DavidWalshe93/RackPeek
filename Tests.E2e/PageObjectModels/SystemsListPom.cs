@@ -129,7 +129,7 @@ public class SystemsListPom
     {
         await DeleteButton(name).ClickAsync();
 
-        await _page.GetByTestId("System-confirm-modal-confirm")
+        await _page.GetByTestId("system-delete-confirm-modal-confirm")
             .ClickAsync();
 
         await Assertions.Expect(SystemCard(name))

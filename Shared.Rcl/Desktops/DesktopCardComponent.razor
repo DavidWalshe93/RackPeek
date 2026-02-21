@@ -31,7 +31,7 @@
         <div class="text-zinc-100 hover:text-emerald-300">
             <NavLink href="@($"resources/hardware/{Desktop.Name}")"
                      class="block"
-                     data-testid="open-desktop-link">
+                     data-testid=@($"desktop-item-{Desktop.Name.Replace(" ", "-")}-link")>
                 @Desktop.Name
             </NavLink>
         </div>

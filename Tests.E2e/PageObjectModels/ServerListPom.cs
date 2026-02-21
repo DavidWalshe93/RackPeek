@@ -87,7 +87,7 @@ public class ServersListPom(IPage page)
     public async Task DeleteServerAsync(string serverName)
     {
         await DeleteButton(serverName).ClickAsync();
-        await page.GetByTestId("Server-confirm-modal-confirm").ClickAsync();
+        await page.GetByTestId("server-delete-confirm-modal-confirm").ClickAsync();
 
         await Assertions.Expect(ServerItem(serverName))
             .Not.ToBeVisibleAsync();

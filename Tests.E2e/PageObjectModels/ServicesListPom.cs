@@ -123,7 +123,7 @@ public class ServicesListPom
     {
         await DeleteButton(name).ClickAsync();
 
-        await _page.GetByTestId("Service-confirm-modal-confirm")
+        await _page.GetByTestId("service-delete-confirm-modal-confirm")
             .ClickAsync();
 
         await Assertions.Expect(ServiceCard(name))

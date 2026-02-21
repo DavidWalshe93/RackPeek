@@ -29,10 +29,7 @@ public class RouterListPom(IPage page)
     }
 
     public ILocator OpenLink(string name)
-    {
-        return RouterItem(name)
-            .GetByTestId("open-router-link");
-    }
+        => page.GetByTestId($"router-item-{Sanitize(name)}-link");
 
     public ILocator EditButton(string name)
     {

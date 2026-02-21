@@ -15,7 +15,6 @@ public class AccessPointsListPom(IPage page)
 
     public ILocator AddSection => page.GetByTestId("accesspoints-add-section");
 
-    // These must match your AddResourceComponent test IDs
     public ILocator AddInput => page.GetByTestId("add-accesspoint-input");
     public ILocator AddButton => page.GetByTestId("add-accesspoint-button");
 
@@ -26,6 +25,11 @@ public class AccessPointsListPom(IPage page)
     public ILocator AccessPointItem(string name)
     {
         return page.GetByTestId($"accesspoint-item-{Sanitize(name)}");
+    }
+    
+    public ILocator AccessPointItemLink(string name)
+    {
+        return page.GetByTestId($"open-accesspoint-{Sanitize(name)}-link");
     }
 
     public ILocator DeleteButton(string name)
@@ -95,7 +99,7 @@ public class AccessPointsListPom(IPage page)
 
     public async Task OpenAccessPointAsync(string name)
     {
-        await AccessPointItem(name).ClickAsync();
+        await AccessPointItemLink(name).ClickAsync();
         await page.WaitForURLAsync($"**/resources/hardware/{name}");
     }
 

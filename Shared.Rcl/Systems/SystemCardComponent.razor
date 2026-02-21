@@ -15,7 +15,8 @@
 <div class="border border-zinc-800 rounded p-4 bg-zinc-900"
      data-testid=@($"system-item-{System.Name.Replace(" ", "-")}")>
     <div class="flex justify-between items-center mb-3">
-        <NavLink href="@($"resources/systems/{System.Name}")" class="block">
+        <NavLink href="@($"resources/systems/{System.Name}")" class="block"
+                 data-testid=@($"system-item-{System.Name.Replace(" ", "-")}-link")>
 
             <div class="text-zinc-100 hover:text-emerald-300">
                 @System.Name
@@ -263,7 +264,9 @@
     IsOpenChanged="v => _driveModalOpen = v"
     Value="@_editingDrive"
     OnSubmit="HandleDriveSubmit"
-    OnDelete="HandleDriveDelete"/>
+    OnDelete="HandleDriveDelete"
+    TestIdPrefix="system"/>
+
 
 <ConfirmModal
     IsOpen="_confirmDeleteOpen"
@@ -272,7 +275,7 @@
     ConfirmText="Delete"
     ConfirmClass="bg-red-600 hover:bg-red-500"
     OnConfirm="DeleteServer"
-    TestIdPrefix="System">>
+    TestIdPrefix="system-delete">
     Are you sure you want to delete <strong>@System.Name</strong>?
     <br/>
     This will detach all dependent systems.
@@ -285,7 +288,9 @@
     Description="Enter a name for the cloned system"
     Label="New system name"
     Value="@($"{System.Name}-copy")"
-    OnSubmit="HandleCloneSubmit"/>
+    OnSubmit="HandleCloneSubmit"
+    TestIdPrefix="system-clone"/>
+
 
 @code {
     [Parameter] [EditorRequired] public SystemResource System { get; set; } = default!;
@@ -389,7 +394,8 @@
     Description="Enter a new name for this system"
     Label="New system name"
     Value="@System.Name"
-    OnSubmit="HandleRenameSubmit"/>
+    OnSubmit="HandleRenameSubmit"
+    TestIdPrefix="system-rename"/>
 
 @code {
     private bool _confirmDeleteOpen;

@@ -23,9 +23,7 @@ public class AddTagUseCase<T>(IResourceCollection repo) : IAddTagUseCase<T> wher
         if (resource == null)
             throw new NotFoundException($"Resource '{name}' not found.");
 
-        if (resource.Tags == null)
-            resource.Tags = [tag];
-        else if (!resource.Tags.Contains(tag))
+        if (!resource.Tags.Contains(tag))
             resource.Tags = [..resource.Tags, tag];
         else
             // Tag already exists

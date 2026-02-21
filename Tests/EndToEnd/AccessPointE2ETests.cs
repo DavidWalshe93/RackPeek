@@ -41,6 +41,7 @@ public class AccessPointYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper ou
         Assert.Equal("Access Point 'ap01' updated.\n", output);
 
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: AccessPoint
                        model: Unifi-U6-Lite
@@ -61,6 +62,7 @@ public class AccessPointYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper ou
         Assert.Equal("Access Point 'ap02' updated.\n", output);
 
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: AccessPoint
                        model: Unifi-U6-Lite

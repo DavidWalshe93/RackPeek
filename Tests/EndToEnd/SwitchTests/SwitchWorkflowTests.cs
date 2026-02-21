@@ -45,6 +45,7 @@ public class SwitchWorkflowTests(TempYamlCliFixture fs, ITestOutputHelper output
         Assert.Equal("Switch 'sw01' updated.\n", output);
 
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: Switch
                        model: Netgear GS108
@@ -68,6 +69,7 @@ public class SwitchWorkflowTests(TempYamlCliFixture fs, ITestOutputHelper output
         Assert.Equal("Switch 'sw02' updated.\n", output);
 
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: Switch
                        model: Netgear GS108

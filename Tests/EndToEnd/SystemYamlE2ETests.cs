@@ -33,6 +33,7 @@ public class SystemYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
         (output, yaml) = await ExecuteAsync("systems", "add", "host01");
         Assert.Equal("System 'host01' added.\n", output);
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: Server
                        name: hypervisor01
@@ -55,6 +56,7 @@ public class SystemYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
 
         outputHelper.WriteLine(yaml);
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: Server
                        name: hypervisor01

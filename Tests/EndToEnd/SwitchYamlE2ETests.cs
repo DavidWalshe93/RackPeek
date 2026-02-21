@@ -38,6 +38,7 @@ public class SwitchYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
             "--poe", "true");
         Assert.Equal("Switch 'sw01' updated.\n", output);
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: Switch
                        model: Netgear GS108
@@ -56,6 +57,7 @@ public class SwitchYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper outputH
         Assert.Equal("Switch 'sw02' updated.\n", output);
 
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: Switch
                        model: Netgear GS108

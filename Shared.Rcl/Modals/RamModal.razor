@@ -1,73 +1,95 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using RackPeek.Domain.Resources.SubResources
+
 @if (IsOpen)
 {
-    <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="fixed inset-0 z-50 flex items-center justify-center"
+         data-testid="@BaseTestId">
+
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/70" @onclick="Cancel"></div>
+        <div class="absolute inset-0 bg-black/70"
+             data-testid="@($"{BaseTestId}-backdrop")"
+             @onclick="Cancel">
+        </div>
 
         <!-- Modal -->
-        <div class="relative bg-zinc-900 border border-zinc-800 rounded w-full max-w-md p-4">
+        <div class="relative bg-zinc-900 border border-zinc-800 rounded w-full max-w-md p-4"
+             data-testid="@($"{BaseTestId}-container")">
+
             <!-- Header -->
-            <div class="flex justify-between items-center mb-4">
-                <div class="text-zinc-100 text-sm font-medium">
+            <div class="flex justify-between items-center mb-4"
+                 data-testid="@($"{BaseTestId}-header")">
+
+                <div class="text-zinc-100 text-sm font-medium"
+                     data-testid="@($"{BaseTestId}-title")">
                     @(IsEdit ? "Modify RAM" : "Add RAM")
                 </div>
 
-                <button
-                    class="text-zinc-400 hover:text-zinc-200"
-                    @onclick="Cancel">
+                <button class="text-zinc-400 hover:text-zinc-200"
+                        data-testid="@($"{BaseTestId}-close")"
+                        @onclick="Cancel">
                     ✕
                 </button>
             </div>
 
             <!-- Form -->
-            <EditForm Model="_model" OnValidSubmit="HandleValidSubmit">
-                <DataAnnotationsValidator/>
-                <ValidationSummary class="text-xs text-red-400 mb-3"/>
+            <EditForm Model="_model"
+                      OnValidSubmit="HandleValidSubmit"
+                      data-testid="@($"{BaseTestId}-form")">
+
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-xs text-red-400 mb-3"
+                                   data-testid="@($"{BaseTestId}-validation-summary")" />
 
                 <div class="space-y-3 text-sm">
+
                     <div class="grid grid-cols-2 gap-3">
-                        <div>
+
+                        <div data-testid="@($"{BaseTestId}-size-field")">
                             <label class="block text-zinc-400 mb-1">
                                 Size (GB)
                             </label>
-                            <InputNumber
-                                class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
-                                @bind-Value="_model.Size"/>
+                            <InputNumber class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
+                                         data-testid="@($"{BaseTestId}-size-input")"
+                                         @bind-Value="_model.Size" />
                         </div>
 
-                        <div>
+                        <div data-testid="@($"{BaseTestId}-mts-field")">
                             <label class="block text-zinc-400 mb-1">
                                 Speed (MT/s)
                             </label>
-                            <InputNumber
-                                class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
-                                @bind-Value="_model.Mts"/>
+                            <InputNumber class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
+                                         data-testid="@($"{BaseTestId}-mts-input")"
+                                         @bind-Value="_model.Mts" />
                         </div>
+
                     </div>
                 </div>
 
                 <!-- Actions -->
-                <div class="flex justify-between items-center mt-5">
+                <div class="flex justify-between items-center mt-5"
+                     data-testid="@($"{BaseTestId}-actions")">
+
                     <span></span>
 
-
                     <div class="flex gap-2">
-                        <button
-                            type="button"
-                            class="px-3 py-1 rounded border border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                            @onclick="Cancel">
+
+                        <button type="button"
+                                class="px-3 py-1 rounded border border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                                data-testid="@($"{BaseTestId}-cancel")"
+                                @onclick="Cancel">
                             Cancel
                         </button>
 
-                        <button
-                            type="submit"
-                            class="px-3 py-1 rounded bg-emerald-600 text-black hover:bg-emerald-500">
+                        <button type="submit"
+                                class="px-3 py-1 rounded bg-emerald-600 text-black hover:bg-emerald-500"
+                                data-testid="@($"{BaseTestId}-submit")">
                             @(IsEdit ? "Update" : "Add")
                         </button>
+
                     </div>
                 </div>
+
             </EditForm>
         </div>
     </div>
@@ -80,6 +102,13 @@
     [Parameter] public Ram? Value { get; set; }
 
     [Parameter] public EventCallback<Ram> OnSubmit { get; set; }
+
+    [Parameter] public string? TestIdPrefix { get; set; }
+
+    private string BaseTestId =>
+        string.IsNullOrWhiteSpace(TestIdPrefix)
+            ? "ram-modal"
+            : $"{TestIdPrefix}-ram-modal";
 
     private RamFormModel _model = new();
 
@@ -124,11 +153,8 @@
 
     private class RamFormModel
     {
-        // Both are intentionally nullable and optional
         [Range(1, 1024)] public int? Size { get; set; }
 
         [Range(1, 10000)] public int? Mts { get; set; }
     }
-
 }
-

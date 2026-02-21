@@ -21,8 +21,8 @@
 @inject IRemoveGpuUseCase<Server> RemoveGpuUseCase
 
 @inject IGetResourceByNameUseCase<Server> GetByNameUseCase
-@inject UpdateServerUseCase UpdateServerUseCase
-@inject IDeleteResourceUseCase<Server> DeleteServerUseCase
+@inject UpdateServerUseCase UpdateUseCase
+@inject IDeleteResourceUseCase<Server> DeleteUseCase
 @inject ICloneResourceUseCase<Server> CloneUseCase
 
 @inject IRenameResourceUseCase<Server> RenameUseCase
@@ -334,7 +334,7 @@
     private async Task HandleRamSubmit(Ram value)
     {
         _isRamModalOpen = false;
-        await UpdateServerUseCase.ExecuteAsync(Server.Name, value.Size, value.Mts, Server.Ipmi);
+        await UpdateUseCase.ExecuteAsync(Server.Name, value.Size, value.Mts, Server.Ipmi);
         Server = await GetByNameUseCase.ExecuteAsync(Server.Name);
     }
 
@@ -555,7 +555,7 @@
     {
         _confirmDeleteOpen = false;
 
-        await DeleteServerUseCase.ExecuteAsync(Server.Name);
+        await DeleteUseCase.ExecuteAsync(Server.Name);
 
         if (OnDeleted.HasDelegate)
             await OnDeleted.InvokeAsync(Server.Name);
@@ -620,7 +620,7 @@
     {
         _editingNotes = false;
 
-        await UpdateServerUseCase.ExecuteAsync(
+        await UpdateUseCase.ExecuteAsync(
             Server.Name,
             Server.Ram?.Size,
             Server.Ram?.Mts,

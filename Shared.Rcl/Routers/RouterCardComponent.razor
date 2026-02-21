@@ -3,20 +3,25 @@
 @using RackPeek.Domain.UseCases.Ports
 @using Router = RackPeek.Domain.Resources.Routers.Router
 
-@inject UpdateRouterUseCase UpdateRouterUseCase
+@inject UpdateRouterUseCase UpdateUseCase
 @inject IGetResourceByNameUseCase<Router> GetByNameUseCase
-@inject IAddPortUseCase<Router> AddRouterPortUseCase
-@inject IUpdatePortUseCase<Router> UpdateRouterPortUseCase
-@inject IRemovePortUseCase<Router> RemoveRouterPortUseCase
+@inject IAddPortUseCase<Router> AddPortUseCase
+@inject IUpdatePortUseCase<Router> UpdatePortUseCase
+@inject IRemovePortUseCase<Router> RemovePortUseCase
 @inject IDeleteResourceUseCase<Router> DeleteUseCase
 @inject IRenameResourceUseCase<Router> RenameUseCase
 @inject ICloneResourceUseCase<Router> CloneUseCase
-
 @inject NavigationManager Nav
-<div class="border border-zinc-800 rounded p-4 bg-zinc-900">
+
+<div class="border border-zinc-800 rounded p-4 bg-zinc-900"
+     data-testid=@($"router-item-{Router.Name.Replace(" ", "-")}")>
+
     <div class="flex justify-between items-center mb-3">
+
         <div class="text-zinc-100 hover:text-emerald-300">
-            <NavLink href="@($"resources/hardware/{Router.Name}")" class="block">
+            <NavLink href="@($"resources/hardware/{Router.Name}")"
+                     class="block"
+                     data-testid="open-router-link">
                 @Router.Name
             </NavLink>
         </div>
@@ -24,35 +29,40 @@
         <div class="flex gap-3 text-xs">
             @if (!_isEditing)
             {
-                <button class="text-zinc-400 hover:text-zinc-200"
+                <button data-testid="edit-router-button"
+                        class="text-zinc-400 hover:text-zinc-200"
                         @onclick="BeginEdit">
                     Edit
                 </button>
-                <button class="text-xs text-blue-400 hover:text-blue-300 transition"
-                        title="Rename service"
+
+                <button data-testid="rename-router-button"
+                        class="text-blue-400 hover:text-blue-300 transition"
                         @onclick="OpenRename">
                     Rename
                 </button>
-                <button
-                    class="text-xs text-emerald-400 hover:text-emerald-300 transition"
-                    title="Clone service"
-                    @onclick="OpenClone">
+
+                <button data-testid="clone-router-button"
+                        class="text-emerald-400 hover:text-emerald-300 transition"
+                        @onclick="OpenClone">
                     Clone
                 </button>
-                <button
-                    class="text-xs text-red-400 hover:text-red-300 transition"
-                    title="Delete server"
-                    @onclick="ConfirmDelete">
+
+                <button data-testid="delete-router-button"
+                        class="text-red-400 hover:text-red-300 transition"
+                        @onclick="ConfirmDelete">
                     Delete
                 </button>
             }
             else
             {
-                <button class="text-emerald-400 hover:text-emerald-300"
+                <button data-testid="save-router-button"
+                        class="text-emerald-400 hover:text-emerald-300"
                         @onclick="Save">
                     Save
                 </button>
-                <button class="text-zinc-500 hover:text-zinc-300"
+
+                <button data-testid="cancel-router-button"
+                        class="text-zinc-500 hover:text-zinc-300"
                         @onclick="Cancel">
                     Cancel
                 </button>
@@ -63,41 +73,42 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 
         <!-- Model -->
-        <div>
+        <div data-testid="router-model-section">
             <div class="text-zinc-400 mb-1">Model</div>
+
             @if (_isEditing)
             {
-                <input
-                    class="w-full px-3 py-2 rounded-md
-                           bg-zinc-800 text-zinc-100
-                           border border-zinc-600
-                           placeholder-zinc-500
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                           hover:border-zinc-400
-                           transition-colors duration-150
-                           cursor-text"
-                    @bind="_edit.Model"/>
+                <input data-testid="router-model-input"
+                       class="w-full px-3 py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-600"
+                       @bind="_edit.Model" />
             }
             else if (!string.IsNullOrWhiteSpace(Router.Model))
             {
-                <div class="text-zinc-300">@Router.Model</div>
+                <div class="text-zinc-300"
+                     data-testid="router-model-value">
+                    @Router.Model
+                </div>
             }
         </div>
 
         <!-- Features -->
-        <div>
+        <div data-testid="router-features-section">
             <div class="text-zinc-400 mb-1">Features</div>
 
             @if (_isEditing)
             {
                 <div class="flex gap-4">
                     <label class="flex items-center gap-2 text-zinc-300">
-                        <input type="checkbox" @bind="_edit.Managed"/>
+                        <input type="checkbox"
+                               data-testid="router-managed-checkbox"
+                               @bind="_edit.Managed" />
                         Managed
                     </label>
 
                     <label class="flex items-center gap-2 text-zinc-300">
-                        <input type="checkbox" @bind="_edit.Poe"/>
+                        <input type="checkbox"
+                               data-testid="router-poe-checkbox"
+                               @bind="_edit.Poe" />
                         PoE
                     </label>
                 </div>
@@ -107,13 +118,15 @@
                 <div class="flex gap-2 flex-wrap">
                     @if (Router.Managed == true)
                     {
-                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300"
+                              data-testid="router-managed-badge">
                             Managed
                         </span>
                     }
                     @if (Router.Poe == true)
                     {
-                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300"
+                              data-testid="router-poe-badge">
                             PoE
                         </span>
                     }
@@ -122,12 +135,14 @@
         </div>
 
         <!-- Ports -->
-        <div class="md:col-span-2">
+        <div class="md:col-span-2"
+             data-testid="router-ports-section">
+
             <div class="flex items-center justify-between mb-1 group">
                 <div class="text-zinc-400">
                     Ports
-                    <button class="hover:text-emerald-400 ml-1"
-                            title="Add Port"
+                    <button data-testid="add-port-button"
+                            class="hover:text-emerald-400 ml-1"
                             @onclick="OpenAddPort">
                         +
                     </button>
@@ -138,10 +153,9 @@
             {
                 @foreach (var port in Router.Ports)
                 {
-                    <div
-                        class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
-                        <button class="hover:text-emerald-400"
-                                title="Edit Port"
+                    <div class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+                        <button data-testid=@($"edit-port-{port.Type}-{port.Speed}")
+                                class="hover:text-emerald-400"
                                 @onclick="() => OpenEditPort(port)">
                             @port.Count× @port.Type — @port.Speed Gbps
                         </button>
@@ -149,62 +163,64 @@
                 }
             }
         </div>
-        <ResourceTagEditor Resource="Router"/>
 
-        <div class="md:col-span-2">
+        <ResourceTagEditor Resource="Router" />
+
+        <div class="md:col-span-2"
+             data-testid="router-notes-section">
+
             <div class="text-zinc-400 mb-1">Notes</div>
 
             @if (_isEditing)
             {
-                <MarkdownEditor
-                    @bind-Value="_edit.Notes"
-                    ShowActionButtons="false"/>
+                <MarkdownEditor @bind-Value="_edit.Notes"
+                                ShowActionButtons="false"
+                                TestIdPrefix="router-notes-editor" />
             }
             else
             {
-                <MarkdownViewer
-                    Value="@Router.Notes"
-                    ShowEditButton="false"/>
+                <MarkdownViewer Value="@Router.Notes"
+                                ShowEditButton="false"
+                                TestIdPrefix="router-notes-viewer" />
             }
         </div>
 
     </div>
 </div>
 
-<PortModal
-    IsOpen="@_portModalOpen"
-    IsOpenChanged="v => _portModalOpen = v"
-    Value="@_editingPort"
-    OnSubmit="HandlePortSubmit"
-    OnDelete="HandlePortDelete"/>
+<PortModal IsOpen="@_portModalOpen"
+           IsOpenChanged="v => _portModalOpen = v"
+           Value="@_editingPort"
+           OnSubmit="HandlePortSubmit"
+           OnDelete="HandlePortDelete" />
 
-<ConfirmModal
-    IsOpen="_confirmDeleteOpen"
-    IsOpenChanged="v => _confirmDeleteOpen = v"
-    Title="Delete router"
-    ConfirmText="Delete"
-    ConfirmClass="bg-red-600 hover:bg-red-500"
-    OnConfirm="DeleteServer"
-    TestIdPrefix="Router">
+<ConfirmModal IsOpen="_confirmDeleteOpen"
+              IsOpenChanged="v => _confirmDeleteOpen = v"
+              Title="Delete router"
+              ConfirmText="Delete"
+              ConfirmClass="bg-red-600 hover:bg-red-500"
+              OnConfirm="DeleteServer"
+              TestIdPrefix="Router">
     Are you sure you want to delete <strong>@Router.Name</strong>?
 </ConfirmModal>
-<StringValueModal
-    IsOpen="_renameOpen"
-    IsOpenChanged="v => _renameOpen = v"
-    Title="Rename router"
-    Description="Enter a new name for this router"
-    Label="New router name"
-    Value="@Router.Name"
-    OnSubmit="HandleRenameSubmit"/>
 
-<StringValueModal
-    IsOpen="_cloneOpen"
-    IsOpenChanged="v => _cloneOpen = v"
-    Title="Clone resource"
-    Description="Enter a name for the cloned resource"
-    Label="New resource name"
-    Value="@($"{Router.Name}-copy")"
-    OnSubmit="HandleCloneSubmit"/>
+<StringValueModal IsOpen="_renameOpen"
+                  IsOpenChanged="v => _renameOpen = v"
+                  Title="Rename router"
+                  Description="Enter a new name for this router"
+                  Label="New router name"
+                  Value="@Router.Name"
+                  OnSubmit="HandleRenameSubmit"
+                  TestIdPrefix="router-rename" />
+
+<StringValueModal IsOpen="_cloneOpen"
+                  IsOpenChanged="v => _cloneOpen = v"
+                  Title="Clone resource"
+                  Description="Enter a name for the cloned resource"
+                  Label="New resource name"
+                  Value="@($"{Router.Name}-copy")"
+                  OnSubmit="HandleCloneSubmit"
+                  TestIdPrefix="router-clone" />
 
 @code {
     [Parameter] [EditorRequired] public Router Router { get; set; } = default!;
@@ -222,7 +238,7 @@
     {
         _isEditing = false;
 
-        await UpdateRouterUseCase.ExecuteAsync(
+        await UpdateUseCase.ExecuteAsync(
             Router.Name,
             _edit.Model,
             _edit.Managed,
@@ -262,7 +278,7 @@
     {
         if (_editingPortIndex < 0)
         {
-            await AddRouterPortUseCase.ExecuteAsync(
+            await AddPortUseCase.ExecuteAsync(
                 Router.Name,
                 port.Type,
                 port.Speed,
@@ -270,7 +286,7 @@
         }
         else
         {
-            await UpdateRouterPortUseCase.ExecuteAsync(
+            await UpdatePortUseCase.ExecuteAsync(
                 Router.Name,
                 _editingPortIndex,
                 port.Type,
@@ -284,7 +300,7 @@
 
     async Task HandlePortDelete(Port _)
     {
-        await RemoveRouterPortUseCase.ExecuteAsync(
+        await RemovePortUseCase.ExecuteAsync(
             Router.Name,
             _editingPortIndex);
 

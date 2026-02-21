@@ -1,41 +1,57 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @using RackPeek.Domain.Resources.SubResources
+
 @if (IsOpen)
 {
-    <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="fixed inset-0 z-50 flex items-center justify-center"
+         data-testid="@BaseTestId">
+
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/70" @onclick="Cancel"></div>
+        <div class="absolute inset-0 bg-black/70"
+             data-testid="@($"{BaseTestId}-backdrop")"
+             @onclick="Cancel">
+        </div>
 
         <!-- Modal -->
-        <div class="relative bg-zinc-900 border border-zinc-800 rounded w-full max-w-md p-4">
+        <div class="relative bg-zinc-900 border border-zinc-800 rounded w-full max-w-md p-4"
+             data-testid="@($"{BaseTestId}-container")">
+
             <!-- Header -->
-            <div class="flex justify-between items-center mb-4">
-                <div class="text-zinc-100 text-sm font-medium">
+            <div class="flex justify-between items-center mb-4"
+                 data-testid="@($"{BaseTestId}-header")">
+
+                <div class="text-zinc-100 text-sm font-medium"
+                     data-testid="@($"{BaseTestId}-title")">
                     @(IsEdit ? "Modify NIC" : "Add NIC")
                 </div>
 
-                <button
-                    class="text-zinc-400 hover:text-zinc-200"
-                    @onclick="Cancel">
+                <button class="text-zinc-400 hover:text-zinc-200"
+                        data-testid="@($"{BaseTestId}-close")"
+                        @onclick="Cancel">
                     ✕
                 </button>
             </div>
 
             <!-- Form -->
-            <EditForm Model="_model" OnValidSubmit="HandleValidSubmit">
-                <DataAnnotationsValidator/>
-                <ValidationSummary class="text-xs text-red-400 mb-3"/>
+            <EditForm Model="_model"
+                      OnValidSubmit="HandleValidSubmit"
+                      data-testid="@($"{BaseTestId}-form")">
+
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-xs text-red-400 mb-3"
+                                   data-testid="@($"{BaseTestId}-validation-summary")" />
 
                 <div class="space-y-3 text-sm">
+
                     <!-- Type -->
-                    <div>
+                    <div data-testid="@($"{BaseTestId}-type-field")">
                         <label class="block text-zinc-400 mb-1">
                             Type
                         </label>
 
-                        <InputSelect
-                            class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
-                            @bind-Value="_model.Type">
+                        <InputSelect class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
+                                     data-testid="@($"{BaseTestId}-type-input")"
+                                     @bind-Value="_model.Type">
                             <option value="">Select type</option>
 
                             @foreach (var type in Nic.ValidNicTypes)
@@ -46,36 +62,39 @@
                     </div>
 
                     <!-- Speed -->
-                    <div>
+                    <div data-testid="@($"{BaseTestId}-speed-field")">
                         <label class="block text-zinc-400 mb-1">
                             Speed (Gbps)
                         </label>
 
-                        <InputNumber
-                            class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
-                            @bind-Value="_model.Speed"/>
+                        <InputNumber class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
+                                     data-testid="@($"{BaseTestId}-speed-input")"
+                                     @bind-Value="_model.Speed" />
                     </div>
 
                     <!-- Ports -->
-                    <div>
+                    <div data-testid="@($"{BaseTestId}-ports-field")">
                         <label class="block text-zinc-400 mb-1">
                             Ports
                         </label>
 
-                        <InputNumber
-                            class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
-                            @bind-Value="_model.Ports"/>
+                        <InputNumber class="w-full bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-zinc-100"
+                                     data-testid="@($"{BaseTestId}-ports-input")"
+                                     @bind-Value="_model.Ports" />
                     </div>
+
                 </div>
 
                 <!-- Actions -->
-                <div class="flex justify-between items-center mt-5">
+                <div class="flex justify-between items-center mt-5"
+                     data-testid="@($"{BaseTestId}-actions")">
+
                     @if (IsEdit)
                     {
-                        <button
-                            type="button"
-                            class="text-red-400 hover:text-red-300 text-sm"
-                            @onclick="HandleDelete">
+                        <button type="button"
+                                class="text-red-400 hover:text-red-300 text-sm"
+                                data-testid="@($"{BaseTestId}-delete")"
+                                @onclick="HandleDelete">
                             Delete NIC
                         </button>
                     }
@@ -85,20 +104,23 @@
                     }
 
                     <div class="flex gap-2">
-                        <button
-                            type="button"
-                            class="px-3 py-1 rounded border border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-                            @onclick="Cancel">
+
+                        <button type="button"
+                                class="px-3 py-1 rounded border border-zinc-700 text-zinc-300 hover:bg-zinc-800"
+                                data-testid="@($"{BaseTestId}-cancel")"
+                                @onclick="Cancel">
                             Cancel
                         </button>
 
-                        <button
-                            type="submit"
-                            class="px-3 py-1 rounded bg-emerald-600 text-black hover:bg-emerald-500">
+                        <button type="submit"
+                                class="px-3 py-1 rounded bg-emerald-600 text-black hover:bg-emerald-500"
+                                data-testid="@($"{BaseTestId}-submit")">
                             @(IsEdit ? "Update" : "Add")
                         </button>
+
                     </div>
                 </div>
+
             </EditForm>
         </div>
     </div>
@@ -112,6 +134,13 @@
 
     [Parameter] public EventCallback<Nic> OnSubmit { get; set; }
     [Parameter] public EventCallback<Nic> OnDelete { get; set; }
+
+    [Parameter] public string? TestIdPrefix { get; set; }
+
+    private string BaseTestId =>
+        string.IsNullOrWhiteSpace(TestIdPrefix)
+            ? "nic-modal"
+            : $"{TestIdPrefix}-nic-modal";
 
     private NicFormModel _model = new();
 
@@ -173,5 +202,4 @@
 
         [Range(1, 128)] public int? Ports { get; set; }
     }
-
 }

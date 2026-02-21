@@ -1,79 +1,79 @@
-﻿@using RackPeek.Domain.Resources.Laptops
+﻿
+@using RackPeek.Domain.Resources.Laptops
 @using RackPeek.Domain.Resources.SubResources
 @using RackPeek.Domain.UseCases.Cpus
 @using RackPeek.Domain.UseCases.Drives
 @using RackPeek.Domain.UseCases.Gpus
 @inject IGetResourceByNameUseCase<Laptop> GetByNameUseCase
-@inject UpdateLaptopUseCase UpdateLaptopUseCase
-@inject IDeleteResourceUseCase<Laptop> DeleteLaptopUseCase
-
+@inject UpdateLaptopUseCase UpdateUseCase
+@inject IDeleteResourceUseCase<Laptop> DeleteUseCase
 @inject IAddCpuUseCase<Laptop> AddCpuUseCase
 @inject IUpdateCpuUseCase<Laptop> UpdateCpuUseCase
 @inject IRemoveCpuUseCase<Laptop> RemoveCpuUseCase
-
 @inject IAddDriveUseCase<Laptop> AddDriveUseCase
 @inject IUpdateDriveUseCase<Laptop> UpdateDriveUseCase
 @inject IRemoveDriveUseCase<Laptop> RemoveDriveUseCase
-
 @inject IAddGpuUseCase<Laptop> AddGpuUseCase
 @inject IUpdateGpuUseCase<Laptop> UpdateGpuUseCase
 @inject IRemoveGpuUseCase<Laptop> RemoveGpuUseCase
 @inject ICloneResourceUseCase<Laptop> CloneUseCase
-
 @inject IRenameResourceUseCase<Laptop> RenameUseCase
 @inject NavigationManager Nav
 
-<div class="border border-zinc-800 rounded p-4 bg-zinc-900">
-    <div class="flex justify-between items-center mb-3">
-        <div class="text-zinc-100 hover:text-emerald-300">
-            <NavLink href="@($"resources/hardware/{Laptop.Name}")" class="block">
+<div class="border border-zinc-800 rounded p-4 bg-zinc-900"
+     data-testid=@($"laptop-item-{Laptop.Name.Replace(" ", "-")}")>
 
+    <div class="flex justify-between items-center mb-3">
+
+        <div class="text-zinc-100 hover:text-emerald-300">
+            <NavLink href="@($"resources/hardware/{Laptop.Name}")"
+                     class="block"
+                     data-testid="open-laptop-link">
                 @Laptop.Name
             </NavLink>
         </div>
 
+        <div class="flex items-center gap-2">
 
-        <div class="flex justify-between items-center mb-3">
             @if (!string.IsNullOrWhiteSpace(Laptop.Model))
             {
-                <span class="text-xs text-zinc-400">
+                <span class="text-xs text-zinc-400"
+                      data-testid="laptop-model-badge">
                     @Laptop.Model
                 </span>
             }
-            <div class="flex items-center gap-2">
-                <button class="text-xs text-blue-400 hover:text-blue-300 transition"
-                        title="Rename service"
-                        @onclick="OpenRename">
-                    Rename
-                </button>
-                <button
-                    class="text-xs text-emerald-400 hover:text-emerald-300 transition"
-                    title="Clone service"
-                    @onclick="OpenClone">
-                    Clone
-                </button>
-                <button
-                    class="text-xs text-red-400 hover:text-red-300 transition"
-                    title="Delete server"
-                    @onclick="ConfirmDelete">
-                    Delete
-                </button>
-            </div>
-        </div>
 
+            <button data-testid="rename-laptop-button"
+                    class="text-xs text-blue-400 hover:text-blue-300 transition"
+                    @onclick="OpenRename">
+                Rename
+            </button>
+
+            <button data-testid="clone-laptop-button"
+                    class="text-xs text-emerald-400 hover:text-emerald-300 transition"
+                    @onclick="OpenClone">
+                Clone
+            </button>
+
+            <button data-testid="delete-laptop-button"
+                    class="text-xs text-red-400 hover:text-red-300 transition"
+                    @onclick="ConfirmDelete">
+                Delete
+            </button>
+
+        </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 
         <!-- CPU -->
-        <div>
+        <div data-testid="laptop-cpu-section">
             <div class="flex items-center justify-between mb-1 group">
                 <div class="text-zinc-400">
                     CPU
-                    <button
-                        class="hover:text-emerald-400 transition"
-                        title="Add CPU"
-                        @onclick="OpenAddCpu">
+                    <button data-testid="add-cpu-button"
+                            class="hover:text-emerald-400 transition"
+                            @onclick="OpenAddCpu">
                         +
                     </button>
                 </div>
@@ -83,12 +83,10 @@
             {
                 @foreach (var cpu in Laptop.Cpus)
                 {
-                    <div
-                        class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
-                        <button
-                            class="hover:text-emerald-400"
-                            title="Edit CPU"
-                            @onclick="() => OpenEditCpu(cpu)">
+                    <div class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+                        <button data-testid=@($"edit-cpu-{cpu.ToString().Replace(" ", "-")}")
+                                class="hover:text-emerald-400"
+                                @onclick="() => OpenEditCpu(cpu)">
                             @cpu.Model — @cpu.Cores cores / @cpu.Threads threads
                         </button>
                     </div>
@@ -97,24 +95,22 @@
         </div>
 
         <!-- RAM -->
-        <div>
+        <div data-testid="laptop-ram-section">
             <div class="text-zinc-400 mb-1">
                 RAM
-                <button
-                    class="hover:text-emerald-400 transition"
-                    title="Edit RAM"
-                    @onclick="EditRam">
+                <button data-testid="edit-ram-button"
+                        class="hover:text-emerald-400 transition"
+                        @onclick="EditRam">
                     +
                 </button>
             </div>
 
             @if (Laptop.Ram is not null)
             {
-                <div
-                    class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
-                    <button
-                        class="hover:text-emerald-400"
-                        @onclick="EditRam">
+                <div class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+                    <button data-testid="ram-value-button"
+                            class="hover:text-emerald-400"
+                            @onclick="EditRam">
                         @($"{Laptop.Ram.Size} GB {Laptop.Ram.Mts} MT/s")
                     </button>
                 </div>
@@ -122,14 +118,13 @@
         </div>
 
         <!-- Drives -->
-        <div>
+        <div data-testid="laptop-drive-section">
             <div class="flex items-center justify-between mb-1 group">
                 <div class="text-zinc-400">
                     Drives
-                    <button
-                        class="hover:text-emerald-400 transition"
-                        title="Add Drive"
-                        @onclick="OpenAddDrive">
+                    <button data-testid="add-drive-button"
+                            class="hover:text-emerald-400 transition"
+                            @onclick="OpenAddDrive">
                         +
                     </button>
                 </div>
@@ -139,11 +134,10 @@
             {
                 @foreach (var drive in Laptop.Drives)
                 {
-                    <div
-                        class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
-                        <button
-                            class="hover:text-emerald-400"
-                            @onclick="() => OpenEditDrive(drive)">
+                    <div class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+                        <button data-testid=@($"edit-drive-{drive.Type}-{drive.Size}")
+                                class="hover:text-emerald-400"
+                                @onclick="() => OpenEditDrive(drive)">
                             @drive.Type — @drive.Size GB
                         </button>
                     </div>
@@ -152,14 +146,13 @@
         </div>
 
         <!-- GPUs -->
-        <div>
+        <div data-testid="laptop-gpu-section">
             <div class="flex items-center justify-between mb-1 group">
                 <div class="text-zinc-400">
                     GPUs
-                    <button
-                        class="hover:text-emerald-400 transition"
-                        title="Add GPU"
-                        @onclick="OpenAddGpu">
+                    <button data-testid="add-gpu-button"
+                            class="hover:text-emerald-400 transition"
+                            @onclick="OpenAddGpu">
                         +
                     </button>
                 </div>
@@ -169,11 +162,10 @@
             {
                 @foreach (var gpu in Laptop.Gpus)
                 {
-                    <div
-                        class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
-                        <button
-                            class="hover:text-emerald-400"
-                            @onclick="() => OpenEditGpu(gpu)">
+                    <div class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+                        <button data-testid=@($"edit-gpu-{gpu.Model}-{gpu.Vram}")
+                                class="hover:text-emerald-400"
+                                @onclick="() => OpenEditGpu(gpu)">
                             @gpu.Model — @gpu.Vram GB VRAM
                         </button>
                     </div>
@@ -181,87 +173,84 @@
             }
         </div>
 
-
     </div>
-    <ResourceTagEditor Resource="Laptop"/>
 
-    <div class="md:col-span-2">
+    <ResourceTagEditor Resource="Laptop" />
+
+    <div class="md:col-span-2"
+         data-testid="laptop-notes-section">
+
         <div class="text-zinc-400 mb-1">Notes</div>
 
         @if (!_editingNotes)
         {
-            <MarkdownViewer
-                Value="@Laptop.Notes"
-                ShowEditButton="true"
-                OnEdit="BeginNotesEdit"/>
+            <MarkdownViewer Value="@Laptop.Notes"
+                            ShowEditButton="true"
+                            OnEdit="BeginNotesEdit"
+                            TestIdPrefix="laptop-notes-viewer" />
         }
         else
         {
-            <MarkdownEditor
-                @bind-Value="_notesDraft"
-                ShowActionButtons="true"
-                OnSave="SaveNotes"
-                OnCancel="CancelNotesEdit"/>
+            <MarkdownEditor @bind-Value="_notesDraft"
+                            ShowActionButtons="true"
+                            OnSave="SaveNotes"
+                            OnCancel="CancelNotesEdit"
+                            TestIdPrefix="laptop-notes-editor" />
         }
     </div>
 
 </div>
-<CpuModal
-    IsOpen="@_cpuModalOpen"
-    IsOpenChanged="v => _cpuModalOpen = v"
-    Value="@_editingCpu"
-    OnSubmit="HandleCpuSubmit"
-    OnDelete="HandleCpuDelete"/>
 
-<RamModal
-    IsOpen="@_isRamModalOpen"
-    IsOpenChanged="v => _isRamModalOpen = v"
-    Value="@Laptop.Ram"
-    OnSubmit="HandleRamSubmit"/>
+<CpuModal IsOpen="@_cpuModalOpen"
+          IsOpenChanged="v => _cpuModalOpen = v"
+          Value="@_editingCpu"
+          OnSubmit="HandleCpuSubmit"
+          OnDelete="HandleCpuDelete" />
 
-<DriveModal
-    IsOpen="@_driveModalOpen"
-    IsOpenChanged="v => _driveModalOpen = v"
-    Value="@_editingDrive"
-    OnSubmit="HandleDriveSubmit"
-    OnDelete="HandleDriveDelete"/>
+<RamModal IsOpen="@_isRamModalOpen"
+          IsOpenChanged="v => _isRamModalOpen = v"
+          Value="@Laptop.Ram"
+          OnSubmit="HandleRamSubmit" />
 
-<GpuModal
-    IsOpen="@_gpuModalOpen"
-    IsOpenChanged="v => _gpuModalOpen = v"
-    Value="@_editingGpu"
-    OnSubmit="HandleGpuSubmit"
-    OnDelete="HandleGpuDelete"/>
+<DriveModal IsOpen="@_driveModalOpen"
+            IsOpenChanged="v => _driveModalOpen = v"
+            Value="@_editingDrive"
+            OnSubmit="HandleDriveSubmit"
+            OnDelete="HandleDriveDelete" />
 
-<ConfirmModal
-    IsOpen="_confirmDeleteOpen"
-    IsOpenChanged="v => _confirmDeleteOpen = v"
-    Title="Delete laptop"
-    ConfirmText="Delete"
-    ConfirmClass="bg-red-600 hover:bg-red-500"
-    OnConfirm="DeleteServer"
-    TestIdPrefix="Laptop">
+<GpuModal IsOpen="@_gpuModalOpen"
+          IsOpenChanged="v => _gpuModalOpen = v"
+          Value="@_editingGpu"
+          OnSubmit="HandleGpuSubmit"
+          OnDelete="HandleGpuDelete" />
+
+<ConfirmModal IsOpen="_confirmDeleteOpen"
+              IsOpenChanged="v => _confirmDeleteOpen = v"
+              Title="Delete laptop"
+              ConfirmText="Delete"
+              ConfirmClass="bg-red-600 hover:bg-red-500"
+              OnConfirm="DeleteServer"
+              TestIdPrefix="Laptop">
     Are you sure you want to delete <strong>@Laptop.Name</strong>?
-    <br/>
-    This will detach all dependent systems.
 </ConfirmModal>
 
-<StringValueModal
-    IsOpen="_renameOpen"
-    IsOpenChanged="v => _renameOpen = v"
-    Title="Rename laptop"
-    Description="Enter a new name for this laptop"
-    Label="New laptop name"
-    Value="@Laptop.Name"
-    OnSubmit="HandleRenameSubmit"/>
-<StringValueModal
-    IsOpen="_cloneOpen"
-    IsOpenChanged="v => _cloneOpen = v"
-    Title="Clone resource"
-    Description="Enter a name for the cloned resource"
-    Label="New resource name"
-    Value="@($"{Laptop.Name}-copy")"
-    OnSubmit="HandleCloneSubmit"/>
+<StringValueModal IsOpen="_renameOpen"
+                  IsOpenChanged="v => _renameOpen = v"
+                  Title="Rename laptop"
+                  Description="Enter a new name for this laptop"
+                  Label="New laptop name"
+                  Value="@Laptop.Name"
+                  OnSubmit="HandleRenameSubmit"
+                  TestIdPrefix="laptop-rename" />
+
+<StringValueModal IsOpen="_cloneOpen"
+                  IsOpenChanged="v => _cloneOpen = v"
+                  Title="Clone resource"
+                  Description="Enter a name for the cloned resource"
+                  Label="New resource name"
+                  Value="@($"{Laptop.Name}-copy")"
+                  OnSubmit="HandleCloneSubmit"
+                  TestIdPrefix="laptop-clone" />
 
 @code {
     [Parameter] [EditorRequired] public Laptop Laptop { get; set; } = default!;
@@ -278,7 +267,7 @@
     private async Task HandleRamSubmit(Ram value)
     {
         _isRamModalOpen = false;
-        await UpdateLaptopUseCase.ExecuteAsync(Laptop.Name, Laptop.Model, value.Size, value.Mts, Laptop.Notes);
+        await UpdateUseCase.ExecuteAsync(Laptop.Name, Laptop.Model, value.Size, value.Mts, Laptop.Notes);
         Laptop = await GetByNameUseCase.ExecuteAsync(Laptop.Name);
     }
 
@@ -445,7 +434,7 @@
     {
         _confirmDeleteOpen = false;
 
-        await DeleteLaptopUseCase.ExecuteAsync(Laptop.Name);
+        await DeleteUseCase.ExecuteAsync(Laptop.Name);
 
         if (OnDeleted.HasDelegate)
             await OnDeleted.InvokeAsync(Laptop.Name);
@@ -510,7 +499,7 @@
     {
         _editingNotes = false;
 
-        await UpdateLaptopUseCase.ExecuteAsync(
+        await UpdateUseCase.ExecuteAsync(
             Laptop.Name,
             Laptop.Model,
             Laptop.Ram?.Size,

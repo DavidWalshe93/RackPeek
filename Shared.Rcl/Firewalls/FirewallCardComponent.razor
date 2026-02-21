@@ -1,61 +1,66 @@
 ﻿@using RackPeek.Domain.Resources.Firewalls
 @using RackPeek.Domain.Resources.SubResources
 @using RackPeek.Domain.UseCases.Ports
-@inject UpdateFirewallUseCase UpdateFirewallUseCase
-@inject IGetAllResourcesByKindUseCase<Firewall> GetAllUseCase
+@inject UpdateFirewallUseCase UpdateUseCase
 @inject IGetResourceByNameUseCase<Firewall> GetByNameUseCase
-@inject IAddPortUseCase<Firewall> AddFirewallPortUseCase
-@inject IUpdatePortUseCase<Firewall> UpdateFirewallPortUseCase
-@inject IRemovePortUseCase<Firewall> RemoveFirewallPortUseCase
+@inject IAddPortUseCase<Firewall> AddPortUseCase
+@inject IUpdatePortUseCase<Firewall> UpdatePortUseCase
+@inject IRemovePortUseCase<Firewall> RemovePortUseCase
 @inject IDeleteResourceUseCase<Firewall> DeleteUseCase
 @inject ICloneResourceUseCase<Firewall> CloneUseCase
-
 @inject IRenameResourceUseCase<Firewall> RenameUseCase
 @inject NavigationManager Nav
 
-<div class="border border-zinc-800 rounded p-4 bg-zinc-900">
+<div class="border border-zinc-800 rounded p-4 bg-zinc-900"
+     data-testid=@($"firewall-item-{Firewall.Name.Replace(" ", "-")}")>
+
     <div class="flex justify-between items-center mb-3">
 
         <div class="text-zinc-100 hover:text-emerald-300">
-            <NavLink href="@($"resources/hardware/{Firewall.Name}")" class="block">
-
+            <NavLink href="@($"resources/hardware/{Firewall.Name}")"
+                     class="block"
+                     data-testid="open-firewall-link">
                 @Firewall.Name
             </NavLink>
         </div>
 
-
         <div class="flex gap-3 text-xs">
             @if (!_isEditing)
             {
-                <button class="text-zinc-400 hover:text-zinc-200"
+                <button data-testid="edit-firewall-button"
+                        class="text-zinc-400 hover:text-zinc-200"
                         @onclick="BeginEdit">
                     Edit
                 </button>
-                <button class="text-xs text-blue-400 hover:text-blue-300 transition"
-                        title="Rename service"
+
+                <button data-testid="rename-firewall-button"
+                        class="text-blue-400 hover:text-blue-300 transition"
                         @onclick="OpenRename">
                     Rename
                 </button>
-                <button
-                    class="text-xs text-emerald-400 hover:text-emerald-300 transition"
-                    title="Clone service"
-                    @onclick="OpenClone">
+
+                <button data-testid="clone-firewall-button"
+                        class="text-emerald-400 hover:text-emerald-300 transition"
+                        @onclick="OpenClone">
                     Clone
                 </button>
-                <button
-                    class="text-xs text-red-400 hover:text-red-300 transition"
-                    title="Delete server"
-                    @onclick="ConfirmDelete">
+
+                <button data-testid="delete-firewall-button"
+                        class="text-red-400 hover:text-red-300 transition"
+                        @onclick="ConfirmDelete">
                     Delete
                 </button>
             }
             else
             {
-                <button class="text-emerald-400 hover:text-emerald-300"
+                <button data-testid="save-firewall-button"
+                        class="text-emerald-400 hover:text-emerald-300"
                         @onclick="Save">
                     Save
                 </button>
-                <button class="text-zinc-500 hover:text-zinc-300"
+
+                <button data-testid="cancel-firewall-button"
+                        class="text-zinc-500 hover:text-zinc-300"
                         @onclick="Cancel">
                     Cancel
                 </button>
@@ -66,41 +71,42 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 
         <!-- Model -->
-        <div>
+        <div data-testid="firewall-model-section">
             <div class="text-zinc-400 mb-1">Model</div>
+
             @if (_isEditing)
             {
-                <input
-                    class="w-full px-3 py-2 rounded-md
-                           bg-zinc-800 text-zinc-100
-                           border border-zinc-600
-                           placeholder-zinc-500
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                           hover:border-zinc-400
-                           transition-colors duration-150
-                           cursor-text"
-                    @bind="_edit.Model"/>
+                <input data-testid="firewall-model-input"
+                       class="w-full px-3 py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-600"
+                       @bind="_edit.Model" />
             }
             else if (!string.IsNullOrWhiteSpace(Firewall.Model))
             {
-                <div class="text-zinc-300">@Firewall.Model</div>
+                <div class="text-zinc-300"
+                     data-testid="firewall-model-value">
+                    @Firewall.Model
+                </div>
             }
         </div>
 
         <!-- Features -->
-        <div>
+        <div data-testid="firewall-features-section">
             <div class="text-zinc-400 mb-1">Features</div>
 
             @if (_isEditing)
             {
                 <div class="flex gap-4">
                     <label class="flex items-center gap-2 text-zinc-300">
-                        <input type="checkbox" @bind="_edit.Managed"/>
+                        <input type="checkbox"
+                               data-testid="firewall-managed-checkbox"
+                               @bind="_edit.Managed" />
                         Managed
                     </label>
 
                     <label class="flex items-center gap-2 text-zinc-300">
-                        <input type="checkbox" @bind="_edit.Poe"/>
+                        <input type="checkbox"
+                               data-testid="firewall-poe-checkbox"
+                               @bind="_edit.Poe" />
                         PoE
                     </label>
                 </div>
@@ -110,13 +116,15 @@
                 <div class="flex gap-2 flex-wrap">
                     @if (Firewall.Managed == true)
                     {
-                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300"
+                              data-testid="firewall-managed-badge">
                             Managed
                         </span>
                     }
                     @if (Firewall.Poe == true)
                     {
-                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300">
+                        <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-300"
+                              data-testid="firewall-poe-badge">
                             PoE
                         </span>
                     }
@@ -125,12 +133,14 @@
         </div>
 
         <!-- Ports -->
-        <div class="md:col-span-2">
+        <div class="md:col-span-2"
+             data-testid="firewall-ports-section">
+
             <div class="flex items-center justify-between mb-1 group">
                 <div class="text-zinc-400">
                     Ports
-                    <button class="hover:text-emerald-400 ml-1"
-                            title="Add Port"
+                    <button data-testid="add-port-button"
+                            class="hover:text-emerald-400 ml-1"
                             @onclick="OpenAddPort">
                         +
                     </button>
@@ -141,10 +151,9 @@
             {
                 @foreach (var port in Firewall.Ports)
                 {
-                    <div
-                        class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
-                        <button class="hover:text-emerald-400"
-                                title="Edit Port"
+                    <div class="flex items-center justify-between text-zinc-300 group hover:bg-zinc-800/40 rounded px-1 py-0.5">
+                        <button data-testid=@($"edit-port-{port.Type}-{port.Speed}")
+                                class="hover:text-emerald-400"
                                 @onclick="() => OpenEditPort(port)">
                             @port.Count× @port.Type — @port.Speed Gbps
                         </button>
@@ -152,61 +161,64 @@
                 }
             }
         </div>
-        <ResourceTagEditor Resource="Firewall"/>
 
-        <div class="md:col-span-2">
+        <ResourceTagEditor Resource="Firewall" />
+
+        <div class="md:col-span-2"
+             data-testid="firewall-notes-section">
+
             <div class="text-zinc-400 mb-1">Notes</div>
 
             @if (_isEditing)
             {
-                <MarkdownEditor
-                    @bind-Value="_edit.Notes"
-                    ShowActionButtons="false"/>
+                <MarkdownEditor @bind-Value="_edit.Notes"
+                                ShowActionButtons="false"
+                                TestIdPrefix="firewall-notes-editor" />
             }
             else
             {
-                <MarkdownViewer
-                    Value="@Firewall.Notes"
-                    ShowEditButton="false"/>
+                <MarkdownViewer Value="@Firewall.Notes"
+                                ShowEditButton="false"
+                                TestIdPrefix="firewall-notes-viewer" />
             }
         </div>
 
     </div>
 </div>
 
-<PortModal
-    IsOpen="@_portModalOpen"
-    IsOpenChanged="v => _portModalOpen = v"
-    Value="@_editingPort"
-    OnSubmit="HandlePortSubmit"
-    OnDelete="HandlePortDelete"/>
+<PortModal IsOpen="@_portModalOpen"
+           IsOpenChanged="v => _portModalOpen = v"
+           Value="@_editingPort"
+           OnSubmit="HandlePortSubmit"
+           OnDelete="HandlePortDelete" />
 
-<ConfirmModal
-    IsOpen="_confirmDeleteOpen"
-    IsOpenChanged="v => _confirmDeleteOpen = v"
-    Title="Delete firewall"
-    ConfirmText="Delete"
-    ConfirmClass="bg-red-600 hover:bg-red-500"
-    OnConfirm="DeleteServer"
-    TestIdPrefix="Firewall">
+<ConfirmModal IsOpen="_confirmDeleteOpen"
+              IsOpenChanged="v => _confirmDeleteOpen = v"
+              Title="Delete firewall"
+              ConfirmText="Delete"
+              ConfirmClass="bg-red-600 hover:bg-red-500"
+              OnConfirm="DeleteServer"
+              TestIdPrefix="Firewall">
     Are you sure you want to delete <strong>@Firewall.Name</strong>?
 </ConfirmModal>
-<StringValueModal
-    IsOpen="_renameOpen"
-    IsOpenChanged="v => _renameOpen = v"
-    Title="Rename firewall"
-    Description="Enter a new name for this firewall"
-    Label="New firewall name"
-    Value="@Firewall.Name"
-    OnSubmit="HandleRenameSubmit"/>
-<StringValueModal
-    IsOpen="_cloneOpen"
-    IsOpenChanged="v => _cloneOpen = v"
-    Title="Clone resource"
-    Description="Enter a name for the cloned resource"
-    Label="New resource name"
-    Value="@($"{Firewall.Name}-copy")"
-    OnSubmit="HandleCloneSubmit"/>
+
+<StringValueModal IsOpen="_renameOpen"
+                  IsOpenChanged="v => _renameOpen = v"
+                  Title="Rename firewall"
+                  Description="Enter a new name for this firewall"
+                  Label="New firewall name"
+                  Value="@Firewall.Name"
+                  OnSubmit="HandleRenameSubmit"
+                  TestIdPrefix="firewall-rename" />
+
+<StringValueModal IsOpen="_cloneOpen"
+                  IsOpenChanged="v => _cloneOpen = v"
+                  Title="Clone resource"
+                  Description="Enter a name for the cloned resource"
+                  Label="New resource name"
+                  Value="@($"{Firewall.Name}-copy")"
+                  OnSubmit="HandleCloneSubmit"
+                  TestIdPrefix="firewall-clone" />
 
 @code {
     [Parameter] [EditorRequired] public Firewall Firewall { get; set; } = default!;
@@ -224,7 +236,7 @@
     {
         _isEditing = false;
 
-        await UpdateFirewallUseCase.ExecuteAsync(
+        await UpdateUseCase.ExecuteAsync(
             Firewall.Name,
             _edit.Model,
             _edit.Managed,
@@ -264,7 +276,7 @@
     {
         if (_editingPortIndex < 0)
         {
-            await AddFirewallPortUseCase.ExecuteAsync(
+            await AddPortUseCase.ExecuteAsync(
                 Firewall.Name,
                 port.Type,
                 port.Speed,
@@ -272,7 +284,7 @@
         }
         else
         {
-            await UpdateFirewallPortUseCase.ExecuteAsync(
+            await UpdatePortUseCase.ExecuteAsync(
                 Firewall.Name,
                 _editingPortIndex,
                 port.Type,
@@ -286,7 +298,7 @@
 
     async Task HandlePortDelete(Port _)
     {
-        await RemoveFirewallPortUseCase.ExecuteAsync(
+        await RemovePortUseCase.ExecuteAsync(
             Firewall.Name,
             _editingPortIndex);
 

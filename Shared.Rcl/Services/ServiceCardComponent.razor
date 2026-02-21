@@ -1,6 +1,6 @@
-﻿@inject UpdateServiceUseCase UpdateServiceUseCase
+﻿@inject UpdateServiceUseCase UpdateUseCase
 @inject IGetResourceByNameUseCase<Service> GetByNameUseCase
-@inject IDeleteResourceUseCase<Service> DeleteServiceUseCase
+@inject IDeleteResourceUseCase<Service> DeleteUseCase
 @inject ICloneResourceUseCase<Service> CloneUseCase
 @inject IRenameResourceUseCase<Service> RenameUseCase
 @inject NavigationManager Nav
@@ -191,13 +191,17 @@
             {
                 <MarkdownEditor
                     @bind-Value="_edit.Notes"
-                    ShowActionButtons="false"/>
+                    ShowActionButtons="false"
+                    TestIdPrefix="service-notes-editor" />
+
             }
             else
             {
                 <MarkdownViewer
                     Value="@Service.Notes"
-                    ShowEditButton="false"/>
+                    ShowEditButton="false"
+                    TestIdPrefix="service-notes-viewer" />
+
             }
         </div>
     </div>
@@ -274,7 +278,7 @@
     async Task Save()
     {
         _isEditing = false;
-        await UpdateServiceUseCase.ExecuteAsync(
+        await UpdateUseCase.ExecuteAsync(
             _edit.Name,
             _edit.Ip,
             _edit.Port,
@@ -298,7 +302,7 @@
     async Task HandleParentSelected(string? name)
     {
         SelectedParentName = name;
-        await UpdateServiceUseCase.ExecuteAsync(
+        await UpdateUseCase.ExecuteAsync(
             Service.Name,
             Service.Network?.Ip,
             Service.Network?.Port,
@@ -326,7 +330,7 @@
     {
         _confirmDeleteOpen = false;
 
-        await DeleteServiceUseCase.ExecuteAsync(Service.Name);
+        await DeleteUseCase.ExecuteAsync(Service.Name);
 
         if (OnDeleted.HasDelegate)
             await OnDeleted.InvokeAsync(Service.Name);

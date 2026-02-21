@@ -2,12 +2,12 @@
 @using RackPeek.Domain.Resources.SystemResources
 @using RackPeek.Domain.Resources.SystemResources.UseCases
 @using RackPeek.Domain.UseCases.Drives
-@inject UpdateSystemUseCase UpdateSystemUseCase
+@inject UpdateSystemUseCase UpdateUseCase
 @inject IGetResourceByNameUseCase<SystemResource> GetByNameUseCase
 @inject IAddDriveUseCase<SystemResource> AddDriveUseCase
 @inject IUpdateDriveUseCase<SystemResource> UpdateDriveUseCase
 @inject IRemoveDriveUseCase<SystemResource> RemoveDriveUseCase
-@inject IDeleteResourceUseCase<SystemResource> DeleteSystemUseCase
+@inject IDeleteResourceUseCase<SystemResource> DeleteUseCase
 @inject ICloneResourceUseCase<SystemResource> CloneUseCase
 @inject NavigationManager Nav
 @inject IRenameResourceUseCase<SystemResource> RenameUseCase
@@ -235,13 +235,17 @@
             {
                 <MarkdownEditor
                     @bind-Value="_edit.Notes"
-                    ShowActionButtons="false"/>
+                    ShowActionButtons="false"
+                    TestIdPrefix="system-notes-editor" />
+
             }
             else
             {
                 <MarkdownViewer
                     Value="@System.Notes"
-                    ShowEditButton="false"/>
+                    ShowEditButton="false"
+                    TestIdPrefix="system-notes-viewer" />
+
             }
         </div>
 
@@ -314,7 +318,7 @@
     async Task HandleParentSelected(string? name)
     {
         SelectedParentName = name;
-        await UpdateSystemUseCase.ExecuteAsync(
+        await UpdateUseCase.ExecuteAsync(
             System.Name,
             System.Type,
             System.Os,
@@ -400,7 +404,7 @@
     {
         _confirmDeleteOpen = false;
 
-        await DeleteSystemUseCase.ExecuteAsync(System.Name);
+        await DeleteUseCase.ExecuteAsync(System.Name);
 
         if (OnDeleted.HasDelegate)
             await OnDeleted.InvokeAsync(System.Name);

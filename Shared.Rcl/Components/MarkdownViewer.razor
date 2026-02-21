@@ -1,10 +1,15 @@
 @using Markdig
-<div class="relative border border-zinc-800 rounded p-4 bg-zinc-900">
+
+<div class="relative border border-zinc-800 rounded p-4 bg-zinc-900"
+     data-testid="@BaseTestId">
 
     @if (ShowEditButton)
     {
-        <div class="absolute top-2 right-2 z-10">
+        <div class="absolute top-2 right-2 z-10"
+             data-testid="@($"{BaseTestId}-edit-container")">
+
             <button class="text-xs text-blue-400 hover:text-blue-300 transition"
+                    data-testid="@($"{BaseTestId}-edit-button")"
                     @onclick="HandleEdit">
                 @(string.IsNullOrWhiteSpace(Value) ? "Add" : "Edit")
             </button>
@@ -13,13 +18,15 @@
 
     @if (string.IsNullOrWhiteSpace(Value))
     {
-        <div class="text-sm text-zinc-500 italic">
+        <div class="text-sm text-zinc-500 italic"
+             data-testid="@($"{BaseTestId}-empty")">
             No notes
         </div>
     }
     else
     {
-        <div class="markdown text-sm">
+        <div class="markdown text-sm"
+             data-testid="@($"{BaseTestId}-content")">
             @((MarkupString)_html)
         </div>
     }
@@ -30,6 +37,13 @@
     [Parameter] public string? Value { get; set; }
     [Parameter] public bool ShowEditButton { get; set; }
     [Parameter] public EventCallback OnEdit { get; set; }
+
+    [Parameter] public string? TestIdPrefix { get; set; }
+
+    private string BaseTestId =>
+        string.IsNullOrWhiteSpace(TestIdPrefix)
+            ? "markdown-viewer"
+            : $"{TestIdPrefix}-markdown-viewer";
 
     private string _html = string.Empty;
 
@@ -45,8 +59,8 @@
 
     private Task HandleEdit()
     {
-        return OnEdit.HasDelegate ? OnEdit.InvokeAsync() : Task.CompletedTask;
+        return OnEdit.HasDelegate
+            ? OnEdit.InvokeAsync()
+            : Task.CompletedTask;
     }
-
-
 }

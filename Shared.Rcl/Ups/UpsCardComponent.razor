@@ -1,16 +1,20 @@
 ﻿@using RackPeek.Domain.Resources.UpsUnits
-@inject UpdateUpsUseCase UpdateUpsUseCase
+@inject UpdateUpsUseCase UpdateUseCase
 @inject IGetResourceByNameUseCase<Ups> GetByNameUseCase
 @inject IDeleteResourceUseCase<Ups> DeleteUseCase
 @inject IRenameResourceUseCase<Ups> RenameUseCase
 @inject ICloneResourceUseCase<Ups> CloneUseCase
-
 @inject NavigationManager Nav
-<div class="border border-zinc-800 rounded p-4 bg-zinc-900">
+
+<div class="border border-zinc-800 rounded p-4 bg-zinc-900"
+     data-testid=@($"ups-item-{Ups.Name.Replace(" ", "-")}")>
+
     <div class="flex justify-between items-center mb-3">
 
         <div class="text-zinc-100 hover:text-emerald-300">
-            <NavLink href="@($"resources/hardware/{Ups.Name}")" class="block">
+            <NavLink href="@($"resources/hardware/{Ups.Name}")"
+                     class="block"
+                     data-testid="open-ups-link">
                 @Ups.Name
             </NavLink>
         </div>
@@ -18,35 +22,40 @@
         <div class="flex gap-3 text-xs">
             @if (!_isEditing)
             {
-                <button class="text-zinc-400 hover:text-zinc-200"
+                <button data-testid="edit-ups-button"
+                        class="text-zinc-400 hover:text-zinc-200"
                         @onclick="BeginEdit">
                     Edit
                 </button>
-                <button class="text-xs text-blue-400 hover:text-blue-300 transition"
-                        title="Rename service"
+
+                <button data-testid="rename-ups-button"
+                        class="text-blue-400 hover:text-blue-300 transition"
                         @onclick="OpenRename">
                     Rename
                 </button>
-                <button
-                    class="text-xs text-emerald-400 hover:text-emerald-300 transition"
-                    title="Clone service"
-                    @onclick="OpenClone">
+
+                <button data-testid="clone-ups-button"
+                        class="text-emerald-400 hover:text-emerald-300 transition"
+                        @onclick="OpenClone">
                     Clone
                 </button>
-                <button class="text-red-400 hover:text-red-300 transition"
-                        title="Delete UPS"
+
+                <button data-testid="delete-ups-button"
+                        class="text-red-400 hover:text-red-300 transition"
                         @onclick="ConfirmDelete">
                     Delete
                 </button>
             }
             else
             {
-                <button class="text-emerald-400 hover:text-emerald-300"
+                <button data-testid="save-ups-button"
+                        class="text-emerald-400 hover:text-emerald-300"
                         @onclick="Save">
                     Save
                 </button>
 
-                <button class="text-zinc-500 hover:text-zinc-300"
+                <button data-testid="cancel-ups-button"
+                        class="text-zinc-500 hover:text-zinc-300"
                         @onclick="Cancel">
                     Cancel
                 </button>
@@ -57,95 +66,94 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 
         <!-- Model -->
-        <div>
+        <div data-testid="ups-model-section">
             <div class="text-zinc-400 mb-1">Model</div>
+
             @if (_isEditing)
             {
-                <input
-                    class="w-full px-3 py-2 rounded-md
-                           bg-zinc-800 text-zinc-100
-                           border border-zinc-600
-                           placeholder-zinc-500
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                           hover:border-zinc-400
-                           transition-colors duration-150
-                           cursor-text"
-                    @bind="_edit.Model"/>
+                <input data-testid="ups-model-input"
+                       class="w-full px-3 py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-600"
+                       @bind="_edit.Model" />
             }
             else if (!string.IsNullOrWhiteSpace(Ups.Model))
             {
-                <div class="text-zinc-300">@Ups.Model</div>
+                <div class="text-zinc-300"
+                     data-testid="ups-model-value">
+                    @Ups.Model
+                </div>
             }
         </div>
 
         <!-- Capacity -->
-        <div>
+        <div data-testid="ups-capacity-section">
             <div class="text-zinc-400 mb-1">Capacity</div>
+
             @if (_isEditing)
             {
                 <input type="number"
-                       class="w-full px-3 py-2 rounded-md
-                           bg-zinc-800 text-zinc-100
-                           border border-zinc-600
-                           placeholder-zinc-500
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-                           hover:border-zinc-400
-                           transition-colors duration-150
-                           cursor-text"
-                       @bind="_edit.Va"/>
+                       data-testid="ups-capacity-input"
+                       class="w-full px-3 py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-600"
+                       @bind="_edit.Va" />
             }
             else if (Ups.Va is not null)
             {
-                <div class="text-zinc-300">@Ups.Va VA</div>
+                <div class="text-zinc-300"
+                     data-testid="ups-capacity-value">
+                    @Ups.Va VA
+                </div>
             }
         </div>
-        <ResourceTagEditor Resource="Ups"/>
 
-        <div class="md:col-span-2">
+        <ResourceTagEditor Resource="Ups" />
+
+        <div class="md:col-span-2"
+             data-testid="ups-notes-section">
+
             <div class="text-zinc-400 mb-1">Notes</div>
 
             @if (_isEditing)
             {
-                <MarkdownEditor
-                    @bind-Value="_edit.Notes"
-                    ShowActionButtons="false"/>
+                <MarkdownEditor @bind-Value="_edit.Notes"
+                                ShowActionButtons="false"
+                                TestIdPrefix="ups-notes-editor" />
             }
             else
             {
-                <MarkdownViewer
-                    Value="@Ups.Notes"
-                    ShowEditButton="false"/>
+                <MarkdownViewer Value="@Ups.Notes"
+                                ShowEditButton="false"
+                                TestIdPrefix="ups-notes-viewer" />
             }
         </div>
     </div>
 </div>
 
-<ConfirmModal
-    IsOpen="_confirmDeleteOpen"
-    IsOpenChanged="v => _confirmDeleteOpen = v"
-    Title="Delete UPS"
-    ConfirmText="Delete"
-    ConfirmClass="bg-red-600 hover:bg-red-500"
-    OnConfirm="DeleteUps"
-    TestIdPrefix="Ups">>
+<ConfirmModal IsOpen="_confirmDeleteOpen"
+              IsOpenChanged="v => _confirmDeleteOpen = v"
+              Title="Delete UPS"
+              ConfirmText="Delete"
+              ConfirmClass="bg-red-600 hover:bg-red-500"
+              OnConfirm="DeleteUps"
+              TestIdPrefix="Ups">
     Are you sure you want to delete <strong>@Ups.Name</strong>?
 </ConfirmModal>
-<StringValueModal
-    IsOpen="_renameOpen"
-    IsOpenChanged="v => _renameOpen = v"
-    Title="Rename Ups"
-    Description="Enter a new name for this Ups"
-    Label="New Ups name"
-    Value="@Ups.Name"
-    OnSubmit="HandleRenameSubmit"/>
-<StringValueModal
-    IsOpen="_cloneOpen"
-    IsOpenChanged="v => _cloneOpen = v"
-    Title="Clone resource"
-    Description="Enter a name for the cloned resource"
-    Label="New resource name"
-    Value="@($"{Ups.Name}-copy")"
-    OnSubmit="HandleCloneSubmit"/>
+
+<StringValueModal IsOpen="_renameOpen"
+                  IsOpenChanged="v => _renameOpen = v"
+                  Title="Rename Ups"
+                  Description="Enter a new name for this Ups"
+                  Label="New Ups name"
+                  Value="@Ups.Name"
+                  OnSubmit="HandleRenameSubmit"
+                  TestIdPrefix="ups-rename" />
+
+<StringValueModal IsOpen="_cloneOpen"
+                  IsOpenChanged="v => _cloneOpen = v"
+                  Title="Clone resource"
+                  Description="Enter a name for the cloned resource"
+                  Label="New resource name"
+                  Value="@($"{Ups.Name}-copy")"
+                  OnSubmit="HandleCloneSubmit"
+                  TestIdPrefix="ups-clone" />
 
 @code {
     [Parameter] [EditorRequired] public Ups Ups { get; set; } = default!;
@@ -167,7 +175,7 @@
     {
         _isEditing = false;
 
-        await UpdateUpsUseCase.ExecuteAsync(
+        await UpdateUseCase.ExecuteAsync(
             Ups.Name,
             _edit.Model,
             _edit.Va,

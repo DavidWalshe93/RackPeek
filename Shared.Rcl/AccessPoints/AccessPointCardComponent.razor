@@ -5,11 +5,15 @@
 @inject ICloneResourceUseCase<AccessPoint> CloneUseCase
 @inject NavigationManager Nav
 
-<div class="border border-zinc-800 rounded p-4 bg-zinc-900">
+<div class="border border-zinc-800 rounded p-4 bg-zinc-900"
+     data-testid=@($"accesspoint-item-{AccessPoint.Name.Replace(" ", "-")}")>
+
     <div class="flex justify-between items-center mb-3">
 
         <div class="text-zinc-100 hover:text-emerald-300">
-            <NavLink href="@($"resources/hardware/{AccessPoint.Name}")" class="block">
+            <NavLink href="@($"resources/hardware/{AccessPoint.Name}")"
+                     class="block"
+                     data-testid="open-accesspoint-link">
                 @AccessPoint.Name
             </NavLink>
         </div>
@@ -17,34 +21,40 @@
         <div class="flex gap-3 text-xs">
             @if (!_isEditing)
             {
-                <button class="text-zinc-400 hover:text-zinc-200"
+                <button data-testid="edit-accesspoint-button"
+                        class="text-zinc-400 hover:text-zinc-200"
                         @onclick="BeginEdit">
                     Edit
                 </button>
 
-                <button class="text-blue-400 hover:text-blue-300"
+                <button data-testid="rename-accesspoint-button"
+                        class="text-blue-400 hover:text-blue-300"
                         @onclick="OpenRename">
                     Rename
                 </button>
 
-                <button class="text-emerald-400 hover:text-emerald-300"
+                <button data-testid="clone-accesspoint-button"
+                        class="text-emerald-400 hover:text-emerald-300"
                         @onclick="OpenClone">
                     Clone
                 </button>
 
-                <button class="text-red-400 hover:text-red-300"
+                <button data-testid="delete-accesspoint-button"
+                        class="text-red-400 hover:text-red-300"
                         @onclick="ConfirmDelete">
                     Delete
                 </button>
             }
             else
             {
-                <button class="text-emerald-400 hover:text-emerald-300"
+                <button data-testid="save-accesspoint-button"
+                        class="text-emerald-400 hover:text-emerald-300"
                         @onclick="Save">
                     Save
                 </button>
 
-                <button class="text-zinc-500 hover:text-zinc-300"
+                <button data-testid="cancel-accesspoint-button"
+                        class="text-zinc-500 hover:text-zinc-300"
                         @onclick="Cancel">
                     Cancel
                 </button>
@@ -55,38 +65,40 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
 
         <!-- Model -->
-        <div>
+        <div data-testid="accesspoint-model-section">
             <div class="text-zinc-400 mb-1">Model</div>
 
             @if (_isEditing)
             {
-                <input class="w-full px-3 py-2 rounded-md
-                          bg-zinc-800 text-zinc-100
-                          border border-zinc-600"
-                       @bind="_edit.Model"/>
+                <input data-testid="accesspoint-model-input"
+                       class="w-full px-3 py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-600"
+                       @bind="_edit.Model" />
             }
             else if (!string.IsNullOrWhiteSpace(AccessPoint.Model))
             {
-                <div class="text-zinc-300">@AccessPoint.Model</div>
+                <div class="text-zinc-300"
+                     data-testid="accesspoint-model-value">
+                    @AccessPoint.Model
+                </div>
             }
         </div>
 
         <!-- Speed -->
-        <div>
+        <div data-testid="accesspoint-speed-section">
             <div class="text-zinc-400 mb-1">Speed (Gbps)</div>
 
             @if (_isEditing)
             {
                 <input type="number"
                        step="0.1"
-                       class="w-full px-3 py-2 rounded-md
-                          bg-zinc-800 text-zinc-100
-                          border border-zinc-600"
-                       @bind="_edit.Speed"/>
+                       data-testid="accesspoint-speed-input"
+                       class="w-full px-3 py-2 rounded-md bg-zinc-800 text-zinc-100 border border-zinc-600"
+                       @bind="_edit.Speed" />
             }
             else if (AccessPoint.Speed is not null)
             {
-                <div class="text-zinc-300">
+                <div class="text-zinc-300"
+                     data-testid="accesspoint-speed-value">
                     @AccessPoint.Speed Gbps
                 </div>
             }
@@ -94,25 +106,27 @@
 
         <ResourceTagEditor Resource="AccessPoint"/>
 
-        <div class="md:col-span-2">
+        <div class="md:col-span-2"
+             data-testid="accesspoint-notes-section">
+
             <div class="text-zinc-400 mb-1">Notes</div>
 
             @if (_isEditing)
             {
                 <MarkdownEditor
                     @bind-Value="_edit.Notes"
-                    ShowActionButtons="false"/>
+                    ShowActionButtons="false"
+                    TestIdPrefix="accesspoint-notes-editor" />
             }
             else
             {
                 <MarkdownViewer
                     Value="@AccessPoint.Notes"
-                    ShowEditButton="false"/>
+                    ShowEditButton="false"
+                    TestIdPrefix="accesspoint-notes-viewer" />
             }
         </div>
-
     </div>
-
 </div>
 
 <ConfirmModal
@@ -133,7 +147,8 @@
     Description="Enter a new name for this accesspoint"
     Label="New accesspoint name"
     Value="@AccessPoint.Name"
-    OnSubmit="HandleRenameSubmit"/>
+    OnSubmit="HandleRenameSubmit"
+    TestIdPrefix="accesspoint-rename"/>
 
 <StringValueModal
     IsOpen="_cloneOpen"
@@ -142,7 +157,8 @@
     Description="Enter a name for the cloned resource"
     Label="New resource name"
     Value="@($"{AccessPoint.Name}-copy")"
-    OnSubmit="HandleCloneSubmit"/>
+    OnSubmit="HandleCloneSubmit"
+    TestIdPrefix="accesspoint-clone"/>
 
 @code {
     [Parameter] [EditorRequired] public AccessPoint AccessPoint { get; set; } = default!;

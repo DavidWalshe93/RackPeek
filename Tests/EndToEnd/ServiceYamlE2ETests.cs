@@ -29,6 +29,7 @@ public class ServiceYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper output
         var (output, yaml) = await ExecuteAsync("services", "add", "immich");
         Assert.Equal("Service 'immich' added.\n", output);
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: Service
                        name: immich
@@ -44,6 +45,7 @@ public class ServiceYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper output
 
         outputHelper.WriteLine(yaml);
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: Service
                        network:
@@ -66,6 +68,7 @@ public class ServiceYamlE2ETests(TempYamlCliFixture fs, ITestOutputHelper output
                      """, output);
 
         Assert.Equal("""
+                     version: 1
                      resources:
                      - kind: System
                        name: vm01

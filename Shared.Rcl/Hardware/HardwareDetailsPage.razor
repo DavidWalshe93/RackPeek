@@ -108,20 +108,23 @@
 
     private Hardware? _hardware;
     private bool _loading = true;
-    HardwareDependencyTree? _tree;
+    private HardwareDependencyTree? _tree;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        _hardware = await Repo.GetByNameAsync(HardwareName) as Hardware;
+        _loading = true;
+        _hardware = null;
         _tree = null;
+
+        _hardware = await Repo.GetByNameAsync(HardwareName) as Hardware;
+
         if (!string.IsNullOrEmpty(_hardware?.Name))
         {
-            _tree = await GetHardwareSystemTreeUseCase.ExecuteAsync(_hardware?.Name!);
+            _tree = await GetHardwareSystemTreeUseCase.ExecuteAsync(_hardware.Name);
         }
 
         _loading = false;
     }
-
 
     private async Task DeleteCallback(string obj)
     {

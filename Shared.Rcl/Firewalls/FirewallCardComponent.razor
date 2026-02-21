@@ -19,7 +19,7 @@
         <div class="text-zinc-100 hover:text-emerald-300">
             <NavLink href="@($"resources/hardware/{Firewall.Name}")"
                      class="block"
-                     data-testid="open-firewall-link">
+                     data-testid=@($"firewall-item-{Firewall.Name.Replace(" ", "-")}-link")>
                 @Firewall.Name
             </NavLink>
         </div>

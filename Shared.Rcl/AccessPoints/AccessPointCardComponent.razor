@@ -13,7 +13,7 @@
         <div class="text-zinc-100 hover:text-emerald-300">
             <NavLink href="@($"resources/hardware/{AccessPoint.Name}")"
                      class="block"
-                     data-testid="open-accesspoint-link">
+                     data-testid="@($"open-accesspoint-{AccessPoint.Name.Replace(" ", "-")}-link")">
                 @AccessPoint.Name
             </NavLink>
         </div>

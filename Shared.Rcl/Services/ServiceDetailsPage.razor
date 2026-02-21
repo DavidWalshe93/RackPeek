@@ -33,12 +33,14 @@
 
     private Service? _service;
     private bool _loading = true;
-
-    protected override async Task OnInitializedAsync()
+    
+    protected override async Task OnParametersSetAsync()
     {
+        _loading = true;
         _service = await Repo.GetByNameAsync<Service>(ServiceName);
         _loading = false;
     }
+    
 
     private void OnDeleted(string obj)
     {

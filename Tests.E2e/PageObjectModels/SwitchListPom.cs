@@ -29,10 +29,7 @@ public class SwitchListPom(IPage page)
     }
 
     public ILocator OpenLink(string name)
-    {
-        return SwitchItem(name)
-            .GetByTestId("open-switch-link");
-    }
+        => page.GetByTestId($"switch-item-{Sanitize(name)}-link");
 
     public ILocator EditButton(string name)
     {

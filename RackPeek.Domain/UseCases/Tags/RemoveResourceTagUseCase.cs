@@ -24,7 +24,7 @@ public class RemoveTagUseCase<T>(IResourceCollection repo)
         var resource = await repo.GetByNameAsync(name)
                        ?? throw new NotFoundException($"Resource '{name}' not found.");
 
-        if (resource.Tags is null || resource.Tags.Length == 0)
+        if (resource.Tags.Length == 0)
             return;
 
         var updated = resource.Tags
@@ -34,7 +34,7 @@ public class RemoveTagUseCase<T>(IResourceCollection repo)
         if (updated.Length == resource.Tags.Length)
             return; // tag didn't exist
 
-        resource.Tags = updated.Length == 0 ? null : updated;
+        resource.Tags = updated;
 
         await repo.UpdateAsync(resource);
     }

@@ -32,8 +32,8 @@
      data-testid=@($"server-item-{Server.Name.Replace(" ", "-")}")>
     <div class="flex justify-between items-center mb-3">
         <div class="text-zinc-100 hover:text-emerald-300">
-            <NavLink href="@($"resources/hardware/{Server.Name}")" class="block">
-
+            <NavLink href="@($"resources/hardware/{Server.Name}")" class="block"
+                     data-testid=@($"server-item-{Server.Name.Replace(" ", "-")}-link")>
                 @Server.Name
             </NavLink>
 
@@ -241,7 +241,8 @@
             <MarkdownViewer
                 Value="@Server.Notes"
                 ShowEditButton="true"
-                OnEdit="BeginNotesEdit"/>
+                OnEdit="BeginNotesEdit"
+                TestIdPrefix="server-markdown"/>
         }
         else
         {
@@ -249,7 +250,9 @@
                 @bind-Value="_notesDraft"
                 ShowActionButtons="true"
                 OnSave="SaveNotes"
-                OnCancel="CancelNotesEdit"/>
+                OnCancel="CancelNotesEdit"
+                TestIdPrefix="server-markdown"/>
+
         }
     </div>
 
@@ -260,34 +263,42 @@
     IsOpenChanged="v => _cpuModalOpen = v"
     Value="@_editingCpu"
     OnSubmit="HandleCpuSubmit"
-    OnDelete="HandleCpuDelete"/>
+    OnDelete="HandleCpuDelete"
+    TestIdPrefix="server-cpu"/>
+
 
 <RamModal
     IsOpen="@_isRamModalOpen"
     IsOpenChanged="v => _isRamModalOpen = v"
     Value="@Server.Ram"
-    OnSubmit="HandleRamSubmit"/>
+    OnSubmit="HandleRamSubmit"
+    TestIdPrefix="server-ram"/>
+
 
 <DriveModal
     IsOpen="@_driveModalOpen"
     IsOpenChanged="v => _driveModalOpen = v"
     Value="@_editingDrive"
     OnSubmit="HandleDriveSubmit"
-    OnDelete="HandleDriveDelete"/>
+    OnDelete="HandleDriveDelete"
+    TestIdPrefix="server-drive"/>
+
 
 <NicModal
     IsOpen="@_nicModalOpen"
     IsOpenChanged="v => _nicModalOpen = v"
     Value="@_editingNic"
     OnSubmit="HandleNicSubmit"
-    OnDelete="HandleNicDelete"/>
+    OnDelete="HandleNicDelete"
+    TestIdPrefix="server-nic"/>
 
 <GpuModal
     IsOpen="@_gpuModalOpen"
     IsOpenChanged="v => _gpuModalOpen = v"
     Value="@_editingGpu"
     OnSubmit="HandleGpuSubmit"
-    OnDelete="HandleGpuDelete"/>
+    OnDelete="HandleGpuDelete"
+    TestIdPrefix="server-gpu"/>
 
 <ConfirmModal
     IsOpen="_confirmDeleteOpen"
@@ -296,7 +307,7 @@
     ConfirmText="Delete"
     ConfirmClass="bg-red-600 hover:bg-red-500"
     OnConfirm="DeleteServer"
-    TestIdPrefix="Server">
+    TestIdPrefix="server-delete">
     Are you sure you want to delete <strong>@Server.Name</strong>?
     <br/>
     This will detach all dependent systems.
@@ -309,7 +320,9 @@
     Description="Enter a new name for this server"
     Label="New server name"
     Value="@Server.Name"
-    OnSubmit="HandleRenameSubmit"/>
+    OnSubmit="HandleRenameSubmit"
+    TestIdPrefix="server-rename" />
+
 <StringValueModal
     IsOpen="_cloneOpen"
     IsOpenChanged="v => _cloneOpen = v"
@@ -317,7 +330,9 @@
     Description="Enter a name for the cloned resource"
     Label="New resource name"
     Value="@($"{Server.Name}-copy")"
-    OnSubmit="HandleCloneSubmit"/>
+    OnSubmit="HandleCloneSubmit"
+    TestIdPrefix="server-clone" />
+
 
 @code {
     [Parameter] [EditorRequired] public Server Server { get; set; } = default!;

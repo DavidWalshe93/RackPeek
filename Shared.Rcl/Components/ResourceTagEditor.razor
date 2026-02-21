@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    @if (Resource.Tags?.Any() == true)
+    @if (Resource.Tags.Any())
     {
         <div class="flex flex-wrap gap-2">
             @foreach (var tag in Resource.Tags.OrderBy(t => t))

@@ -28,7 +28,7 @@
         <div class="text-zinc-100 hover:text-emerald-300">
             <NavLink href="@($"resources/hardware/{Laptop.Name}")"
                      class="block"
-                     data-testid="open-laptop-link">
+                     data-testid=@($"laptop-item-{Laptop.Name.Replace(" ", "-")}-link")>
                 @Laptop.Name
             </NavLink>
         </div>

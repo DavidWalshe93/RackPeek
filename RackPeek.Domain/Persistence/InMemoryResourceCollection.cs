@@ -78,7 +78,6 @@ public sealed class InMemoryResourceCollection(IEnumerable<Resource>? seed = nul
         lock (_lock)
         {
             var result = _resources
-                .Where(r => r.Tags != null)
                 .SelectMany(r => r.Tags!) // flatten all tag arrays
                 .Where(t => !string.IsNullOrWhiteSpace(t))
                 .GroupBy(t => t)

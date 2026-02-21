@@ -29,6 +29,9 @@ public sealed class YamlResourceCollection(
     ResourceCollection resourceCollection)
     : IResourceCollection
 {
+    // Bump this when your YAML schema changes, and add a migration step below.
+    private const int CurrentSchemaVersion = 1;
+
     public Task<bool> Exists(string name)
     {
         return Task.FromResult(resourceCollection.Resources.Exists(r =>
@@ -38,11 +41,11 @@ public sealed class YamlResourceCollection(
     public Task<Dictionary<string, int>> GetTagsAsync()
     {
         var result = resourceCollection.Resources
-            .Where(r => r.Tags != null)
-            .SelectMany(r => r.Tags!) // flatten all tag arrays
+            .SelectMany(r => r.Tags) // flatten all tag arrays
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .GroupBy(t => t)
             .ToDictionary(g => g.Key, g => g.Count());
+
         return Task.FromResult(result);
     }
 
@@ -54,28 +57,17 @@ public sealed class YamlResourceCollection(
     public Task<IReadOnlyList<Resource>> GetDependantsAsync(string name)
     {
         return Task.FromResult<IReadOnlyList<Resource>>(resourceCollection.Resources
-            .Where(r => r.RunsOn?.Equals(name, StringComparison.OrdinalIgnoreCase) ?? false).ToList());
+            .Where(r => r.RunsOn?.Equals(name, StringComparison.OrdinalIgnoreCase) ?? false)
+            .ToList());
     }
 
     public Task<IReadOnlyList<Resource>> GetByTagAsync(string name)
     {
-        return Task.FromResult<IReadOnlyList<Resource>>(resourceCollection.Resources.Where(r => r.Tags.Contains(name))
-            .ToList());
-    }
-
-    public async Task LoadAsync()
-    {
-        var loaded = await LoadFromFileAsync();
-        try
-        {
-            resourceCollection.Resources.Clear();
-        }
-        catch
-        {
-            // ignore
-        }
-
-        resourceCollection.Resources.AddRange(loaded);
+        return Task.FromResult<IReadOnlyList<Resource>>(
+            resourceCollection.Resources
+                .Where(r => r.Tags.Contains(name))
+                .ToList()
+        );
     }
 
     public IReadOnlyList<Hardware> HardwareResources =>
@@ -97,13 +89,53 @@ public sealed class YamlResourceCollection(
     {
         var resource =
             resourceCollection.Resources.FirstOrDefault(r => r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-        return Task.FromResult<T?>(resource as T);
+        return Task.FromResult(resource as T);
     }
 
     public Resource? GetByName(string name)
     {
         return resourceCollection.Resources.FirstOrDefault(r =>
             r.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public async Task LoadAsync()
+    {
+        // Read raw YAML so we can back it up exactly before any migration writes.
+        var yaml = await fileStore.ReadAllTextAsync(filePath);
+        if (string.IsNullOrWhiteSpace(yaml))
+        {
+            resourceCollection.Resources.Clear();
+            return;
+        }
+
+        var root = DeserializeRoot(yaml);
+        if (root == null)
+        {
+            // Keep behavior aligned with your previous code: if YAML is invalid, treat as empty.
+            resourceCollection.Resources.Clear();
+            return;
+        }
+
+        // Guard: config is newer than this app understands.
+        if (root.Version > CurrentSchemaVersion)
+        {
+            throw new InvalidOperationException(
+                $"Config schema version {root.Version} is newer than this application supports ({CurrentSchemaVersion}).");
+        }
+
+        // If older, backup first, then migrate step-by-step, then save.
+        if (root.Version < CurrentSchemaVersion)
+        {
+            await BackupOriginalAsync(yaml);
+
+            root = await MigrateAsync(root);
+
+            // Ensure we persist the migrated root (with updated version)
+            await SaveRootAsync(root);
+        }
+
+        resourceCollection.Resources.Clear();
+        resourceCollection.Resources.AddRange(root.Resources ?? []);
     }
 
     public Task AddAsync(Resource resource)
@@ -143,24 +175,14 @@ public sealed class YamlResourceCollection(
         {
             action(resourceCollection.Resources);
 
-            var serializer = new SerializerBuilder()
-                .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                .WithTypeConverter(new StorageSizeYamlConverter())
-                .WithTypeConverter(new NotesStringYamlConverter())
-                .ConfigureDefaultValuesHandling(
-                    DefaultValuesHandling.OmitNull |
-                    DefaultValuesHandling.OmitEmptyCollections
-                )
-                .Build();
-
-            var payload = new OrderedDictionary
+            // Always write current schema version when app writes the file.
+            var root = new YamlRoot
             {
-                ["resources"] = resourceCollection.Resources.Select(SerializeResource).ToList()
+                Version = CurrentSchemaVersion,
+                Resources = resourceCollection.Resources
             };
 
-            await fileStore.WriteAllTextAsync(
-                filePath,
-                serializer.Serialize(payload));
+            await SaveRootAsync(root);
         }
         finally
         {
@@ -168,12 +190,57 @@ public sealed class YamlResourceCollection(
         }
     }
 
-    private async Task<List<Resource>> LoadFromFileAsync()
-    {
-        var yaml = await fileStore.ReadAllTextAsync(filePath);
-        if (string.IsNullOrWhiteSpace(yaml))
-            return new List<Resource>();
+    // ----------------------------
+    // Versioning + migration
+    // ----------------------------
 
+    private async Task BackupOriginalAsync(string originalYaml)
+    {
+        // Timestamped backup for safe rollback
+        var backupPath = $"{filePath}.bak.{DateTime.UtcNow:yyyyMMddHHmmss}";
+        await fileStore.WriteAllTextAsync(backupPath, originalYaml);
+    }
+
+    private Task<YamlRoot> MigrateAsync(YamlRoot root)
+    {
+        // Step-by-step migrations until we reach CurrentSchemaVersion
+        while (root.Version < CurrentSchemaVersion)
+        {
+            root = root.Version switch
+            {
+                0 => MigrateV0ToV1(root),
+                _ => throw new InvalidOperationException(
+                    $"No migration is defined from version {root.Version} to {root.Version + 1}.")
+            };
+        }
+
+        return Task.FromResult(root);
+    }
+
+    private YamlRoot MigrateV0ToV1(YamlRoot root)
+    {
+        // V0 -> V1 example migration:
+        // - Ensure 'kind' is normalized on all resources
+        // - Ensure tags collections aren’t null
+        if (root.Resources != null)
+        {
+            foreach (var r in root.Resources)
+            {
+                r.Kind = GetKind(r);
+                r.Tags ??= [];
+            }
+        }
+
+        root.Version = 1;
+        return root;
+    }
+
+    // ----------------------------
+    // YAML read/write
+    // ----------------------------
+
+    private YamlRoot? DeserializeRoot(string yaml)
+    {
         var deserializer = new DeserializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
             .WithCaseInsensitivePropertyMatching()
@@ -199,13 +266,41 @@ public sealed class YamlResourceCollection(
 
         try
         {
+            // If 'version' is missing, int defaults to 0 => treated as V0.
             var root = deserializer.Deserialize<YamlRoot>(yaml);
-            return root?.Resources ?? new List<Resource>();
+
+            // If YAML had only "resources:" previously, this will still work.
+            root ??= new YamlRoot { Version = 0, Resources = new List<Resource>() };
+            root.Resources ??= new List<Resource>();
+
+            return root;
         }
         catch (YamlException)
         {
-            return new List<Resource>();
+            return null;
         }
+    }
+
+    private async Task SaveRootAsync(YamlRoot root)
+    {
+        var serializer = new SerializerBuilder()
+            .WithNamingConvention(CamelCaseNamingConvention.Instance)
+            .WithTypeConverter(new StorageSizeYamlConverter())
+            .WithTypeConverter(new NotesStringYamlConverter())
+            .ConfigureDefaultValuesHandling(
+                DefaultValuesHandling.OmitNull |
+                DefaultValuesHandling.OmitEmptyCollections
+            )
+            .Build();
+
+        // Preserve ordering: version first, then resources
+        var payload = new OrderedDictionary
+        {
+            ["version"] = root.Version,
+            ["resources"] = (root.Resources ?? new List<Resource>()).Select(SerializeResource).ToList()
+        };
+
+        await fileStore.WriteAllTextAsync(filePath, serializer.Serialize(payload));
     }
 
     private string GetKind(Resource resource)
@@ -249,7 +344,7 @@ public sealed class YamlResourceCollection(
             .Deserialize<Dictionary<string, object?>>(yaml);
 
         foreach (var (key, value) in props)
-            if (key != "kind")
+            if (!string.Equals(key, "kind", StringComparison.OrdinalIgnoreCase))
                 map[key] = value;
 
         return map;
@@ -258,5 +353,6 @@ public sealed class YamlResourceCollection(
 
 public class YamlRoot
 {
+    public int Version { get; set; } // <- NEW: YAML schema version
     public List<Resource>? Resources { get; set; }
 }

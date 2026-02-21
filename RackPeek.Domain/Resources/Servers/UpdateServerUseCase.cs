@@ -8,7 +8,7 @@ public class UpdateServerUseCase(IResourceCollection repository) : IUseCase
 {
     public async Task ExecuteAsync(
         string name,
-        int? ramGb = null,
+        double? ramGb = null,
         int? ramMts = null,
         bool? ipmi = null,
         string? notes = null

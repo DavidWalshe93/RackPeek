@@ -9,7 +9,7 @@ public class UpdateLaptopUseCase(IResourceCollection repository) : IUseCase
     public async Task ExecuteAsync(
         string name,
         string? model = null,
-        int? ramGb = null,
+        double? ramGb = null,
         int? ramMts = null,
         string? notes = null
     )

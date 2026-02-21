@@ -67,35 +67,56 @@ docker compose up -d
 ## Installing on Linux 
 
 ```bash
-# 1. Download the RackPeek binary
-
+# Download the RackPeek binary
 wget https://github.com/Timmoth/RackPeek/releases/download/RackPeek-0.0.3/rackpeek_0_0_3_linux-x64 -O rackpeek
 
 # Or with curl:
-
 curl -L https://github.com/Timmoth/RackPeek/releases/download/RackPeek-0.0.3/rackpeek_0_0_3_linux-x64 -o rackpeek
 
-# 2. Make the binary executable
-
+# Make the binary executable
 chmod +x rackpeek
 
-# 3. Move RackPeek into your PATH
-
+# Move RackPeek into your PATH
 sudo mv rackpeek /usr/local/bin/rpk
 
-# 4. Create the global config directory
+# Create the global config directory
 # RackPeek expects a `config` folder **next to the binary**, so create it in `/usr/local/bin`:
-
 sudo mkdir -p /usr/local/bin/config
 
-# 5. Create the empty `config.yaml`
-
+# Create the empty `config.yaml`
 sudo touch /usr/local/bin/config/config.yaml
 
-# 6. Test the installation
-
+# Test the installation
 rpk --help
 ```
+
+## Release Status
+```
+[x] Ideation
+[x] Development
+[x] Alpha Release
+[~] Beta Release
+[ ] v1.0.0 Release
+```
+
+## POST V1.0.0 Roadmap
+- Support for IoT and networked devices
+- Enhanced networking and port mapping
+- Git integration (version-controlled, shared configuration)
+- Diagramming tools
+- Ansible inventory generator
+### The roadmap for the next wave of features is actively being discussed, please make your voice heard! 
+
+## Contribution Guide
+
+We are now gearing up for the full v1.0.0 release, so development focus is on stability / bug fixes / essential core missing features. Please raise any suggestions / bugs / feedback in the Github issues.
+
+## Questionnaire
+
+We’re gathering feedback from homelabbers to validate direction and prioritize features.  
+Answer whichever questions stand out to you, your input directly shapes the project.
+
+[![User Questionnaire](https://img.shields.io/badge/Questionnaire-Share%20Feedback-orange?logo=googleforms&logoColor=white)](https://forms.gle/KKA4bqfGAeRYvGxT6)
 
 ## Core Values
 
@@ -120,22 +141,3 @@ RackPeek is built to solve real problems we actively have. If a feature isn’t 
 **Opinionated**  
 The project is optimized for home labs and self-hosted environments, not enterprise CMDBs or corporate documentation workflows.
 
-## Release Status
-```
-[x] Ideation
-[x] Development
-[x] Alpha Release
-[~] Beta Release
-[ ] v1.0.0 Release
-```
-
-## Contribution Guide
-
-We are now gearing up for the full v1.0.0 release, so development focus is on stability / bug fixes / essential core missing features. Please raise any suggestions / bugs / feedback in the Github issues.
-
-## Questionnaire
-
-We’re gathering feedback from homelabbers to validate direction and prioritize features.  
-Answer whichever questions stand out to you, your input directly shapes the project.
-
-[![User Questionnaire](https://img.shields.io/badge/Questionnaire-Share%20Feedback-orange?logo=googleforms&logoColor=white)](https://forms.gle/KKA4bqfGAeRYvGxT6)

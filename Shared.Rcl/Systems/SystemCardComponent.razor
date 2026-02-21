@@ -15,7 +15,8 @@
 <div class="border border-zinc-800 rounded p-4 bg-zinc-900"
      data-testid=@($"system-item-{System.Name.Replace(" ", "-")}")>
     <div class="flex justify-between items-center mb-3">
-        <NavLink href="@($"resources/systems/{System.Name}")" class="block">
+        <NavLink href="@($"resources/systems/{System.Name}")" class="block"
+                 data-testid=@($"system-item-{System.Name.Replace(" ", "-")}-link")>
 
             <div class="text-zinc-100 hover:text-emerald-300">
                 @System.Name

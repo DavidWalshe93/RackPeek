@@ -21,7 +21,7 @@
         <div class="text-zinc-100 hover:text-emerald-300">
             <NavLink href="@($"resources/hardware/{Router.Name}")"
                      class="block"
-                     data-testid="open-router-link">
+                     data-testid=@($"router-item-{Router.Name.Replace(" ", "-")}-link")>
                 @Router.Name
             </NavLink>
         </div>

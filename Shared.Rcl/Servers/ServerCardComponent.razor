@@ -32,8 +32,8 @@
      data-testid=@($"server-item-{Server.Name.Replace(" ", "-")}")>
     <div class="flex justify-between items-center mb-3">
         <div class="text-zinc-100 hover:text-emerald-300">
-            <NavLink href="@($"resources/hardware/{Server.Name}")" class="block">
-
+            <NavLink href="@($"resources/hardware/{Server.Name}")" class="block"
+                     data-testid=@($"server-item-{Server.Name.Replace(" ", "-")}-link")>
                 @Server.Name
             </NavLink>
 

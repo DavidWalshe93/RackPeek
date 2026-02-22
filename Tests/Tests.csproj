@@ -27,7 +27,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="EndToEnd\LaptopTests\" />
       <Folder Include="EndToEnd\RouterTests\" />
       <Folder Include="EndToEnd\ServerTests\" />
       <Folder Include="EndToEnd\ServiceTests\" />

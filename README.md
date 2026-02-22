@@ -141,8 +141,6 @@ RackPeek is built to solve real problems we actively have. If a feature isn’t 
 **Opinionated**  
 The project is optimized for home labs and self-hosted environments, not enterprise CMDBs or corporate documentation workflows.
 
-Here’s a clean section you can drop into your **README.md**.
-
 
 ## Development Docs
 

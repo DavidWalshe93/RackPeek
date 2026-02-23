@@ -28,7 +28,6 @@
 
     <ItemGroup>
       <Folder Include="EndToEnd\ServerTests\" />
-      <Folder Include="EndToEnd\ServiceTests\" />
     </ItemGroup>
 
 </Project>

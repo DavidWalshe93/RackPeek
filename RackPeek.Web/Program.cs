@@ -17,6 +17,8 @@ public class Program
             builder.Configuration
         );
 
+        builder.Configuration.AddJsonFile($"appsettings.json", optional: true, reloadOnChange: false);
+        
         var yamlDir = builder.Configuration.GetValue<string>("RPK_YAML_DIR") ?? "./config";
         var yamlFileName = "config.yaml";
 
@@ -103,6 +105,19 @@ public class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        
+        // Remove default config sources
+        builder.Configuration.Sources.Clear();
+
+        // Re-add manually WITHOUT file watchers
+        builder.Configuration
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json",
+                optional: true,
+                reloadOnChange: false)
+            .AddEnvironmentVariables()
+            .AddCommandLine(args);
+        
         var app = await BuildApp(builder);
         await app.RunAsync();
     }

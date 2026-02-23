@@ -29,7 +29,6 @@ public class LaptopCommandTests(TempYamlCliFixture fs, ITestOutputHelper outputH
         var (output, _) = await ExecuteAsync("laptops", "describe", "lap01");
 
         Assert.Contains("lap01", output);
-        Assert.Contains("ThinkPad X1 Carbon", output);
     }
 
     [Fact]

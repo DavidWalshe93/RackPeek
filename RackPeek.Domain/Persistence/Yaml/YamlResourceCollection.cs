@@ -1,4 +1,7 @@
 using System.Collections.Specialized;
+using System.Reflection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using RackPeek.Domain.Resources;
 using RackPeek.Domain.Resources.AccessPoints;
 using RackPeek.Domain.Resources.Desktops;
@@ -11,6 +14,7 @@ using RackPeek.Domain.Resources.Services;
 using RackPeek.Domain.Resources.Switches;
 using RackPeek.Domain.Resources.SystemResources;
 using RackPeek.Domain.Resources.UpsUnits;
+using DocMigrator.Yaml;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -117,14 +121,14 @@ public sealed class YamlResourceCollection(
         }
 
         // Guard: config is newer than this app understands.
-        if (root.Version > CurrentSchemaVersion)
+        if (root.SchemaVersion > CurrentSchemaVersion)
         {
             throw new InvalidOperationException(
-                $"Config schema version {root.Version} is newer than this application supports ({CurrentSchemaVersion}).");
+                $"Config schema version {root.SchemaVersion} is newer than this application supports ({CurrentSchemaVersion}).");
         }
 
         // If older, backup first, then migrate step-by-step, then save.
-        if (root.Version < CurrentSchemaVersion)
+        if (root.SchemaVersion < CurrentSchemaVersion)
         {
             await BackupOriginalAsync(yaml);
 
@@ -178,7 +182,7 @@ public sealed class YamlResourceCollection(
             // Always write current schema version when app writes the file.
             var root = new YamlRoot
             {
-                Version = CurrentSchemaVersion,
+                SchemaVersion = CurrentSchemaVersion,
                 Resources = resourceCollection.Resources
             };
 
@@ -204,13 +208,13 @@ public sealed class YamlResourceCollection(
     private Task<YamlRoot> MigrateAsync(YamlRoot root)
     {
         // Step-by-step migrations until we reach CurrentSchemaVersion
-        while (root.Version < CurrentSchemaVersion)
+        while (root.SchemaVersion < CurrentSchemaVersion)
         {
-            root = root.Version switch
+            root = root.SchemaVersion switch
             {
                 0 => MigrateV0ToV1(root),
                 _ => throw new InvalidOperationException(
-                    $"No migration is defined from version {root.Version} to {root.Version + 1}.")
+                    $"No migration is defined from version {root.SchemaVersion} to {root.SchemaVersion + 1}.")
             };
         }
 
@@ -231,7 +235,7 @@ public sealed class YamlResourceCollection(
             }
         }
 
-        root.Version = 1;
+        root.SchemaVersion = 1;
         return root;
     }
 
@@ -264,13 +268,16 @@ public sealed class YamlResourceCollection(
             })
             .Build();
 
+            // var rootDeserializer = Setup();
+            // var rootDeserializer = new YamlRootDeserializer();
+
         try
         {
             // If 'version' is missing, int defaults to 0 => treated as V0.
             var root = deserializer.Deserialize<YamlRoot>(yaml);
 
             // If YAML had only "resources:" previously, this will still work.
-            root ??= new YamlRoot { Version = 0, Resources = new List<Resource>() };
+            root ??= new YamlRoot { SchemaVersion = 0, Resources = new List<Resource>() };
             root.Resources ??= new List<Resource>();
 
             return root;
@@ -296,7 +303,7 @@ public sealed class YamlResourceCollection(
         // Preserve ordering: version first, then resources
         var payload = new OrderedDictionary
         {
-            ["version"] = root.Version,
+            ["schemaVersion"] = root.SchemaVersion,
             ["resources"] = (root.Resources ?? new List<Resource>()).Select(SerializeResource).ToList()
         };
 
@@ -349,10 +356,55 @@ public sealed class YamlResourceCollection(
 
         return map;
     }
+
+    public YamlMigrator Setup(DeserializerBuilder deserializerBuilder)
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddYamlMigrator(Assembly.GetExecutingAssembly());
+        var scope = services.BuildServiceProvider().CreateScope();
+        return scope.ServiceProvider.GetRequiredService<YamlMigrator>();
+        // return new YamlRootDeserializer(scope.ServiceProvider, scope.ServiceProvider.GetRequiredService<ILogger<YamlRootDeserializer>>(), deserializerBuilder);
+    }
+
+    // TODO: Wrap this in an 'instance' so we don't needlessly rebuild this?
+    //       Similar to CamelCaseNamingConvention.instance
+    public class YamlRootDeserializer : YamlMigrationDeserializer<YamlRoot>
+    {
+        public YamlRootDeserializer(IServiceProvider serviceProvider,
+                ILogger<YamlRootDeserializer> logger,
+                DeserializerBuilder deserializerBuilder) :
+            base(serviceProvider, logger, new List<Func<IServiceProvider, Dictionary<object,object>, ValueTask>>{
+                    // List migrations here
+                    EnsureSchemaVersionExists,
+                },
+                deserializerBuilder) {}
+
+        #region Migrations
+
+        // Define migration functions here
+
+        public static ValueTask EnsureSchemaVersionExists(IServiceProvider serviceProvider, Dictionary<object, object> obj)
+        {
+            if (!obj.ContainsKey("schemaVersion"))
+            {
+                obj["schemaVersion"] = 0;
+                if (obj.ContainsKey("version"))
+                {
+                    obj["schemaVersion"] = obj["version"];
+                }
+            }
+
+            obj.Remove("version");
+            return ValueTask.CompletedTask;
+        }
+
+        #endregion
+    }
 }
 
 public class YamlRoot
 {
-    public int Version { get; set; } // <- NEW: YAML schema version
+    public int SchemaVersion { get; set; } // <- NEW: YAML schema version
     public List<Resource>? Resources { get; set; }
 }

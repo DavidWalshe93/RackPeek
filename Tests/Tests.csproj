@@ -15,8 +15,8 @@
         <PackageReference Include="xunit" Version="2.9.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4"/>
         <PackageReference Include="Spectre.Console.Testing" Version="0.54.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.2"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.2"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.3"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="10.0.3"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -33,7 +33,6 @@
       <Folder Include="EndToEnd\ServerTests\" />
       <Folder Include="EndToEnd\ServiceTests\" />
     </ItemGroup>
-
     <ItemGroup>
         <None Include="TestConfigs\**\*.yaml">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -44,48 +43,47 @@
         </None>
 
         <None Update="TestConfigs\v1\valid-config-1.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\01-server.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\02-firewall.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\03-router.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\04-switch.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\05-accesspoint.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\06-ups.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\07-desktop.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\08-laptop.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\09-service.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
 
         <None Update="TestConfigs\v1\10-system.yaml">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
-    
 </Project>

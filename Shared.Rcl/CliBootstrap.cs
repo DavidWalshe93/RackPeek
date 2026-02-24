@@ -429,6 +429,7 @@ public static class CliBootstrap
                 laptops.AddCommand<LaptopGetByNameCommand>("get").WithDescription("Retrieve a Laptop by name.");
                 laptops.AddCommand<LaptopDescribeCommand>("describe")
                     .WithDescription("Show detailed information about a Laptop.");
+                laptops.AddCommand<LaptopSetCommand>("set").WithDescription("Update properties of a laptop.");
                 laptops.AddCommand<LaptopDeleteCommand>("del").WithDescription("Delete a Laptop from the inventory.");
                 laptops.AddCommand<LaptopReportCommand>("summary")
                     .WithDescription("Show a summarized hardware report for all Laptops.");

@@ -33,7 +33,7 @@ public class RouterSetCommand(
             settings.Managed,
             settings.Poe);
 
-        AnsiConsole.MarkupLine($"[green]Server '{settings.Name}' updated.[/]");
+        AnsiConsole.MarkupLine($"[green]Router '{settings.Name}' updated.[/]");
         return 0;
     }
 }

@@ -4,6 +4,8 @@ using RackPeek.Domain;
 using RackPeek.Domain.Persistence;
 using RackPeek.Domain.Persistence.Yaml;
 using RackPeek.Web.Components;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using Shared.Rcl;
 
 namespace RackPeek.Web;
@@ -46,8 +48,7 @@ public class Program
         }
 
         builder.Services.AddScoped<ITextFileStore, PhysicalTextFileStore>();
-
-
+        
         builder.Services.AddScoped(sp =>
         {
             var nav = sp.GetRequiredService<NavigationManager>();
@@ -60,12 +61,14 @@ public class Program
 
         var resources = new ResourceCollection();
         builder.Services.AddSingleton(resources);
+        builder.Services.AddScoped<RackPeekConfigMigrationDeserializer>();
 
         builder.Services.AddScoped<IResourceCollection>(sp =>
             new YamlResourceCollection(
                 yamlFilePath,
                 sp.GetRequiredService<ITextFileStore>(),
-                sp.GetRequiredService<ResourceCollection>()));
+                sp.GetRequiredService<ResourceCollection>(),
+                sp.GetRequiredService<RackPeekConfigMigrationDeserializer>()));
 
         // Infrastructure
         builder.Services.AddYamlRepos();

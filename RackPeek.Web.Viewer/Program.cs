@@ -5,6 +5,8 @@ using RackPeek.Domain;
 using RackPeek.Domain.Persistence;
 using RackPeek.Domain.Persistence.Yaml;
 using Shared.Rcl;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace RackPeek.Web.Viewer;
 
@@ -33,15 +35,17 @@ public class Program
 
         var resources = new ResourceCollection();
         builder.Services.AddSingleton(resources);
-
+        
         var yamlDir = builder.Configuration.GetValue<string>("RPK_YAML_DIR") ?? "config";
         var yamlFilePath = $"{yamlDir}/config.yaml";
+        builder.Services.AddScoped<RackPeekConfigMigrationDeserializer>();
 
         builder.Services.AddScoped<IResourceCollection>(sp =>
             new YamlResourceCollection(
                 yamlFilePath,
                 sp.GetRequiredService<ITextFileStore>(),
-                sp.GetRequiredService<ResourceCollection>()));
+                sp.GetRequiredService<ResourceCollection>(),
+                sp.GetRequiredService<RackPeekConfigMigrationDeserializer>()));
 
         builder.Services.AddYamlRepos();
         builder.Services.AddCommands();

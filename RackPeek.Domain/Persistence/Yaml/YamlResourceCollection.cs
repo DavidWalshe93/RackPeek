@@ -26,7 +26,8 @@ public class ResourceCollection
 public sealed class YamlResourceCollection(
     string filePath,
     ITextFileStore fileStore,
-    ResourceCollection resourceCollection)
+    ResourceCollection resourceCollection,
+    RackPeekConfigMigrationDeserializer _deserializer)
     : IResourceCollection
 {
     // Bump this when your YAML schema changes, and add a migration step below.
@@ -108,34 +109,35 @@ public sealed class YamlResourceCollection(
             return;
         }
 
-        var root = DeserializeRoot(yaml);
-        if (root == null)
-        {
-            // Keep behavior aligned with your previous code: if YAML is invalid, treat as empty.
-            resourceCollection.Resources.Clear();
-            return;
-        }
-
+        var version = _deserializer.GetSchemaVersion(yaml); 
+        
         // Guard: config is newer than this app understands.
-        if (root.Version > CurrentSchemaVersion)
+        if (version > CurrentSchemaVersion)
         {
             throw new InvalidOperationException(
-                $"Config schema version {root.Version} is newer than this application supports ({CurrentSchemaVersion}).");
+                $"Config schema version {version} is newer than this application supports ({CurrentSchemaVersion}).");
         }
 
+        YamlRoot? root;
         // If older, backup first, then migrate step-by-step, then save.
-        if (root.Version < CurrentSchemaVersion)
+        if (version < CurrentSchemaVersion)
         {
             await BackupOriginalAsync(yaml);
-
-            root = await MigrateAsync(root);
-
+            root = await _deserializer.Deserialize(yaml);
+            
             // Ensure we persist the migrated root (with updated version)
             await SaveRootAsync(root);
         }
-
+        else
+        {
+            root = await _deserializer.Deserialize(yaml);
+        }
+        
         resourceCollection.Resources.Clear();
-        resourceCollection.Resources.AddRange(root.Resources ?? []);
+        if (root?.Resources != null)
+        {
+            resourceCollection.Resources.AddRange(root.Resources);
+        }
     }
 
     public Task AddAsync(Resource resource)
@@ -200,88 +202,8 @@ public sealed class YamlResourceCollection(
         var backupPath = $"{filePath}.bak.{DateTime.UtcNow:yyyyMMddHHmmss}";
         await fileStore.WriteAllTextAsync(backupPath, originalYaml);
     }
-
-    private Task<YamlRoot> MigrateAsync(YamlRoot root)
-    {
-        // Step-by-step migrations until we reach CurrentSchemaVersion
-        while (root.Version < CurrentSchemaVersion)
-        {
-            root = root.Version switch
-            {
-                0 => MigrateV0ToV1(root),
-                _ => throw new InvalidOperationException(
-                    $"No migration is defined from version {root.Version} to {root.Version + 1}.")
-            };
-        }
-
-        return Task.FromResult(root);
-    }
-
-    private YamlRoot MigrateV0ToV1(YamlRoot root)
-    {
-        // V0 -> V1 example migration:
-        // - Ensure 'kind' is normalized on all resources
-        // - Ensure tags collections aren’t null
-        if (root.Resources != null)
-        {
-            foreach (var r in root.Resources)
-            {
-                r.Kind = GetKind(r);
-                r.Tags ??= [];
-            }
-        }
-
-        root.Version = 1;
-        return root;
-    }
-
-    // ----------------------------
-    // YAML read/write
-    // ----------------------------
-
-    private YamlRoot? DeserializeRoot(string yaml)
-    {
-        var deserializer = new DeserializerBuilder()
-            .WithNamingConvention(CamelCaseNamingConvention.Instance)
-            .WithCaseInsensitivePropertyMatching()
-            .WithTypeConverter(new StorageSizeYamlConverter())
-            .WithTypeConverter(new NotesStringYamlConverter())
-            .WithTypeDiscriminatingNodeDeserializer(options =>
-            {
-                options.AddKeyValueTypeDiscriminator<Resource>("kind", new Dictionary<string, Type>
-                {
-                    { Server.KindLabel, typeof(Server) },
-                    { Switch.KindLabel, typeof(Switch) },
-                    { Firewall.KindLabel, typeof(Firewall) },
-                    { Router.KindLabel, typeof(Router) },
-                    { Desktop.KindLabel, typeof(Desktop) },
-                    { Laptop.KindLabel, typeof(Laptop) },
-                    { AccessPoint.KindLabel, typeof(AccessPoint) },
-                    { Ups.KindLabel, typeof(Ups) },
-                    { SystemResource.KindLabel, typeof(SystemResource) },
-                    { Service.KindLabel, typeof(Service) }
-                });
-            })
-            .Build();
-
-        try
-        {
-            // If 'version' is missing, int defaults to 0 => treated as V0.
-            var root = deserializer.Deserialize<YamlRoot>(yaml);
-
-            // If YAML had only "resources:" previously, this will still work.
-            root ??= new YamlRoot { Version = 0, Resources = new List<Resource>() };
-            root.Resources ??= new List<Resource>();
-
-            return root;
-        }
-        catch (YamlException)
-        {
-            return null;
-        }
-    }
-
-    private async Task SaveRootAsync(YamlRoot root)
+    
+    private async Task SaveRootAsync(YamlRoot? root)
     {
         var serializer = new SerializerBuilder()
             .WithNamingConvention(CamelCaseNamingConvention.Instance)
@@ -349,10 +271,11 @@ public sealed class YamlResourceCollection(
 
         return map;
     }
+
 }
 
 public class YamlRoot
 {
-    public int Version { get; set; } // <- NEW: YAML schema version
+    public int Version { get; set; }
     public List<Resource>? Resources { get; set; }
 }

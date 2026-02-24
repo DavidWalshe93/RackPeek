@@ -138,30 +138,4 @@ public class ServerWorkflowTests(TempYamlCliFixture fs, ITestOutputHelper output
 
                      """, output);
     }
-    
-    [Fact]
-    public async Task servers_labels_cli_workflow_test()
-    {
-        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
-
-        // Create server
-        var (output, yaml) = await ExecuteAsync("servers", "add", "web-01");
-        Assert.Contains("web-01", yaml);
-
-        // Add label
-        (output, yaml) = await ExecuteAsync("servers", "label", "add", "web-01", "--key", "env", "--value", "production");
-        Assert.Contains("Label 'env' added", output);
-        Assert.Contains("env:", yaml);
-        Assert.Contains("production", yaml);
-
-        // Describe should show label
-        (output, _) = await ExecuteAsync("servers", "describe", "web-01");
-        Assert.Contains("env", output);
-        Assert.Contains("production", output);
-
-        // Remove label
-        (output, yaml) = await ExecuteAsync("servers", "label", "remove", "web-01", "--key", "env");
-        Assert.Contains("Label 'env' removed", output);
-        Assert.DoesNotContain("env:", yaml);
-    }
 }

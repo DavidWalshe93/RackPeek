@@ -5,6 +5,7 @@ using Microsoft.Playwright;
 public class AccessPointCardPom(IPage page)
 {
     public TagsPom Tags => new(page);
+    public LabelsPom Labels => new(page);
 
     // Root
     public ILocator Card(string accessPointName)

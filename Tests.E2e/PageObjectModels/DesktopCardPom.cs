@@ -5,6 +5,7 @@ using Microsoft.Playwright;
 public class DesktopCardPom(IPage page)
 {    
     public TagsPom Tags => new(page);
+    public LabelsPom Labels => new(page);
 
     // -------------------------------------------------
     // Root + Navigation

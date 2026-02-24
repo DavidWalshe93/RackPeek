@@ -5,6 +5,7 @@ namespace Tests.E2e.PageObjectModels;
 public class ServiceCardPom(IPage page)
 {
     public TagsPom Tags => new(page);
+    public LabelsPom Labels => new(page);
 
     // -------------------------------------------------
     // Root

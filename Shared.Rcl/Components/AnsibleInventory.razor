@@ -1,0 +1,171 @@
+﻿@page "/ansible/inventory"
+
+@using RackPeek.Domain.Ansible
+@using RackPeek.Domain.Resources.Desktops
+@inject AnsibleInventoryGeneratorUseCase InventoryUseCase
+
+<div class="border border-zinc-800 rounded p-4 bg-zinc-900 max-w-5xl mx-auto"
+     data-testid="ansible-inventory-page">
+
+    <div class="flex justify-between items-center mb-4">
+        <div class="text-zinc-100 text-lg">
+            Ansible Inventory Generator
+        </div>
+
+        <button class="text-sm bg-emerald-600 hover:bg-emerald-500 px-3 py-1 rounded text-white transition"
+                data-testid="generate-inventory-button"
+                @onclick="GenerateInventory">
+            Generate
+        </button>
+    </div>
+
+    <!-- Options -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+        <!-- Tags -->
+        <div>
+            <div class="text-zinc-400 mb-1">Group By Tags</div>
+            <input class="w-full bg-zinc-800 text-zinc-200 p-2 rounded border border-zinc-700"
+                   placeholder="prod, staging, dmz"
+                   data-testid="group-by-tags-input"
+                   @bind="_groupByTagsRaw" />
+            <div class="text-xs text-zinc-500 mt-1">
+                Comma-separated tag names
+            </div>
+        </div>
+
+        <!-- Labels -->
+        <div>
+            <div class="text-zinc-400 mb-1">Group By Labels</div>
+            <input class="w-full bg-zinc-800 text-zinc-200 p-2 rounded border border-zinc-700"
+                   placeholder="env, site"
+                   data-testid="group-by-labels-input"
+                   @bind="_groupByLabelsRaw" />
+            <div class="text-xs text-zinc-500 mt-1">
+                Creates groups like env_prod, site_london
+            </div>
+        </div>
+
+        <!-- Global Vars -->
+        <div class="md:col-span-2">
+            <div class="text-zinc-400 mb-1">Global Variables</div>
+            <textarea class="w-full bg-zinc-800 text-zinc-200 p-2 rounded border border-zinc-700 font-mono text-sm"
+                      rows="4"
+                      placeholder="ansible_user=ansible&#10;ansible_python_interpreter=/usr/bin/python3"
+                      data-testid="global-vars-input"
+                      @bind="_globalVarsRaw">
+            </textarea>
+            <div class="text-xs text-zinc-500 mt-1">
+                One per line: key=value
+            </div>
+        </div>
+    </div>
+
+    <!-- Errors / Warnings -->
+    @if (_warnings.Any())
+    {
+        <div class="border border-red-700 bg-red-900/40 text-red-300 p-3 rounded mb-4"
+             data-testid="inventory-warnings">
+            <div class="font-semibold mb-1">Warnings</div>
+            <ul class="list-disc ml-5 text-sm">
+                @foreach (var warning in _warnings)
+                {
+                    <li>@warning</li>
+                }
+            </ul>
+        </div>
+    }
+
+    <!-- Output -->
+    <div>
+        <div class="text-zinc-400 mb-1">Generated Inventory</div>
+        <textarea class="w-full bg-black text-emerald-400 p-3 rounded border border-zinc-800 font-mono text-sm"
+                  rows="18"
+                  readonly
+                  data-testid="inventory-output">
+@_inventoryText
+        </textarea>
+    </div>
+
+</div>
+
+@code {
+
+    private string _groupByTagsRaw = "prod, staging";
+    private string _groupByLabelsRaw = "env, site";
+    private string _globalVarsRaw =
+@"ansible_user=ansible
+ansible_python_interpreter=/usr/bin/python3";
+    
+    private string _inventoryText = string.Empty;
+    private List<string> _warnings = new();
+
+    private async Task GenerateInventory()
+    {
+        try
+        {
+            _warnings.Clear();
+            _inventoryText = string.Empty;
+
+            var options = new InventoryOptions
+            {
+                GroupByTags = ParseCsv(_groupByTagsRaw),
+                GroupByLabelKeys = ParseCsv(_groupByLabelsRaw),
+                GlobalVars = ParseGlobalVars(_globalVarsRaw)
+            };
+
+            var result = await InventoryUseCase.ExecuteAsync(options);
+            if (result is null)
+            {
+                _warnings.Add("Inventory generation returned null.");
+                return;
+            }
+
+            _inventoryText = result.InventoryText;
+            _warnings = result.Warnings.ToList();
+        }
+        catch (Exception ex)
+        {
+            _warnings.Clear();
+            _warnings.Add($"Unexpected error: {ex.Message}");
+        }
+    }
+
+    private static IReadOnlyList<string> ParseCsv(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+            return [];
+
+        return raw.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                  .Select(x => x.Trim())
+                  .Where(x => !string.IsNullOrWhiteSpace(x))
+                  .ToArray();
+    }
+
+    private static IDictionary<string, string> ParseGlobalVars(string raw)
+    {
+        var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        if (string.IsNullOrWhiteSpace(raw))
+            return dict;
+
+        var lines = raw.Split('\n', StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var line in lines)
+        {
+            var trimmed = line.Trim();
+            if (string.IsNullOrWhiteSpace(trimmed)) continue;
+
+            var parts = trimmed.Split('=', 2);
+            if (parts.Length != 2) continue;
+
+            var key = parts[0].Trim();
+            var value = parts[1].Trim();
+
+            if (!string.IsNullOrWhiteSpace(key))
+                dict[key] = value;
+        }
+
+        return dict;
+    }
+}

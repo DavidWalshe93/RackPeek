@@ -1,0 +1,273 @@
+﻿@page "/docs"
+@page "/docs/{*Page}"
+
+@inject HttpClient Http
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+@using Markdig
+@implements IDisposable
+
+<PageTitle>Docs@(!string.IsNullOrWhiteSpace(_activeTitle) ? $": {_activeTitle}" : "")</PageTitle>
+
+<div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+        <div class="space-y-1">
+            <div class="text-xs text-zinc-500 uppercase tracking-wider">
+                Knowledge Base
+            </div>
+            <h1 class="text-lg text-zinc-100">
+                Docs
+                @if (!string.IsNullOrWhiteSpace(_activeTitle))
+                {
+                    <span class="text-zinc-500">:</span>
+                    <span class="text-emerald-400">@_activeTitle</span>
+                }
+            </h1>
+        </div>
+
+        <NavLink href="/docs"
+                 Match="NavLinkMatch.All"
+                 class="text-sm text-emerald-400 hover:text-emerald-300 transition"
+                 data-testid="docs-home-link">
+            → Overview
+        </NavLink>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+        <!-- Sidebar -->
+        <aside class="md:col-span-4 lg:col-span-3">
+            <div class="border border-zinc-800 rounded-md p-4 bg-zinc-900/40">
+
+                <div class="text-xs text-zinc-500 uppercase tracking-wider mb-3">
+                    Pages
+                </div>
+
+                <input class="w-full bg-zinc-800 text-zinc-200 p-2 rounded border border-zinc-700 text-sm"
+                       placeholder="Search docs…"
+                       data-testid="docs-search-input"
+                       @bind="_filter" />
+
+                <div class="mt-3 space-y-1 max-h-[60vh] overflow-auto pr-1">
+
+                    @if (_indexLoading)
+                    {
+                        <div class="text-zinc-500 text-sm">loading index…</div>
+                    }
+                    else if (_indexNotFound)
+                    {
+                        <div class="text-zinc-500 text-sm">
+                            docs index not found
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var item in FilteredIndex())
+                        {
+                            <NavLink href="@($"/docs/{ToRouteSlug(item)}")"
+                                     class="block text-sm text-zinc-300 hover:text-emerald-300 transition"
+                                     activeClass="text-emerald-400 font-semibold"
+                                     data-testid="@($"docs-index-link-{Sanitize(item)}")">
+                                @DisplayName(item)
+                            </NavLink>
+                        }
+                    }
+                </div>
+            </div>
+        </aside>
+
+        <!-- Content -->
+        <main class="md:col-span-8 lg:col-span-9">
+            <div class="border border-zinc-800 rounded-md p-4 bg-zinc-900/30"
+                 data-testid="docs-viewer">
+
+                @if (_isLoading)
+                {
+                    <div class="text-zinc-500">loading documentation…</div>
+                }
+                else if (_notFound)
+                {
+                    <div class="text-zinc-500">
+                        document not found
+                        <div class="text-xs text-zinc-600 mt-1">
+                            Tried: <span class="text-zinc-400">@_lastFetchUrl</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="markdown">
+                        @((MarkupString)_htmlContent!)
+                    </div>
+                }
+
+            </div>
+        </main>
+
+    </div>
+</div>
+
+@code {
+
+    [Parameter] public string? Page { get; set; }
+
+    private string? _htmlContent;
+    private bool _isLoading = true;
+    private bool _notFound;
+    private bool _pendingScroll;
+
+    private string _filter = "";
+    private string _activeTitle = "";
+    private string? _lastFetchUrl;
+
+    private bool _indexLoading = true;
+    private bool _indexNotFound;
+    private List<string> _docsIndex = new();
+
+    private static readonly MarkdownPipeline Pipeline =
+        new MarkdownPipelineBuilder()
+            .UseAdvancedExtensions()
+            .UseAutoIdentifiers()
+            .Build();
+
+    protected override void OnInitialized()
+    {
+        Nav.LocationChanged += HandleLocationChanged;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadIndexAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _isLoading = true;
+        _notFound = false;
+        _pendingScroll = true;
+        _activeTitle = "";
+
+        try
+        {
+            // DEFAULT TO overview.md
+            var target = string.IsNullOrWhiteSpace(Page)
+                ? "overview"
+                : Page;
+
+            var decoded = Uri.UnescapeDataString(target);
+
+            if (!decoded.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+                decoded += ".md";
+
+            var url = $"_content/Shared.Rcl/raw_docs/{decoded}";
+            _lastFetchUrl = url;
+
+            var markdown = await Http.GetStringAsync(url);
+            _htmlContent = Markdown.ToHtml(markdown, Pipeline);
+
+            _activeTitle = DisplayName(decoded);
+        }
+        catch
+        {
+            _notFound = true;
+            _htmlContent = null;
+            _activeTitle = DisplayName(Page ?? "overview");
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_pendingScroll && !_isLoading && !_notFound)
+        {
+            _pendingScroll = false;
+            await ScrollToFragmentAsync();
+        }
+    }
+
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        _pendingScroll = true;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task ScrollToFragmentAsync()
+    {
+        var uri = new Uri(Nav.Uri);
+        var fragment = uri.Fragment;
+
+        if (!string.IsNullOrWhiteSpace(fragment))
+        {
+            var anchor = fragment.TrimStart('#');
+            await JS.InvokeVoidAsync("scrollToAnchor", anchor);
+        }
+    }
+
+    private async Task LoadIndexAsync()
+    {
+        _indexLoading = true;
+        _indexNotFound = false;
+
+        try
+        {
+            var url = "_content/Shared.Rcl/raw_docs/docs-index.json";
+            var items = await Http.GetFromJsonAsync<List<string>>(url);
+
+            _docsIndex = (items ?? new List<string>())
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => x.Replace('\\', '/').Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+        catch
+        {
+            _indexNotFound = true;
+            _docsIndex = new();
+        }
+        finally
+        {
+            _indexLoading = false;
+        }
+    }
+
+    private IEnumerable<string> FilteredIndex()
+    {
+        if (string.IsNullOrWhiteSpace(_filter))
+            return _docsIndex;
+
+        return _docsIndex.Where(x =>
+            x.Contains(_filter, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string ToRouteSlug(string path)
+        => path.EndsWith(".md", StringComparison.OrdinalIgnoreCase)
+            ? path[..^3]
+            : path;
+
+    private static string DisplayName(string path)
+    {
+        var p = path.Replace('\\', '/').Trim();
+        if (p.EndsWith(".md", StringComparison.OrdinalIgnoreCase))
+            p = p[..^3];
+
+        return p.Split('/', StringSplitOptions.RemoveEmptyEntries)
+                .LastOrDefault() ?? p;
+    }
+
+    private static string Sanitize(string value)
+        => value.Replace(" ", "-")
+                .Replace("/", "-")
+                .Replace("\\", "-")
+                .Replace(".", "-");
+
+    public void Dispose()
+    {
+        Nav.LocationChanged -= HandleLocationChanged;
+    }
+}

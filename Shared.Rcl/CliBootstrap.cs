@@ -12,6 +12,7 @@ using RackPeek.Domain.Persistence.Yaml;
 using Shared.Rcl.Commands;
 using Shared.Rcl.Commands.AccessPoints;
 using Shared.Rcl.Commands.AccessPoints.Labels;
+using Shared.Rcl.Commands.Ansible;
 using Shared.Rcl.Commands.Desktops;
 using Shared.Rcl.Commands.Desktops.Labels;
 using Shared.Rcl.Commands.Desktops.Cpus;
@@ -582,6 +583,18 @@ public static class CliBootstrap
                     label.AddCommand<ServiceLabelRemoveCommand>("remove").WithDescription("Remove a label from a service.");
                 });
             });
+            
+            // ----------------------------
+            // Ansible
+            // ----------------------------
+            config.AddBranch("ansible", ansible =>
+            {
+                ansible.SetDescription("Generate and manage Ansible inventory.");
+
+                ansible.AddCommand<GenerateAnsibleInventoryCommand>("inventory")
+                    .WithDescription("Generate an Ansible inventory.");
+            });
+            
         });
     }
 

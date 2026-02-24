@@ -3,9 +3,22 @@
 
 <div class="min-h-screen bg-zinc-950 text-zinc-200 font-mono p-6">
 
-    <YamlFileComponent Path="config/config.yaml">
+    <!-- Top Actions -->
+    <div class="mb-4 flex justify-between items-center">
+        <div class="text-zinc-400 text-sm">
+            Raw YAML Configuration
+        </div>
 
+        <NavLink href="/ansible/inventory"
+                 class="text-sm text-emerald-400 hover:text-emerald-300 transition"
+                 data-testid="yaml-to-ansible-link">
+            → Open Ansible Inventory Generator
+        </NavLink>
+    </div>
+
+    <YamlFileComponent Path="config/config.yaml">
     </YamlFileComponent>
+
 </div>
 
 @code {

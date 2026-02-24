@@ -1,7 +1,7 @@
 using Tests.EndToEnd.Infra;
 using Xunit.Abstractions;
 
-namespace Tests.EndToEnd;
+namespace Tests.EndToEnd.LaptopTests;
 
 [Collection("Yaml CLI tests")]
 public class LaptopErrorTests(TempYamlCliFixture fs, ITestOutputHelper outputHelper)

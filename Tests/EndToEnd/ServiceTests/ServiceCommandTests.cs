@@ -1,7 +1,7 @@
 using Tests.EndToEnd.Infra;
 using Xunit.Abstractions;
 
-namespace Tests.EndToEnd;
+namespace Tests.EndToEnd.ServiceTests;
 
 [Collection("Yaml CLI tests")]
 public class ServiceCommandTests(TempYamlCliFixture fs, ITestOutputHelper outputHelper)

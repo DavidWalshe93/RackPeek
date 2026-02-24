@@ -1,7 +1,7 @@
 using Tests.EndToEnd.Infra;
 using Xunit.Abstractions;
 
-namespace Tests.EndToEnd;
+namespace Tests.EndToEnd.RouterTests;
 
 [Collection("Yaml CLI tests")]
 public class RouterErrorTests(TempYamlCliFixture fs, ITestOutputHelper outputHelper)

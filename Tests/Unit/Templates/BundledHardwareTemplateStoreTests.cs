@@ -1,3 +1,4 @@
+using RackPeek.Domain.Resources.Servers;
 using RackPeek.Domain.Resources.Switches;
 using RackPeek.Domain.Resources.Routers;
 using RackPeek.Domain.Resources.Firewalls;
@@ -256,6 +257,56 @@ public class BundledHardwareTemplateStoreTests : IDisposable
         Assert.NotNull(template);
         var ups = Assert.IsType<Ups>(template.Spec);
         Assert.Equal(2200, ups.Va);
+    }
+
+    [Fact]
+    public async Task server_template__preserves_cpu_ram_drives_nics_ipmi()
+    {
+        // Arrange
+        WriteTemplate("servers", "Intel-NUC-13-Pro.yaml", """
+            kind: Server
+            name: Intel-NUC-13-Pro
+            cpus:
+              - model: Intel Core i7-1360P
+                cores: 12
+                threads: 16
+            ram:
+              size: 32
+              mts: 4800
+            drives:
+              - type: nvme
+                size: 1024
+            nics:
+              - type: rj45
+                speed: 2.5
+                ports: 1
+            ipmi: false
+            """);
+        var sut = new BundledHardwareTemplateStore(_tempDir);
+
+        // Act
+        var template = await sut.GetByIdAsync("Server/Intel-NUC-13-Pro");
+
+        // Assert
+        Assert.NotNull(template);
+        Assert.Equal("Server", template.Kind);
+        Assert.Equal("Intel-NUC-13-Pro", template.Model);
+        var server = Assert.IsType<Server>(template.Spec);
+        Assert.False(server.Ipmi);
+        Assert.NotNull(server.Ram);
+        Assert.Equal(32, server.Ram.Size);
+        Assert.Equal(4800, server.Ram.Mts);
+        Assert.Single(server.Cpus!);
+        Assert.Equal("Intel Core i7-1360P", server.Cpus![0].Model);
+        Assert.Equal(12, server.Cpus[0].Cores);
+        Assert.Equal(16, server.Cpus[0].Threads);
+        Assert.Single(server.Drives!);
+        Assert.Equal("nvme", server.Drives![0].Type);
+        Assert.Equal(1024, server.Drives[0].Size);
+        Assert.Single(server.Nics!);
+        Assert.Equal("rj45", server.Nics![0].Type);
+        Assert.Equal(2.5, server.Nics[0].Speed);
+        Assert.Equal(1, server.Nics[0].Ports);
     }
 
     [Fact]

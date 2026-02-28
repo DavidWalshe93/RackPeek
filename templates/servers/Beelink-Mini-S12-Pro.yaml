@@ -1,0 +1,17 @@
+kind: Server
+name: Beelink-Mini-S12-Pro
+cpus:
+  - model: Intel N100
+    cores: 4
+    threads: 4
+ram:
+  size: 16
+  mts: 3200
+drives:
+  - type: nvme
+    size: 500
+nics:
+  - type: rj45
+    speed: 1
+    ports: 1
+ipmi: false

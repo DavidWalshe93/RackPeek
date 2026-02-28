@@ -610,13 +610,16 @@ public static class CliBootstrap
             // ----------------------------
             config.AddBranch("templates", templates =>
             {
-                templates.SetDescription("Browse and inspect known hardware templates.");
+                templates.SetDescription("Browse, inspect and validate hardware templates.");
 
                 templates.AddCommand<TemplateListCommand>("list")
                     .WithDescription("List available hardware templates, optionally filtered by kind.");
 
                 templates.AddCommand<TemplateShowCommand>("show")
                     .WithDescription("Display details of a specific hardware template.");
+
+                templates.AddCommand<TemplateValidateCommand>("validate")
+                    .WithDescription("Validate a hardware template YAML file against the resource schema.");
             });
             
         });

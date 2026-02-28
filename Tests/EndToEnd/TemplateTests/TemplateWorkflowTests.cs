@@ -192,4 +192,191 @@ public class TemplateWorkflowTests(TempYamlCliFixture fs, ITestOutputHelper outp
         // Assert
         Assert.Contains("already exists", output, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public async Task server_add_with_template__creates_prefilled_server()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+
+        // Act
+        var (output, yaml) = await ExecuteAsync(
+            "servers", "add", "home-nuc", "--template", "Intel-NUC-13-Pro");
+
+        // Assert
+        Assert.Equal("Server 'home-nuc' added.\n", output);
+        Assert.Contains("name: home-nuc", yaml);
+        Assert.Contains("Intel Core i7-1360P", yaml);
+        Assert.Contains("size: 32", yaml);
+        Assert.Contains("type: nvme", yaml);
+        Assert.Contains("ipmi: false", yaml);
+    }
+
+    [Fact]
+    public async Task template_list__includes_server_templates()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+
+        // Act
+        var (output, _) = await ExecuteAsync("templates", "list");
+
+        // Assert
+        Assert.Contains("Server", output);
+        Assert.Contains("Intel-NUC-13-Pro", output);
+    }
+
+    [Fact]
+    public async Task template_show__server_template__shows_details()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+
+        // Act
+        var (output, _) = await ExecuteAsync("templates", "show", "Server/Intel-NUC-13-Pro");
+
+        // Assert
+        Assert.Contains("Server/Intel-NUC-13-Pro", output);
+        Assert.Contains("Server", output);
+        Assert.Contains("Intel-NUC-13-Pro", output);
+        Assert.Contains("IPMI", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("RAM", output, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("CPU", output, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task template_validate__valid_server__passes()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+        var templatePath = Path.Combine(fs.Root, "valid-server.yaml");
+        await File.WriteAllTextAsync(templatePath, """
+            kind: Server
+            name: test-server
+            cpus:
+              - model: Intel N100
+                cores: 4
+                threads: 4
+            ram:
+              size: 16
+              mts: 3200
+            drives:
+              - type: nvme
+                size: 512
+            nics:
+              - type: rj45
+                speed: 1
+                ports: 1
+            ipmi: false
+            """);
+
+        // Act
+        var (output, _) = await ExecuteAsync("templates", "validate", templatePath);
+
+        // Assert
+        Assert.Contains("Valid", output);
+    }
+
+    [Fact]
+    public async Task template_validate__valid_switch__passes()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+        var templatePath = Path.Combine(fs.Root, "valid-switch.yaml");
+        await File.WriteAllTextAsync(templatePath, """
+            kind: Switch
+            name: test-switch
+            model: Test-24
+            managed: true
+            poe: true
+            ports:
+              - type: rj45
+                speed: 1
+                count: 24
+            """);
+
+        // Act
+        var (output, _) = await ExecuteAsync("templates", "validate", templatePath);
+
+        // Assert
+        Assert.Contains("Valid", output);
+    }
+
+    [Fact]
+    public async Task template_validate__invalid_kind__reports_error()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+        var templatePath = Path.Combine(fs.Root, "bad-kind.yaml");
+        await File.WriteAllTextAsync(templatePath, """
+            kind: Toaster
+            name: not-real
+            """);
+
+        // Act
+        var (output, _) = await ExecuteAsync("templates", "validate", templatePath);
+
+        // Assert
+        Assert.Contains("Invalid", output);
+        Assert.Contains("kind", output, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task template_validate__invalid_drive_type__reports_error()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+        var templatePath = Path.Combine(fs.Root, "bad-drive.yaml");
+        await File.WriteAllTextAsync(templatePath, """
+            kind: Server
+            name: bad-drive
+            drives:
+              - type: floppy
+                size: 1
+            """);
+
+        // Act
+        var (output, _) = await ExecuteAsync("templates", "validate", templatePath);
+
+        // Assert
+        Assert.Contains("Invalid", output);
+        Assert.Contains("floppy", output);
+    }
+
+    [Fact]
+    public async Task template_validate__missing_file__reports_error()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+
+        // Act
+        var (output, _) = await ExecuteAsync(
+            "templates", "validate", Path.Combine(fs.Root, "nonexistent.yaml"));
+
+        // Assert
+        Assert.Contains("not found", output, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task template_validate__switch_missing_model__reports_error()
+    {
+        // Arrange
+        await File.WriteAllTextAsync(Path.Combine(fs.Root, "config.yaml"), "");
+        var templatePath = Path.Combine(fs.Root, "no-model.yaml");
+        await File.WriteAllTextAsync(templatePath, """
+            kind: Switch
+            name: no-model
+            ports:
+              - type: rj45
+                speed: 1
+                count: 8
+            """);
+
+        // Act
+        var (output, _) = await ExecuteAsync("templates", "validate", templatePath);
+
+        // Assert
+        Assert.Contains("Invalid", output);
+        Assert.Contains("model", output, StringComparison.OrdinalIgnoreCase);
+    }
 }

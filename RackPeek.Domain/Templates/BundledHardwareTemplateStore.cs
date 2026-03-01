@@ -63,6 +63,7 @@ public sealed class BundledHardwareTemplateStore : IHardwareTemplateStore
         var all = await LoadAsync();
         return all
             .Where(t => t.Kind.Equals(kind, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(t => t.Model, StringComparer.OrdinalIgnoreCase)
             .ToList();
     }
 
@@ -76,7 +77,11 @@ public sealed class BundledHardwareTemplateStore : IHardwareTemplateStore
     /// <inheritdoc />
     public async Task<IReadOnlyList<HardwareTemplate>> GetAllAsync()
     {
-        return await LoadAsync();
+        var all = await LoadAsync();
+        return all
+            .OrderBy(t => t.Kind, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(t => t.Model, StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     private async Task<List<HardwareTemplate>> LoadAsync()
